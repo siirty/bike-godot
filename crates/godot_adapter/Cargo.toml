@@ -1,0 +1,12 @@
+[package]
+name = "godot_adapter"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+# The trainer core stays its own repository; this adapter binds only the
+# SIM-mode-safe subset, mirroring the Dart bridge's contract in bike-training-app.
+trainer_core = { git = "https://github.com/siirty/bike-training-core", rev = "49bde0bd25be" }
+tokio = { version = "1.53.1", features = ["sync", "rt-multi-thread", "macros", "time"] }
+log = "0.4"

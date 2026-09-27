@@ -1,83 +1,44 @@
-# AI-Supported Development Template
+# bike-godot
 
-A project-agnostic GitHub template for disciplined AI-assisted software development.
+Godot shell for the bike trainer app. Created from
+[`template-ai-dev`](https://github.com/siirty/template-ai-dev).
 
-The default operating model is:
+## Decision context
 
-1. A human defines intent and acceptance criteria.
-2. A coding agent explores, plans, implements, tests, and documents the change.
-3. Deterministic CI runs project checks.
-4. Codex can perform an independent, read-only pull-request review.
-5. A human evaluates the evidence and decides whether to merge.
+The Flutter + Dart app (`siirty/bike-training-app`) is now the **prototype**: it stays
+runnable as the reference behavior and training-oracle, but new product work happens here.
+This repo is a **composition project**, not a port:
 
-This repository deliberately keeps the core small. Add stack- and domain-specific rules only after the project exists.
+| Piece | Where it lives | Role |
+|---|---|---|
+| Godot app shell | this repo, `apps/` | UI, camera, HUD, menus, IPC client. GDScript. |
+| Trainer core | [`siirty/bike-training-core`](https://github.com/siirty/bike-training-core) | Rust crate owning BLE/FTMS I/O. Unchanged, consumed as a git dependency. |
+| Domain core | `siirty/bike-training-app` (`packages/race_engine`, `race_physics`, `session_director`, `workout_import`) | Stays **Dart**, run headless as a separate process behind the replay/IPC protocol. No language port. |
 
-## Create a project
+The full rationale — why the Flutter app became a prototype, why the Dart domain is not
+being ported to Rust for now, and the language split — lives in
+[`docs/architecture/README.md`](docs/architecture/README.md).
 
-Use **Use this template** on GitHub, then run:
+## Layout
 
-```bash
-python scripts/bootstrap.py
-```
+- `apps/race_viewer_godot/` — seed imported from PR 66 of `bike-training-app`
+  (deterministic-kernel replay viewer, perspective chase camera, low-poly art).
+- `crates/godot_adapter/` — Rust GDExtension adapter over `trainer_core`
+  (SIM-safe subset only: scan / connect / telemetry / SIM params — never ERG routing).
+- `docs/decisions/` — ADRs for the repository split and language choices.
 
-Then:
+## First milestones
 
-1. Review `.ai/project.yml`.
-2. Replace this README with the project README.
-3. Configure branch protection for the default branch.
-4. Run `bash scripts/setup-local-ci-labels.sh` if the repository should use the disposable Proxmox CI runner.
-5. Configure the optional Codex reviewer runner or disable it with `CODEX_REVIEW_ENABLED=false`.
-6. Open non-trivial work as a draft pull request and mark it ready when the implementation is coherent.
+1. **M1 — Repo + CI green**: this skeleton, quality CI on the self-hosted runner.
+2. **M2 — Live ride**: trainer connect via the adapter, a rideable workout, live rider
+   position in the Godot view (replay contract becomes live IPC). The gate for the whole
+   architecture: proven on the Linux ride computer with the real trainer.
+3. **M3 — Golden-vector harness**: record trajectories/seed streams from the Dart
+   prototype; compare against any future domain port.
+4. **M4 — Product shell**: workout import UI, persistence, packaging.
 
-Detailed setup: [`docs/development/AI_WORKFLOW.md`](docs/development/AI_WORKFLOW.md)
+## Runner
 
-## Core files
-
-| File | Purpose |
-|---|---|
-| `AGENTS.md` | Shared, tool-agnostic instructions and review rules |
-| `CLAUDE.md` | Claude Code implementer role and workflow |
-| `.claude/skills/` | Reusable implementation, verification, documentation, security, and dependency procedures |
-| `.ai/project.yml` | Compact project facts and project-specific commands |
-| `.ai/task-template.md` | Generic structure for scoped implementation tasks |
-| `.ai/review-policy.md` | Advisory independent-review policy |
-| `.github/workflows/quality.yml` | Deterministic project checks plus optional Codex review |
-| `.github/workflows/local-proxmox-ci.yml` | Thin trigger layer for the standalone `gha-proxmox-runner` service |
-| `.github/codex/prompts/review.md` | Independent reviewer contract loaded from the base branch |
-| `scripts/ci.sh` | Project-agnostic CI dispatcher with stack detection and an explicit override path |
-| `scripts/setup-local-ci-labels.sh` | Creates the two optional local-CI trigger labels |
-
-## CI model
-
-The template deliberately separates ordinary repository CI from the home runner.
-
-`quality.yml` runs deterministic checks for normal pull-request feedback. Projects can keep those checks on GitHub-hosted runners or configure another runner through `CI_RUNNER_JSON`.
-
-The optional local runner integration is provided by [`siirty/gha-proxmox-runner`](https://github.com/siirty/gha-proxmox-runner). Its controller independently authorizes only:
-
-- a PR merged into `main` — automatic local CI;
-- `ci:manual-trigger` — one explicit local CI run on any PR/base branch;
-- `ci:merge-check` — an explicit pre-merge run on any PR/base branch.
-
-`ci:merge-check` is informational for now and is intentionally distinct so it can later become a required merge gate.
-
-## Review trigger policy
-
-- Deterministic CI runs on every pull-request update.
-- Codex review runs automatically when a draft PR becomes **Ready for review**.
-- Add the `ai-review` label to request a later re-review.
-- Codex is advisory by default; deterministic CI remains the merge gate unless the project explicitly changes that policy.
-
-## Template principles
-
-- Specifications and acceptance criteria precede implementation.
-- Shared instructions stay concise; procedures live in skills.
-- Verification evidence is required, not merely a claim that something works.
-- The implementer and reviewer can be different models and roles.
-- AI-generated changes remain attributable and reviewable through ordinary Git history.
-- Secrets, production access, deployments, and destructive operations require explicit human control.
-- Infrastructure services such as local CI remain separate products rather than being embedded into the project template.
-
-## License
-
-The template files are provided under the MIT License. Replace the copyright placeholder when bootstrapping a project.
+CI runs on the self-hosted `gh-runner` (labels `[self-hosted, linux, X64]`) via the
+`CI_RUNNER_JSON` repository variable; optional disposable Proxmox CI is wired through
+`local-proxmox-ci.yml` after `scripts/setup-local-ci-labels.sh`.

@@ -1,0 +1,17 @@
+# Cargo workspace for the Godot app's native adapter layer.
+#
+# The trainer core lives in its own repository (siirty/bike-training-core) and is
+# consumed as an ordinary git dependency, pinned by commit rev — the same model
+# bike-training-app uses for its Dart-side bridge. The Godot shell talks to it
+# through a GDExtension built from crates/godot_adapter.
+[workspace]
+resolver = "2"
+members = ["crates/godot_adapter"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+log = "0.4"
+tokio = "1.53.1"

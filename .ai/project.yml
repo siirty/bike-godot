@@ -1,23 +1,23 @@
 # Fill this file immediately after creating a project from the template.
 project:
-  name: "{{PROJECT_NAME}}"
-  description: "{{PROJECT_DESCRIPTION}}"
+  name: "bike-godot"
+  description: "Godot trainer app shell over trainer_core (Rust) and the headless Dart domain core"
   default_branch: "main"
-  status: "bootstrap"
+  status: "active"
 
 commands:
-  setup: ""
-  format: ""
-  lint: ""
-  typecheck: ""
-  test: ""
+  setup: "dart pub get (domain core, in bike-training-app) / cargo fetch"
+  format: "cargo fmt --all --check"
+  lint: "cargo clippy --workspace -- -D warnings"
+  typecheck: "cargo check --workspace"
+  test: "cargo test --workspace"
   build: ""
   ci: "./scripts/ci.sh"
 
 architecture:
-  summary: ""
-  primary_languages: []
-  frameworks: []
+  summary: "Godot shell + Rust trainer adapter (trainer_core git dep) + headless Dart domain core (separate repo/process)."
+  primary_languages: ["gdscript", "rust"]
+  frameworks: ["godot-4.3"]
   data_stores: []
   external_services: []
 
@@ -35,5 +35,5 @@ security:
     - "Change access control or billing without explicit human authorization"
 
 ownership:
-  owner: "{{PROJECT_OWNER}}"
+  owner: "Levin Schmidt (siirty)"
   reviewers: []
