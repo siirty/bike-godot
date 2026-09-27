@@ -31,3 +31,6 @@ node_modules/
 *.log
 *.tmp
 .tmp/
+
+# Runner-side cargo config is injected by setup, not committed
+/.runner-setup/
