@@ -25,6 +25,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      # The Rust workspace consumes siirty/bike-training-core (private) as a git
+      # dependency; cargo fetches it through the git CLI using this token.
+      - name: Configure cargo git auth
+        shell: bash
+        env:
+          CARGO_GIT_TOKEN: ${{ secrets.CARGO_GIT_TOKEN }}
+        run: |
+          mkdir -p ~/.cargo ~/.config/git
+          printf '[net]\ngit-fetch-with-cli = true\n' > "$HOME/.cargo/config.toml"
+          {
+            printf 'protocol=https\n'
+            printf 'host=github.com\n'
+            printf 'username=x-access-token\n'
+            printf 'password=%s\n' "$CARGO_GIT_TOKEN"
+          } > "$HOME/.config/git/credentials"
+
       - name: Run project checks
         shell: bash
         run: ./scripts/ci.sh
