@@ -1,0 +1,50 @@
+name: Feature or change
+description: Define a reviewable behavior change with acceptance criteria.
+title: "[Change]: "
+labels: ["type:change"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and outcome
+      description: What problem exists, who is affected, and what outcome is required?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: State what is included and excluded.
+      placeholder: |
+        In scope:
+        -
+        Out of scope:
+        -
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Use observable, testable statements.
+      placeholder: "- [ ] When ..., the system ..."
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and risks
+      description: Compatibility, security, privacy, performance, legal, operational, or deadline constraints.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: >-
+        State how each acceptance criterion should be verified: automated check,
+        integration test, manual scenario, or other concrete evidence.
+      placeholder: "- <criterion> -> <verification method>"
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and references
+      description: Existing behavior, logs, screenshots, code, designs, or related decisions.

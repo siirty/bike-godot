@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Replace these examples with the project's authoritative checks.
+# Install dependencies through the project's locked, reproducible mechanism.
+# Then run formatting verification, linting, type checking, tests, and build.
+
+echo "Configure scripts/project-ci.sh for this project" >&2
+exit 2

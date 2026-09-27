@@ -1,0 +1,33 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# AI tool local state and credentials
+.claude/settings.local.json
+.codex/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generic build and test output
+coverage/
+dist/
+build/
+target/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+node_modules/
+
+# Local temporary files
+*.log
+*.tmp
+.tmp/

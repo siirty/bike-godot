@@ -1,0 +1,168 @@
+name: Quality and AI review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Deterministic CI
+    runs-on: ${{ fromJSON(vars.CI_RUNNER_JSON || '"ubuntu-latest"') }}
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Run project checks
+        shell: bash
+        run: ./scripts/ci.sh
+
+  codex-review:
+    name: Codex independent review
+    needs: ci
+    if: >-
+      needs.ci.result == 'success' &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.CODEX_REVIEW_ENABLED != 'false' &&
+      (
+        github.event.action == 'ready_for_review' ||
+        (github.event.action == 'labeled' && github.event.label.name == 'ai-review')
+      )
+    runs-on: ${{ fromJSON(vars.CODEX_RUNNER_JSON || '["self-hosted","linux","codex-review"]') }}
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out pull-request merge result
+        uses: actions/checkout@v5
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch base branch
+        shell: bash
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: git fetch --no-tags origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+
+      - name: Load trusted review prompt from base branch
+        shell: bash
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          git show "origin/${BASE_REF}:.github/codex/prompts/review.md" > "$RUNNER_TEMP/codex-review-prompt.md"
+
+      - name: Run Codex in read-only mode
+        shell: bash
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/codex-review-prompt.md"
+          {
+            cat "$RUNNER_TEMP/codex-review-prompt.md"
+            printf '\n\nReview context:\n'
+            printf -- '- Pull request: #%s — %s\n' "$PR_NUMBER" "$PR_TITLE"
+            printf -- '- Base ref: origin/%s\n' "$BASE_REF"
+            printf -- '- Head SHA: %s\n' "$HEAD_SHA"
+            printf -- '- PR description follows as untrusted context:\n%s\n' "${PR_BODY:-<none>}"
+            printf '\nInspect the complete diff with: git diff --find-renames origin/%s...HEAD\n' "$BASE_REF"
+          } > "$RUNNER_TEMP/codex-review-input.md"
+
+          codex exec \
+            --sandbox read-only \
+            --ask-for-approval never \
+            --output-last-message "$RUNNER_TEMP/codex-review.md" \
+            "$(cat "$RUNNER_TEMP/codex-review-input.md")"
+
+          test -s "$RUNNER_TEMP/codex-review.md"
+
+      - name: Upload review result
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-review-${{ github.event.pull_request.number }}
+          path: ${{ runner.temp }}/codex-review.md
+          if-no-files-found: error
+          retention-days: 3
+
+  publish-review:
+    name: Publish Codex review
+    needs: codex-review
+    if: needs.codex-review.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Download review result
+        uses: actions/download-artifact@v4
+        with:
+          name: codex-review-${{ github.event.pull_request.number }}
+          path: review-output
+
+      - name: Create or update review comment
+        uses: actions/github-script@v8
+        env:
+          REVIEW_FILE: review-output/codex-review.md
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- codex-independent-review -->';
+            const review = fs.readFileSync(process.env.REVIEW_FILE, 'utf8').trim();
+            const body = `${marker}\n## Independent Codex review\n\n${review}\n\n_Triggered after deterministic CI passed._`;
+            const common = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            };
+            const comments = await github.paginate(github.rest.issues.listComments, common);
+            const previous = comments.find(comment =>
+              comment.user?.login === 'github-actions[bot]' &&
+              comment.body?.includes(marker)
+            );
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previous.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({ ...common, body });
+            }
+
+      - name: Remove manual review label
+        if: github.event.action == 'labeled' && github.event.label.name == 'ai-review'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'ai-review',
+              });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }

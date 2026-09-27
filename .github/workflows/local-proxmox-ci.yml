@@ -1,0 +1,40 @@
+name: Local Proxmox CI
+
+on:
+  pull_request_target:
+    types: [closed, labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  merged-main:
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
+    uses: siirty/gha-proxmox-runner/.github/workflows/proxmox-ci-reusable.yml@main
+    with:
+      policy: merged-main
+      checkout-repository: ${{ github.repository }}
+      checkout-ref: ${{ github.sha }}
+
+  manual-trigger:
+    if: >-
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'ci:manual-trigger'
+    uses: siirty/gha-proxmox-runner/.github/workflows/proxmox-ci-reusable.yml@main
+    with:
+      policy: manual-trigger
+      checkout-repository: ${{ github.event.pull_request.head.repo.full_name }}
+      checkout-ref: ${{ github.event.pull_request.head.sha }}
+
+  merge-check:
+    if: >-
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'ci:merge-check'
+    uses: siirty/gha-proxmox-runner/.github/workflows/proxmox-ci-reusable.yml@main
+    with:
+      policy: merge-check
+      checkout-repository: ${{ github.event.pull_request.head.repo.full_name }}
+      checkout-ref: ${{ github.event.pull_request.head.sha }}

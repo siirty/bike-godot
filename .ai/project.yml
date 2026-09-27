@@ -1,0 +1,39 @@
+# Fill this file immediately after creating a project from the template.
+project:
+  name: "{{PROJECT_NAME}}"
+  description: "{{PROJECT_DESCRIPTION}}"
+  default_branch: "main"
+  status: "bootstrap"
+
+commands:
+  setup: ""
+  format: ""
+  lint: ""
+  typecheck: ""
+  test: ""
+  build: ""
+  ci: "./scripts/ci.sh"
+
+architecture:
+  summary: ""
+  primary_languages: []
+  frameworks: []
+  data_stores: []
+  external_services: []
+
+quality:
+  required_test_types: []
+  coverage_policy: "No numeric threshold until the project defines one. Changed behavior still requires meaningful tests."
+  compatibility_policy: "Preserve compatibility unless an approved requirement states otherwise."
+
+security:
+  data_classification: "unspecified"
+  sensitive_areas: []
+  forbidden_agent_actions:
+    - "Access or expose secrets"
+    - "Deploy to production without explicit human authorization"
+    - "Change access control or billing without explicit human authorization"
+
+ownership:
+  owner: "{{PROJECT_OWNER}}"
+  reviewers: []
