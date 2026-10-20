@@ -1,4 +1,4 @@
-//! Text for people, ported from the prototype's `workout_formatting.dart` and `error_presenter.dart`.
+//! Presentation text for workouts and user-visible errors.
 //! Exception types are for logs; these strings are what a rider sees.
 
 use std::time::Duration;
@@ -26,23 +26,23 @@ pub fn format_speed(speed_ms: f64) -> String {
 
 /// Whole watts.
 pub fn format_power(watts: f64) -> String {
-    format!("{} W", dart_round(watts))
+    format!("{} W", round_whole(watts))
 }
 
 /// Whole rpm, or an em dash when not reported.
 pub fn format_cadence(rpm: Option<f64>) -> String {
-    rpm.map_or_else(|| EM_DASH.to_owned(), |r| format!("{} rpm", dart_round(r)))
+    rpm.map_or_else(|| EM_DASH.to_owned(), |r| format!("{} rpm", round_whole(r)))
 }
 
-/// Dart's `round()`: half away from zero, which is also Rust's `f64::round`.
-fn dart_round(x: f64) -> i64 {
+/// Round halves away from zero.
+fn round_whole(x: f64) -> i64 {
     x.round() as i64
 }
 
 /// A target in its file's own unit.
 pub fn format_power_target(target: PowerTarget) -> String {
     match target {
-        PowerTarget::PercentFtp(f) => format!("{}% FTP", dart_round(f * 100.0)),
+        PowerTarget::PercentFtp(f) => format!("{}% FTP", round_whole(f * 100.0)),
         PowerTarget::AbsoluteWatts(w) => format_power(w),
     }
 }

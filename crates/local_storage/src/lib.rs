@@ -1,4 +1,4 @@
-//! Local-first persistence for saved workouts, ported from the Dart prototype's `local_storage`.
+//! Local-first persistence for saved workouts.
 //!
 //! SQLite (bundled through rusqlite) behind the [`WorkoutRepository`] trait. Row types and the
 //! connection never leave this crate: callers see [`SavedWorkoutRecord`] only.

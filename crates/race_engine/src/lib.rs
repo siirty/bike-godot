@@ -1,10 +1,10 @@
-//! The deterministic live race kernel, ported from the Dart prototype's `race_engine`.
+//! The deterministic live race kernel.
 //!
 //! One pure stepping kernel ([`RaceSimulation`]) with explicit state, inputs, time and
 //! randomness. Headless tests and the live Godot adapter step the same object. Capability lives
 //! in [`RaceSimulationConfig`]; only dynamic continuation data lives in [`RaceState`].
 
-pub mod dart_json;
+pub mod canonical_json;
 #[cfg(feature = "testing")]
 pub mod harness;
 pub mod pack;

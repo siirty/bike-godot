@@ -2,8 +2,7 @@
 //!
 //! Both inverses are Newton–Raphson with a bisection fallback inside a fixed bracket. `P(v)` and
 //! `P(grade)` are monotonic for physically sane inputs, so a solution inside the bracket is unique
-//! when one exists. The order of every operation follows the Dart prototype so results agree to
-//! the bit.
+//! when one exists. Operation order is stable and covered by frozen regression vectors.
 
 use crate::forces::{aero_drag_force_n, gravity_force_n, rolling_resistance_force_n};
 use crate::{EnvironmentParams, PhysicsError, RiderPhysicalParams};

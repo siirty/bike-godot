@@ -8,7 +8,7 @@ use race_physics::{
     LongitudinalDynamicsConfig, PhysicsDefaults, PhysiologyParams, RiderPhysicalParams,
 };
 
-use crate::dart_json::dart_double;
+use crate::canonical_json::format_number;
 use crate::simulation::error::{at, RaceSimulationError, Result, SimulationValidationCode as C};
 use crate::simulation::validate::{
     check_canonical, check_finite, check_finite_non_negative, check_finite_positive,
@@ -116,7 +116,7 @@ impl BasicDraftingConfig {
                     C::DraftingMultiplierOutOfRange,
                     format!(
                         "drag multipliers must be finite and in (0, 1], got {} at offset {i}",
-                        dart_double(value)
+                        format_number(value)
                     ),
                     format!("minimumDragMultiplierBySlotOffset[{i}]"),
                 ));
@@ -127,8 +127,8 @@ impl BasicDraftingConfig {
                     format!(
                         "drag multipliers must be monotonically non-decreasing so moving farther \
                          laterally can never improve shelter: {} at offset {i} does not follow {}",
-                        dart_double(value),
-                        dart_double(list[i - 1])
+                        format_number(value),
+                        format_number(list[i - 1])
                     ),
                     format!("minimumDragMultiplierBySlotOffset[{i}]"),
                 ));

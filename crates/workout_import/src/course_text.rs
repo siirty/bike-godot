@@ -67,7 +67,7 @@ fn parse_course_text(contents: &str, format: &str) -> Result<CourseText, Workout
     let mut breakpoints: Vec<Breakpoint> = Vec::new();
 
     for (i, raw_line) in split_lines(contents).enumerate() {
-        let line = dart_trim(raw_line);
+        let line = trim_text(raw_line);
         if line.is_empty() {
             continue;
         }
@@ -90,7 +90,7 @@ fn parse_course_text(contents: &str, format: &str) -> Result<CourseText, Workout
         match section {
             Section::Header => {
                 if let Some(value) = description_value(line) {
-                    description = Some(dart_trim(value).to_owned());
+                    description = Some(trim_text(value).to_owned());
                 }
             }
             Section::Data => {
@@ -101,8 +101,8 @@ fn parse_course_text(contents: &str, format: &str) -> Result<CourseText, Workout
                         return Err(err(format!(
                             "time must not decrease within [COURSE DATA]: {} then {} on line \
                              {line_number}",
-                            dart_duration(last.time_micros),
-                            dart_duration(breakpoint.time_micros)
+                            format_duration(last.time_micros),
+                            format_duration(breakpoint.time_micros)
                         )));
                     }
                 }
@@ -198,13 +198,13 @@ fn parse_breakpoint(line: &str, line_number: usize) -> Result<Breakpoint, String
 
 /// Dart's `String.trim` strips Unicode whitespace, as does Rust's `str::trim`; kept as a named
 /// function so the intent (match the prototype) is visible at each call site.
-fn dart_trim(s: &str) -> &str {
+fn trim_text(s: &str) -> &str {
     s.trim()
 }
 
 /// Renders microseconds like Dart's `Duration.toString()` (`H:MM:SS.ffffff`), so parse errors
 /// read the same as the prototype's.
-fn dart_duration(micros: i64) -> String {
+fn format_duration(micros: i64) -> String {
     let sign = if micros < 0 { "-" } else { "" };
     let m = micros.unsigned_abs();
     format!(

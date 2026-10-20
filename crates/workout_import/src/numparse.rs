@@ -1,6 +1,6 @@
-//! Number parsing that accepts what the Dart prototype's `double.tryParse` / `int.tryParse` did.
+//! Numeric grammar for imported workout files.
 //!
-//! The grammars differ in small ways that matter for real files: Dart trims surrounding
+//! Import compatibility includes trimming surrounding
 //! whitespace, spells the specials `NaN`/`Infinity`, and lets an integer carry a `0x` prefix.
 //! Rust's `str::parse` rejects whitespace and accepts lowercase `inf`/`nan`. Parsing through
 //! here keeps "which files import" identical across the port.
@@ -13,7 +13,7 @@ pub(crate) fn parse_f64(raw: &str) -> Option<f64> {
         "-Infinity" => return Some(f64::NEG_INFINITY),
         _ => {}
     }
-    // Reject the Rust-only spellings (inf, infinity, nan in any case) Dart does not accept.
+    // The file grammar accepts named NaN/Infinity only with the canonical capitalization.
     if s.bytes()
         .any(|b| b.is_ascii_alphabetic() && !matches!(b, b'e' | b'E'))
     {
@@ -52,7 +52,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn doubles_follow_dart_grammar() {
+    fn doubles_follow_workout_grammar() {
         assert_eq!(parse_f64(" 1.5 "), Some(1.5));
         assert_eq!(parse_f64(".5"), Some(0.5));
         assert_eq!(parse_f64("5."), Some(5.0));
@@ -66,7 +66,7 @@ mod tests {
     }
 
     #[test]
-    fn integers_follow_dart_grammar() {
+    fn integers_follow_workout_grammar() {
         assert_eq!(parse_i64(" 42 "), Some(42));
         assert_eq!(parse_i64("+7"), Some(7));
         assert_eq!(parse_i64("-3"), Some(-3));

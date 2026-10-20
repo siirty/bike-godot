@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use crate::dart_json::dart_double;
+use crate::canonical_json::format_number;
 use crate::simulation::error::{RaceSimulationError, Result, SimulationValidationCode as C};
 use crate::RiderId;
 
@@ -12,7 +12,7 @@ pub(crate) fn check_finite(value: f64, path: &str) -> Result<f64> {
     } else {
         Err(RaceSimulationError::validation(
             C::NotFinite,
-            format!("expected a finite number, got {}", dart_double(value)),
+            format!("expected a finite number, got {}", format_number(value)),
             path,
         ))
     }
@@ -23,7 +23,10 @@ pub(crate) fn check_finite_non_negative(value: f64, path: &str) -> Result<f64> {
     if value < 0.0 {
         return Err(RaceSimulationError::validation(
             C::NegativeValue,
-            format!("expected a non-negative number, got {}", dart_double(value)),
+            format!(
+                "expected a non-negative number, got {}",
+                format_number(value)
+            ),
             path,
         ));
     }
@@ -35,7 +38,7 @@ pub(crate) fn check_finite_positive(value: f64, path: &str) -> Result<f64> {
     if value <= 0.0 {
         return Err(RaceSimulationError::validation(
             C::NotPositive,
-            format!("expected a positive number, got {}", dart_double(value)),
+            format!("expected a positive number, got {}", format_number(value)),
             path,
         ));
     }
@@ -68,7 +71,10 @@ pub(crate) fn check_positive_duration(value: Duration, path: &str) -> Result<Dur
     if value.is_zero() {
         return Err(RaceSimulationError::validation(
             C::NotPositive,
-            format!("expected a positive duration, got {}", dart_duration(value)),
+            format!(
+                "expected a positive duration, got {}",
+                format_duration(value)
+            ),
             path,
         ));
     }
@@ -109,8 +115,8 @@ pub(crate) fn check_canonical<T>(
     Ok(())
 }
 
-/// Dart's `Duration.toString()`: `H:MM:SS.ffffff`.
-pub(crate) fn dart_duration(d: Duration) -> String {
+/// The duration diagnostic format: `H:MM:SS.ffffff`.
+pub(crate) fn format_duration(d: Duration) -> String {
     let m = d.as_micros();
     format!(
         "{}:{:02}:{:02}.{:06}",

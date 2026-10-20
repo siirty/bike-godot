@@ -190,7 +190,7 @@ fn lerp(start: f64, end: f64, fraction: f64) -> f64 {
     start + (end - start) * fraction
 }
 
-/// A duration as whole microseconds — the resolution the Dart prototype computes at.
+/// A duration as whole microseconds, the timeline resolution.
 pub(crate) fn micros(d: Duration) -> i64 {
     i64::try_from(d.as_micros()).expect("workout durations fit in i64 microseconds")
 }

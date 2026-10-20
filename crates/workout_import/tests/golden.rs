@@ -75,7 +75,7 @@ fn bits(v: Option<f64>) -> Option<u64> {
 }
 
 #[test]
-fn every_parse_matches_the_dart_reference() {
+fn every_parse_matches_the_frozen_reference() {
     let golden = golden();
     let parses = golden["parses"].as_array().unwrap();
     assert!(parses.len() >= 19, "vector file looks truncated");
@@ -160,7 +160,7 @@ fn every_parse_matches_the_dart_reference() {
 }
 
 #[test]
-fn legacy_blobs_decode_and_reencode_like_dart() {
+fn stored_blobs_decode_and_reencode_exactly() {
     let golden = golden();
     for case in golden["legacy"].as_array().unwrap() {
         let file = case["file"].as_str().unwrap();
@@ -183,7 +183,7 @@ fn legacy_blobs_decode_and_reencode_like_dart() {
 }
 
 #[test]
-fn decode_classification_matches_dart() {
+fn decode_classification_matches_frozen_reference() {
     let golden = golden();
     for case in golden["decodes"].as_array().unwrap() {
         let source = case["source"].as_str().unwrap();
@@ -191,7 +191,7 @@ fn decode_classification_matches_dart() {
             DecodedSegments::Readable { segments, version } => {
                 assert!(
                     case["readable"].as_bool().unwrap(),
-                    "{source:?} decoded but Dart refused"
+                    "{source:?} decoded but fixture expected refusal"
                 );
                 assert_eq!(
                     Some(version),
@@ -208,7 +208,7 @@ fn decode_classification_matches_dart() {
             } => {
                 assert!(
                     !case["readable"].as_bool().unwrap(),
-                    "{source:?} refused ({reason}) but Dart decoded it"
+                    "{source:?} refused ({reason}) but fixture expected success"
                 );
                 let kind = match kind {
                     workout_import::UnreadableReason::Malformed => "malformed",

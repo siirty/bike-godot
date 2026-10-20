@@ -1,8 +1,7 @@
 # Cargo workspace for the bike trainer app: the Rust domain core plus the Godot adapter.
 #
-# The domain crates are a parity-tested port of the Dart prototype in
-# siirty/bike-training-app (see docs/decisions/0002-rust-domain-port.md). Each crate is checked
-# against golden vectors recorded from the Dart reference (fixtures/golden/).
+# Domain contracts and development are owned by this repository. Frozen regression vectors
+# under fixtures/golden require no external checkout or generator.
 #
 # The trainer core lives in its own repository (siirty/bike-training-core) and is consumed as an
 # ordinary git dependency, pinned by commit rev. The Godot shell talks to everything through one

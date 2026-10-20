@@ -43,8 +43,8 @@ paths:
   simulation validation, and duplicating it here would make two crates disagree about which values
   are legal.
 - **Behaviour is pinned by `tests/golden.rs`** against `fixtures/golden/race_physics.json`,
-  recorded from the Dart prototype, bit for bit. A deliberate change of behaviour is listed in
-  `docs/port/divergences.md` and named in the test. Otherwise the test is right, not the change.
+  frozen as self-contained regression evidence. A behavior change needs a local contract decision
+  and independent tests; never regenerate expectations from the implementation.
 - **Never re-derive the human rider's speed independently once real trainer telemetry is
   available.** The solver and the dynamics step exist for three things:
   - AI riders, who have no physical trainer;

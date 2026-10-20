@@ -10,7 +10,7 @@ use crate::simulation::events::detect_events;
 use crate::simulation::positioning::{
     compute_drag_multipliers, resolve_lateral_slots, retain_eligible_targets, select_draft_targets,
 };
-use crate::simulation::validate::dart_duration;
+use crate::simulation::validate::format_duration;
 use crate::{RaceInputFrame, RaceSimulationConfig, RaceState, RaceStepResult, RiderState};
 
 /// The deterministic stepping kernel: one validated configuration, and [`Self::step`].
@@ -68,7 +68,7 @@ impl RaceSimulation {
                 C::NotPositive,
                 format!(
                     "the step timestep must be positive, got {}",
-                    dart_duration(dt)
+                    format_duration(dt)
                 ),
                 "dt",
             ));
@@ -79,8 +79,8 @@ impl RaceSimulation {
                 format!(
                     "the step timestep ({}) must equal the configured fixed step ({}); variable \
                      steps and accumulated deltas are not accepted",
-                    dart_duration(dt),
-                    dart_duration(config.fixed_step())
+                    format_duration(dt),
+                    format_duration(config.fixed_step())
                 ),
                 "dt",
             ));

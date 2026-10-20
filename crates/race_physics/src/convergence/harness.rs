@@ -199,17 +199,17 @@ pub struct ScenarioError {
 impl ScenarioError {
     /// The largest speed error over every track.
     pub fn max_speed_error_ms(&self) -> f64 {
-        dart_reduce_max(self.tracks.iter().map(|t| t.max_speed_error_ms))
+        maximum_error(self.tracks.iter().map(|t| t.max_speed_error_ms))
     }
 
     /// The largest distance error over every track.
     pub fn max_distance_error_m(&self) -> f64 {
-        dart_reduce_max(self.tracks.iter().map(|t| t.max_distance_error_m))
+        maximum_error(self.tracks.iter().map(|t| t.max_distance_error_m))
     }
 }
 
 /// `reduce((a, b) => a > b ? a : b)`, the prototype's maximum.
-pub(crate) fn dart_reduce_max(values: impl Iterator<Item = f64>) -> f64 {
+pub(crate) fn maximum_error(values: impl Iterator<Item = f64>) -> f64 {
     values
         .reduce(|a, b| if a > b { a } else { b })
         .expect("at least one value")

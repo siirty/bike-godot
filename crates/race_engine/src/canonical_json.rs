@@ -1,17 +1,16 @@
-//! JSON written the way the prototype's `jsonEncode` writes it, so snapshots are byte-identical.
-//!
-//! serde_json already escapes strings the same way (`\"`, `\\`, `\b \t \n \f \r`, lowercase
-//! `\u00xx` for other control characters). Doubles differ: Dart prints `8.0`, `1e+21` and
-//! `1.5e-7`, while Rust prints `8`, `1e21` and `1.5e-7`. [`DartFormatter`] fixes that.
+//! Canonical numeric JSON for versioned snapshots. This repository owns the byte format.
+//! Finite doubles use round-tripping digits, preserve signed zero, retain an integral `.0`,
+//! and use explicit exponent signs outside the fixed-notation window. Existing saved snapshots
+//! keep their encoding; this is independent of any external runtime or generator.
 
 use std::io;
 
-/// Dart's `double.toString()` for a finite or non-finite value.
+/// The snapshot numeric contract for a finite or non-finite value.
 ///
 /// Shortest round-tripping digits `d1…dk` with decimal exponent `n` (value = 0.d1…dk × 10ⁿ):
 /// `k ≤ n ≤ 21` → digits, zeros, `.0`; `0 < n ≤ 21` → point inside; `−6 < n ≤ 0` → `0.000ddd`;
 /// otherwise exponential with an explicit exponent sign.
-pub fn dart_double(value: f64) -> String {
+pub fn format_number(value: f64) -> String {
     if value.is_nan() {
         return "NaN".to_owned();
     }
@@ -52,14 +51,14 @@ pub fn dart_double(value: f64) -> String {
     format!("{sign}{body}")
 }
 
-/// A serde_json formatter that writes doubles as Dart does. Non-finite values are never written:
+/// A serde_json formatter that writes the canonical numeric representation. Non-finite values are never written:
 /// every double in a snapshot was validated finite first.
 #[derive(Debug, Clone, Copy, Default)]
-pub struct DartFormatter;
+pub struct CanonicalFormatter;
 
-impl serde_json::ser::Formatter for DartFormatter {
+impl serde_json::ser::Formatter for CanonicalFormatter {
     fn write_f64<W: ?Sized + io::Write>(&mut self, writer: &mut W, value: f64) -> io::Result<()> {
-        writer.write_all(dart_double(value).as_bytes())
+        writer.write_all(format_number(value).as_bytes())
     }
 
     fn write_f32<W: ?Sized + io::Write>(&mut self, writer: &mut W, value: f32) -> io::Result<()> {
@@ -67,10 +66,10 @@ impl serde_json::ser::Formatter for DartFormatter {
     }
 }
 
-/// Serializes `value` compactly with [`DartFormatter`].
-pub fn to_dart_json<T: serde::Serialize + ?Sized>(value: &T) -> String {
+/// Serializes `value` compactly with [`CanonicalFormatter`].
+pub fn to_canonical_json<T: serde::Serialize + ?Sized>(value: &T) -> String {
     let mut out = Vec::new();
-    let mut ser = serde_json::Serializer::with_formatter(&mut out, DartFormatter);
+    let mut ser = serde_json::Serializer::with_formatter(&mut out, CanonicalFormatter);
     value
         .serialize(&mut ser)
         .expect("in-memory serialization of plain data cannot fail");
@@ -79,12 +78,10 @@ pub fn to_dart_json<T: serde::Serialize + ?Sized>(value: &T) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::dart_double as d;
+    use super::format_number as d;
 
     #[test]
-    fn matches_dart_double_to_string() {
-        // Expected strings are Dart's `toString()` of the same doubles (see tests/dart_json.rs
-        // for the vector-backed check).
+    fn matches_format_number_to_string() {
         assert_eq!(d(8.0), "8.0");
         assert_eq!(d(-2.25), "-2.25");
         assert_eq!(d(0.1), "0.1");

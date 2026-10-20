@@ -1,7 +1,7 @@
 //! Pure cycling physics: the gravity/rolling/aero forces, the power↔speed and power↔grade
 //! solvers, and the one fixed-step longitudinal integrator every simulated rider is advanced with.
 //!
-//! A parity-tested port of the Dart prototype's `race_physics` package. No I/O, no wall clock, no
+//! Deterministic physical models. No I/O, no wall clock, no
 //! engine dependency. Drafting enters only as an aerodynamic-drag multiplier (see
 //! [step_longitudinal_dynamics]); nothing here can scale power, mass, rolling resistance, grade or
 //! speed to influence an outcome.

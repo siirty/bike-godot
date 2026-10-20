@@ -1,6 +1,6 @@
 //! Workout file parsing and the workout model.
 //!
-//! A parity-tested port of the Dart prototype's `workout_import` package:
+//! Workout file parsing, timeline construction and versioned segment encoding:
 //!
 //! - **Formats**: `.zwo` (Zwift), `.erg` and `.mrc` (TrainerRoad/CompuTrainer), dispatched through
 //!   one registry ([`WorkoutFormat`], [`parse_file`]).
