@@ -1,0 +1,21 @@
+[package]
+name = "ble_trainer"
+version = "0.1.0"
+description = "TrainerControl over trainer_core: Bluetooth FTMS in SIM mode, and the core's simulator."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+trainer_control.workspace = true
+trainer_core.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "sync", "time", "macros"] }
+log.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+async-trait.workspace = true
+
+[lints]
+workspace = true

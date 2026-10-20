@@ -20,6 +20,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
 
 [[package]]
+name = "ble_trainer"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "log",
+ "thiserror 2.0.21",
+ "tokio",
+ "trainer_control",
+ "trainer_core 0.3.0 (git+https://github.com/siirty/bike-training-core?rev=49bde0bd25bed2ce01eb1b1ceb9bb857e5240089)",
+]
+
+[[package]]
 name = "block2"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -307,7 +319,7 @@ version = "0.1.0"
 dependencies = [
  "log",
  "tokio",
- "trainer_core",
+ "trainer_core 0.3.0 (git+https://github.com/siirty/bike-training-core?rev=49bde0bd25be)",
 ]
 
 [[package]]
@@ -902,6 +914,20 @@ dependencies = [
 name = "trainer_core"
 version = "0.3.0"
 source = "git+https://github.com/siirty/bike-training-core?rev=49bde0bd25be#49bde0bd25bed2ce01eb1b1ceb9bb857e5240089"
+dependencies = [
+ "async-trait",
+ "btleplug",
+ "futures-util",
+ "log",
+ "thiserror 2.0.21",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
+name = "trainer_core"
+version = "0.3.0"
+source = "git+https://github.com/siirty/bike-training-core?rev=49bde0bd25bed2ce01eb1b1ceb9bb857e5240089#49bde0bd25bed2ce01eb1b1ceb9bb857e5240089"
 dependencies = [
  "async-trait",
  "btleplug",
