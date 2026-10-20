@@ -9,10 +9,29 @@ Read these sources in this order before making consequential changes:
 1. The issue, task, or user request.
 2. `.ai/project.yml` for project facts and commands.
 3. Relevant requirements under `docs/requirements/`.
-4. Relevant architecture decisions under `docs/decisions/`.
+4. Relevant architecture decisions under `docs/decisions/`, and the accepted architecture under `docs/architecture/` (`physics-design.md` first). `docs/architecture/open-race-design-questions.md` lists unresolved work, not accepted architecture: do not silently decide a question owned by a later slice.
 5. Existing code and tests.
 
 When sources conflict, stop and report the conflict. Do not silently choose a convenient interpretation.
+
+## Product and architectural invariants
+
+The app turns structured cycling workouts into terrain and race situations ridden in FTMS SIM mode. The athlete's real power decides the outcome. The app never forces target power through ERG mode.
+
+- Trainers receive SIM parameters only (grade, wind, rolling resistance, wind resistance). No ERG / target-power write may be reachable from the app.
+- Script the opportunity; simulate the outcome. The workout constrains the possible races but does not predetermine the result.
+- `session_director` is pure, deterministic pre-ride planning for fixed inputs and an explicit seed. It has no live rider state, clock, trainer, Godot or I/O.
+- `race_engine` owns one pure deterministic stepping kernel, with explicit state, inputs, time, RNG (`pcg32-v1`, canonical `RiderId` order) and typed events. Headless and live execution use the same kernel.
+- Fixed rider capability belongs in `RaceSimulationConfig`; only dynamic data belongs in `RaceState`. Never rewrite configuration to influence an outcome.
+- AI may react tactically to observable race state and the human. Never change CP/FTP, W′, sprint ability, mass/aero, physics, speed or power to force a story or keep the human attached. Drafting scales aerodynamic drag only.
+- Only the Scene Planner sees scene goals. Individual rider AI never receives the athlete's workout-target error or fidelity score.
+- When a preferred scene becomes unreachable, choose a plausible, physiologically equivalent fallback. Never teleport riders or manufacture impossible actions.
+- Measured activity data contains only actual human telemetry. Simulated outcomes never create synthetic power samples.
+- Ride-loop code targets `TrainerControl`, not `ble_trainer` or `trainer_core`.
+- Domain crates stay free of Godot, BLE, filesystem and wall-clock dependencies. Only `crates/godot_adapter` depends on `godot`, and GDScript is presentation only.
+- The domain crates match the Dart prototype bit for bit (`fixtures/golden/`, `tests/golden.rs`). A deliberate behaviour change is listed in `docs/port/divergences.md`. Tests for new behaviour derive from specifications, references or independent calculation, never from the implementation's current output. Simulation tests use fixed seeds and explicit oracles.
+
+Path-specific conventions live in `.claude/rules/`. Formula, protocol and file-format references live in `.claude/skills/` (`cycling-physics`, `ftms-ble-protocol`, `workout-file-formats`).
 
 ## Working method
 
@@ -58,6 +77,19 @@ Prioritize findings in this order:
 4. Missing or ineffective tests for changed behavior and important failure modes.
 5. Operational risk: observability gaps, unbounded resource use, poor failure recovery, and unsafe configuration defaults.
 6. Documentation that would cause users or maintainers to operate the software incorrectly.
+
+In this repository, always flag:
+
+- any app-reachable ERG / target-power operation;
+- a second live/headless simulation implementation, or a hidden clock in the domain crates;
+- AI capability or physics changes used as rubber-banding;
+- target-error leakage into individual AI;
+- a forced narrative repair where a fallback is required;
+- simulated values entering measured activity history;
+- dependency-direction violations between crates (`godot` outside `godot_adapter`, `trainer_core` outside `ble_trainer`);
+- golden-vector drift without a matching entry in `docs/port/divergences.md`;
+- tautological tests, or stochastic tests without reproducible seeds and explicit oracles;
+- stale documentation that could direct an agent toward superseded architecture.
 
 For each finding:
 

@@ -51,14 +51,17 @@ Dependencies point downward only. The domain crates know nothing about Godot. On
   prototype, and each crate's `tests/golden.rs` replays them bit for bit. Deliberate differences
   are listed in [`docs/port/divergences.md`](../port/divergences.md).
 
-## Not yet built
+## Documents
 
-- A workout-driven race. `session_director`'s scenarios do not feed the live kernel yet, and the
-  race screen runs a scripted three-rider scenario.
-- AI tactics.
-- Activity recording.
-- Sync.
-- Packaging.
+- [`physics-design.md`](physics-design.md): the accepted race, training and physics design. It covers the simulation contracts, positioning and drafting, the determinism guarantee, snapshots, dynamics and the timestep, scenario planning, AI tiers, and fidelity. This is the source of truth for race behavior.
+- [`open-race-design-questions.md`](open-race-design-questions.md): unresolved, implementation-gating questions by slice. It is not accepted architecture.
+- [`build-order.md`](build-order.md): vertical slices, what is built, what is next, and how each slice is verified.
+- [`product-alignment.md`](product-alignment.md): product identity, the first user and platform, the AI tiers, and the threshold-first vertical.
+- [`trainer-core.md`](trainer-core.md): the `trainer_core` boundary, the SIM-only chokepoint, and the write-rate policy.
+- [`risks.md`](risks.md): platform and implementation risks to budget for.
+- [`platform-rollout.md`](platform-rollout.md): Linux first, then Windows, Android, and macOS/iOS.
+- [`../trainers/`](../trainers/): per-trainer hardware datasheets. These are records, not requirements.
+- [`../port/divergences.md`](../port/divergences.md): deliberate differences from the Dart prototype.
+- [`../research/race-calibration-data-spike.md`](../research/race-calibration-data-spike.md): a time-boxed spike on sourcing real race data for calibration.
 
-Native BLE has only been exercised on Linux. Do not claim support on any other platform until it
-has been proven on real hardware.
+When a decision is accepted, update its authoritative document and remove the matching open question in the same change. Edit stale text in place; do not append correction notes.

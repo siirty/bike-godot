@@ -22,7 +22,8 @@ against golden vectors recorded from the Dart code. Created from
 | `crates/local_storage/` | The workout library on SQLite (rusqlite). |
 | `crates/ble_trainer/` | A SIM-only `TrainerControl` over [`bike-training-core`](https://github.com/siirty/bike-training-core) (pinned git dependency). |
 | `fixtures/golden/`, `tools/golden_exporter/` | Parity vectors and the Dart script that records them. |
-| `docs/` | [Architecture](docs/architecture/README.md), [decisions](docs/decisions/), [port divergences](docs/port/divergences.md). |
+| `tools/ftms-spike/` | SIM-mode experiments against a real trainer; results go into [`docs/trainers/`](docs/trainers/). |
+| `docs/` | [Architecture](docs/architecture/README.md) (design, build order, open questions), [decisions](docs/decisions/), [trainer datasheets](docs/trainers/), [port divergences](docs/port/divergences.md). |
 
 ## Quick start
 

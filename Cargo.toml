@@ -18,6 +18,7 @@ members = [
   "crates/trainer_control",
   "crates/workout_import",
   "crates/godot_adapter",
+  "tools/ftms-spike",
 ]
 
 [workspace.package]
@@ -36,8 +37,9 @@ rusqlite = { version = "0.40", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 godot = { version = "0.5.5", features = ["api-4-3"] }
 async-trait = "0.1"
-# The trainer connection core stays its own repository. Only crates/ble_trainer may depend on it:
-# that crate's public surface is the reviewed SIM-only subset (no ERG path reaches the app).
+# The trainer connection core stays its own repository. In the app, only crates/ble_trainer may
+# depend on it: that crate's public surface is the reviewed SIM-only subset (no ERG path reaches
+# the app). The other user is tools/ftms-spike, a SIM-only hardware experiment runner outside the app.
 trainer_core = { git = "https://github.com/siirty/bike-training-core", rev = "49bde0bd25bed2ce01eb1b1ceb9bb857e5240089" }
 
 workout_import = { path = "crates/workout_import" }

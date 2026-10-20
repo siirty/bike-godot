@@ -6,7 +6,7 @@ Your role is implementation, not final approval. Codex is the independent pull-r
 
 ## Default workflow
 
-1. Read the task, `.ai/project.yml`, relevant requirements, ADRs, code, and tests.
+1. Read the task, `.ai/project.yml`, relevant requirements, ADRs, `docs/architecture/`, the `.claude/rules/` file for the paths you touch, code, and tests. Load a reference skill (`cycling-physics`, `ftms-ble-protocol`, `workout-file-formats`) when its domain is involved.
 2. Restate the intended outcome and acceptance criteria in concrete terms.
 3. Explore before editing. Identify affected interfaces, data flows, tests, and documentation.
 4. Produce a short implementation plan. Surface material ambiguity before committing to an irreversible design.

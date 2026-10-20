@@ -1,0 +1,19 @@
+# The FTMS SIM-mode write-path experiment runner for real trainers (see docs/trainers/).
+#
+# A workspace member so fmt/clippy/test cover it. It depends on `trainer_core` directly and on
+# nothing in crates/: the spike measures the hardware, not the app. Throwaway by design: none of
+# this may graduate into adapter code. It writes SIM parameters only.
+[package]
+name = "ftms_spike"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "ftms-spike"
+path = "src/main.rs"
+
+[dependencies]
+trainer_core.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time", "sync"] }
