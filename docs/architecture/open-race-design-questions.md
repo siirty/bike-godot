@@ -23,12 +23,12 @@ hand-authored terrain and starting state. It needs empirical answers for:
 - athlete-specific CP/FTP estimation and calibration of W′ capacity;
 - empirical calibration of Pmax and the reserve-dependent sprint ceiling;
 - initial rider-profile and tactical-personality distributions;
-- the spotlight riders' utility functions, action set, decision cadence, reaction delay and
-  commitment/hysteresis;
+- empirical calibration of the implemented spotlight utilities, response cadence and commitment;
+  additional reaction-delay behavior if observations justify it;
 - the threat model, combining persistent reputation with current-race danger;
 - richer pack pace templates and recovery behavior, guided by the seeded baseline;
-- the shape of the minimal scene-goal seam, meaning a targetable future race-state set that the
-  spotlight AI's utility is evaluated against;
+- how future scene goals map to the implemented bounded tactical roles, without exposing those
+  goals or workout error to individual controllers;
 - collision avoidance under soft slot occupancy;
 - calibrated bike-length, wheel-clearance and shelter constants by gap, depth and lateral slot;
 - group events (split, catch, dropped, bridge) and their detection rule, to extend `RaceEventKind`;

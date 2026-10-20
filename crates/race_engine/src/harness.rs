@@ -514,3 +514,78 @@ fn clock(d: Duration) -> String {
     let s = d.as_secs();
     format!("{}:{:02}", s / 60, s % 60)
 }
+
+/// Two reactive spotlight riders among the seeded pace-plan pack. This owns policy continuation;
+/// the underlying simulation still uses `run_race` and the one production kernel.
+#[derive(Debug, Clone, PartialEq)]
+pub struct TacticalScenario {
+    /// Fixed field, terrain, pack plans and starting state.
+    pub base: CorpusScenario,
+    /// Spotlight policy continuation in canonical rider order.
+    pub controllers: Vec<crate::tactics::TacticalController>,
+}
+impl TacticalScenario {
+    /// A mixed field with the same seed and physical configuration as the baseline corpus.
+    pub fn generate(seed: u64) -> Result<Self, RaceSimulationError> {
+        let base = CorpusScenario::generate(seed)?;
+        let controllers = base
+            .config
+            .riders()
+            .iter()
+            .take(2)
+            .enumerate()
+            .map(|(i, r)| {
+                crate::tactics::TacticalController::new(
+                    r.id().clone(),
+                    crate::tactics::TacticsConfig::default(),
+                    crate::tactics::TacticalProfile::seeded(seed.wrapping_add(i as u64)),
+                )
+            })
+            .collect();
+        Ok(Self { base, controllers })
+    }
+    /// Pack intentions overridden only for the spotlight riders, all reading the same pre-step state.
+    pub fn inputs_at(&mut self, state: &RaceState) -> Result<RaceInputFrame, RaceSimulationError> {
+        let mut inputs = self.base.inputs_at(state)?.inputs().to_vec();
+        for controller in &mut self.controllers {
+            let input = controller
+                .input(
+                    &self.base.config,
+                    state,
+                    crate::tactics::TacticalRole::Neutral,
+                )
+                .map_err(|e| {
+                    RaceSimulationError::validation(
+                        crate::SimulationValidationCode::OutOfRange,
+                        e.to_string(),
+                        "tactics",
+                    )
+                })?;
+            let index = inputs
+                .iter()
+                .position(|i| i.id() == input.id())
+                .expect("configured spotlight rider");
+            inputs[index] = input;
+        }
+        RaceInputFrame::new(inputs)
+    }
+    /// Complete one race from a fresh policy, recording spotlight rider-steps per action.
+    pub fn run(&mut self) -> Result<(RaceRun, [u64; 6]), HarnessError> {
+        let sim = RaceSimulation::new(self.base.config.clone())
+            .map_err(|source| HarnessError::Simulation { step: 0, source })?;
+        let mut actions = [0; 6];
+        let run = run_race(
+            &sim,
+            self.base.initial_state.clone(),
+            self.base.max_steps,
+            |state| {
+                let inputs = self.inputs_at(state)?;
+                for controller in &self.controllers {
+                    actions[controller.action().expect("observed policy") as usize] += 1;
+                }
+                Ok(inputs)
+            },
+        )?;
+        Ok((run, actions))
+    }
+}

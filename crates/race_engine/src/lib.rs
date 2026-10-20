@@ -10,6 +10,7 @@ pub mod harness;
 pub mod pack;
 pub mod ride_session;
 pub mod simulation;
+pub mod tactics;
 /// Tolerance-aware comparison for tests. Never used by the kernel.
 #[cfg(feature = "testing")]
 pub mod testing;

@@ -16,7 +16,7 @@ required. Created from [`template-ai-dev`](https://github.com/siirty/template-ai
 | `crates/workout_import/` | ZWO/ERG/MRC parsing and the versioned segment JSON. |
 | `crates/race_physics/` | Forces, power↔speed solvers, fixed-step dynamics, drafting. |
 | `crates/session_director/` | Pre-ride terrain synthesis and training contracts. |
-| `crates/race_engine/` | The deterministic race kernel, PCG32, snapshot codec, and the workout `RideSession`. |
+| `crates/race_engine/` | The deterministic race kernel, spotlight tactics, PCG32, snapshot codec, and workout `RideSession`. |
 | `crates/trainer_control/` | The `TrainerControl` interface, SIM write throttle, and simulated trainer. |
 | `crates/local_storage/` | The workout library on SQLite (rusqlite). |
 | `crates/ble_trainer/` | A SIM-only `TrainerControl` over [`bike-training-core`](https://github.com/siirty/bike-training-core) (pinned git dependency). |

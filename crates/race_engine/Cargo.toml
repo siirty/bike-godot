@@ -16,6 +16,10 @@ testing = []
 name = "headless_corpus"
 required-features = ["testing"]
 
+[[example]]
+name = "tactical_corpus"
+required-features = ["testing"]
+
 [dependencies]
 race_physics.workspace = true
 session_director.workspace = true

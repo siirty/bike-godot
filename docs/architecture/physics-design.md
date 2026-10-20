@@ -476,9 +476,23 @@ resuming a kernel snapshot requires the same future inputs, as it always has. Ca
 lives in the kernel, so a controller cannot bypass it with an excessive request.
 
 Schema v3 serializes physiology, reserve and minimum drafting gap. Schema v2 is rejected by the
-production decoder. Historical Dart races remain independent oracles via test-only v3 fixtures
+production decoder. Frozen historical races remain regression evidence via test-only v3 fixtures
 that explicitly select null physiology and the original zero minimum gap. No old bytes are
 silently upgraded in production. Race-to-race form variation is deferred.
+
+## Spotlight controller (Slice 5)
+
+`race_engine::tactics::TacticalController` now supplies recover, follow, chase, cruise, attack and
+sprint intentions for the two spotlight opponents. It observes one immutable pre-step state and
+its own reserve, with seeded fixed personality. The pack retains `PackPacePlan`. Defaults are
+provisional: 1 s decisions, 3 s minimum commitment, 0.10 switching margin and 20%/40% recovery
+hysteresis. All tuning is validated and checkpointed. Following corrects gap/speed with a bounded
+power request; the kernel alone applies physiological limits and physical movement.
+
+A `TacticalRole` adds at most 0.15 utility to an already valid action. Recovery overrides roles.
+This supplies the minimal bounded planner-influence seam; it does not implement full SceneGoals,
+viability or the Scene Planner. Controller checkpoints must accompany a kernel snapshot for exact
+autonomous continuation. See [ADR 0005](../decisions/0005-spotlight-tactics.md).
 
 ## Constrained stochasticity
 
