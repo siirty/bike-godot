@@ -1,0 +1,16 @@
+[package]
+name = "workout_import"
+version = "0.1.0"
+description = "Workout file parsers (.zwo/.erg/.mrc), the workout model, its timeline and its JSON."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+roxmltree.workspace = true
+
+[lints]
+workspace = true

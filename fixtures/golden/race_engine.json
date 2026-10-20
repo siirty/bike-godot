@@ -1,0 +1,3629 @@
+{
+ "pcg32": [
+  {
+   "seed": "42",
+   "stream": "54",
+   "startState": "185706b82c2e03f8",
+   "startStream": "000000000000006d",
+   "u32": [
+    2707161783,
+    2068313097,
+    3122475824,
+    2211639955,
+    3215226955,
+    3421331566,
+    3217466285,
+    2167406445,
+    3860803674,
+    4181216144,
+    853247742,
+    499135993
+   ],
+   "doubles": [
+    0.9276185126548473,
+    0.17042659305610708,
+    0.6335996055525354,
+    0.8079597107936243,
+    0.5683813790672656,
+    0.280900987110152
+   ],
+   "bounded": [
+    0,
+    1,
+    1,
+    2,
+    68,
+    127387,
+    2233071061
+   ],
+   "endState": "327a9000f77be9f7"
+  },
+  {
+   "seed": "0",
+   "stream": "0",
+   "startState": "5851f42d4c957f2e",
+   "startStream": "0000000000000001",
+   "u32": [
+    3837872008,
+    932996374,
+    1548399547,
+    1612522464,
+    473443212,
+    3522865942,
+    1734871597,
+    2449558126,
+    1653269385,
+    2811495245,
+    1556319449,
+    4237376059
+   ],
+   "doubles": [
+    0.5069628847059139,
+    0.37841267016707203,
+    0.22232190012986175,
+    0.7692719489021922,
+    0.29772419796758,
+    0.44388599153431174
+   ],
+   "bounded": [
+    0,
+    1,
+    1,
+    3,
+    28,
+    693434,
+    4087942593
+   ],
+   "endState": "cd9a2fdb475a51e1"
+  },
+  {
+   "seed": "20260812",
+   "stream": "1",
+   "startState": "a124c7be3492b066",
+   "startStream": "0000000000000003",
+   "u32": [
+    3756917321,
+    3498292652,
+    915584791,
+    1781480683,
+    836139662,
+    1135738452,
+    855352965,
+    2042074806,
+    921301142,
+    2720464064,
+    947554367,
+    3232176060
+   ],
+   "doubles": [
+    0.72618381708632,
+    0.39249297952483986,
+    0.5726429968185328,
+    0.8978158079944788,
+    0.5329437828835834,
+    0.23283221446240954
+   ],
+   "bounded": [
+    0,
+    1,
+    0,
+    6,
+    25,
+    86127,
+    1858620933
+   ],
+   "endState": "f2598334babb936f"
+  },
+  {
+   "seed": "99",
+   "stream": "3",
+   "startState": "91ef1ac1b5e6a8a9",
+   "startStream": "0000000000000007",
+   "u32": [
+    4124282745,
+    2420769701,
+    1972241957,
+    3882721232,
+    2703665787,
+    1973508405,
+    2364662121,
+    4034735356,
+    3678908340,
+    743871984,
+    2389427775,
+    2087755344
+   ],
+   "doubles": [
+    0.6792703613679915,
+    0.36345099237994327,
+    0.6403054592234606,
+    0.32472927197214596,
+    0.30518280503736195,
+    0.7136272067322962
+   ],
+   "bounded": [
+    0,
+    1,
+    1,
+    1,
+    66,
+    23451,
+    3742216954
+   ],
+   "endState": "bd192d008bf6930a"
+  },
+  {
+   "seed": "-1",
+   "stream": "7",
+   "startState": "d47b5a7a302cf485",
+   "startStream": "000000000000000f",
+   "u32": [
+    3682281251,
+    255722740,
+    1249582889,
+    2381802978,
+    773662768,
+    2463191905,
+    2612913395,
+    865443487,
+    2986186965,
+    184769985,
+    2260638238,
+    1559148181
+   ],
+   "doubles": [
+    0.6706530821124255,
+    0.9071008177901014,
+    0.7046464973790961,
+    0.534899342381331,
+    0.8918523663246332,
+    0.17916002955954025
+   ],
+   "bounded": [
+    0,
+    1,
+    1,
+    4,
+    69,
+    736737,
+    3221201299
+   ],
+   "endState": "75c0b45549323fae"
+  },
+  {
+   "seed": "9223372036854775807",
+   "stream": "-2",
+   "startState": "1eb82f4acdaa0349",
+   "startStream": "fffffffffffffffd",
+   "u32": [
+    450929555,
+    1605146412,
+    248364545,
+    3215538804,
+    2301339708,
+    2222649133,
+    2204608817,
+    2562294823,
+    2483577192,
+    3310804732,
+    3293163148,
+    1400321373
+   ],
+   "doubles": [
+    0.9606468991788735,
+    0.23992724160961232,
+    0.04118632012104306,
+    0.8168198173753961,
+    0.2943058164856639,
+    0.3089719731305459
+   ],
+   "bounded": [
+    0,
+    0,
+    1,
+    4,
+    29,
+    834605,
+    3808561456
+   ],
+   "endState": "80e956ea44d87ddc"
+  }
+ ],
+ "terrain": [
+  {
+   "interpolation": "step",
+   "beyondEnd": "holdLastGrade",
+   "lengthM": null,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.01
+    ],
+    [
+     399.999,
+     0.01
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.065
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     -0.04
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.02
+    ],
+    [
+     2500.0,
+     0.02
+    ],
+    [
+     2500.001,
+     0.02
+    ],
+    [
+     9000.0,
+     0.02
+    ]
+   ]
+  },
+  {
+   "interpolation": "step",
+   "beyondEnd": "holdLastGrade",
+   "lengthM": 2500.0,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.01
+    ],
+    [
+     399.999,
+     0.01
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.065
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     -0.04
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.02
+    ],
+    [
+     2500.0,
+     0.02
+    ],
+    [
+     2500.001,
+     0.02
+    ],
+    [
+     9000.0,
+     0.02
+    ]
+   ]
+  },
+  {
+   "interpolation": "step",
+   "beyondEnd": "flat",
+   "lengthM": null,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.01
+    ],
+    [
+     399.999,
+     0.01
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.065
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     -0.04
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.0
+    ],
+    [
+     2500.0,
+     0.0
+    ],
+    [
+     2500.001,
+     0.0
+    ],
+    [
+     9000.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "interpolation": "step",
+   "beyondEnd": "flat",
+   "lengthM": 2500.0,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.01
+    ],
+    [
+     399.999,
+     0.01
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.065
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     -0.04
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.02
+    ],
+    [
+     2500.0,
+     0.02
+    ],
+    [
+     2500.001,
+     0.0
+    ],
+    [
+     9000.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "interpolation": "linear",
+   "beyondEnd": "holdLastGrade",
+   "lengthM": null,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.0101375
+    ],
+    [
+     399.999,
+     0.0649998625
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.012157228514323777
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     0.01992937021777516
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.02
+    ],
+    [
+     2500.0,
+     0.02
+    ],
+    [
+     2500.001,
+     0.02
+    ],
+    [
+     9000.0,
+     0.02
+    ]
+   ]
+  },
+  {
+   "interpolation": "linear",
+   "beyondEnd": "holdLastGrade",
+   "lengthM": 2500.0,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.0101375
+    ],
+    [
+     399.999,
+     0.0649998625
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.012157228514323777
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     0.01992937021777516
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.02
+    ],
+    [
+     2500.0,
+     0.02
+    ],
+    [
+     2500.001,
+     0.02
+    ],
+    [
+     9000.0,
+     0.02
+    ]
+   ]
+  },
+  {
+   "interpolation": "linear",
+   "beyondEnd": "flat",
+   "lengthM": null,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.0101375
+    ],
+    [
+     399.999,
+     0.0649998625
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.012157228514323777
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     0.01992937021777516
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.0
+    ],
+    [
+     2500.0,
+     0.0
+    ],
+    [
+     2500.001,
+     0.0
+    ],
+    [
+     9000.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "interpolation": "linear",
+   "beyondEnd": "flat",
+   "lengthM": 2500.0,
+   "probes": [
+    [
+     -5.0,
+     0.01
+    ],
+    [
+     0.0,
+     0.01
+    ],
+    [
+     1.0,
+     0.0101375
+    ],
+    [
+     399.999,
+     0.0649998625
+    ],
+    [
+     400.0,
+     0.065
+    ],
+    [
+     777.7,
+     0.012157228514323777
+    ],
+    [
+     1150.5,
+     -0.04
+    ],
+    [
+     1999.0,
+     0.01992937021777516
+    ],
+    [
+     2000.0,
+     0.02
+    ],
+    [
+     2200.0,
+     0.02
+    ],
+    [
+     2500.0,
+     0.02
+    ],
+    [
+     2500.001,
+     0.0
+    ],
+    [
+     9000.0,
+     0.0
+    ]
+   ]
+  }
+ ],
+ "races": [
+  {
+   "name": "replay-three-riders-no-drafting",
+   "initialSnapshot": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "steps": 1800,
+   "inputScript": {
+    "human": [
+     [
+      0,
+      250,
+      0,
+      null,
+      null
+     ],
+     [
+      650,
+      330,
+      0,
+      null,
+      null
+     ]
+    ],
+    "leader": [
+     [
+      0,
+      265,
+      0,
+      null,
+      null
+     ]
+    ],
+    "rival": [
+     [
+      0,
+      275,
+      0,
+      null,
+      null
+     ],
+     [
+      900,
+      245,
+      0,
+      null,
+      null
+     ]
+    ]
+   },
+   "checkpoints": [
+    {
+     "step": 100,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 70.92065202383672,
+       "speedMs": 8.305704471338304,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 83.13343125421473,
+       "speedMs": 8.382315921032514,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 76.31485508139666,
+       "speedMs": 8.449124230820933,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 200,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 112.58181470727067,
+       "speedMs": 8.319808620543489,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 125.2958880868061,
+       "speedMs": 8.439459335823168,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 118.92462180086807,
+       "speedMs": 8.547657634089001,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 300,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 153.80228648646735,
+       "speedMs": 8.145443871372207,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 167.1862079166844,
+       "speedMs": 8.291612203465123,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 161.4215096278734,
+       "speedMs": 8.423291547425796,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 400,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 193.84782923778505,
+       "speedMs": 7.881877083080981,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 208.1221730614971,
+       "speedMs": 8.125185080303844,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 202.98877137950763,
+       "speedMs": 8.232623026472856,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 500,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 233.07885785907226,
+       "speedMs": 7.857386295658477,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 248.91171377989383,
+       "speedMs": 8.228076591850249,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 244.23052314093582,
+       "speedMs": 8.304828108160462,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 600,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 272.8016514546169,
+       "speedMs": 8.059989011542111,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 290.7235530495069,
+       "speedMs": 8.518994110534692,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 286.3804092675689,
+       "speedMs": 8.579506751370268,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 700,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 314.2996496761802,
+       "speedMs": 8.681552719582289,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 334.33172193604645,
+       "speedMs": 8.9381956325308,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 330.27013431547243,
+       "speedMs": 8.991578692072569,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 800,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 359.8391657066584,
+       "speedMs": 9.511946963187034,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 380.28896561052414,
+       "speedMs": 9.453928553034078,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 376.48931147163637,
+       "speedMs": 9.506147576240114,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 900,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 409.3807705125482,
+       "speedMs": 10.293729900181878,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 429.0317396192097,
+       "speedMs": 10.049674566142082,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 425.499398648846,
+       "speedMs": 10.104961337586744,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1000,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 462.6973599122305,
+       "speedMs": 10.961345126445602,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 480.47111767362514,
+       "speedMs": 10.443089953083401,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 476.90761250153315,
+       "speedMs": 10.387854584865561,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1100,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 518.1842158188014,
+       "speedMs": 11.161579582979616,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 532.8258176853104,
+       "speedMs": 10.446665080680166,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 528.8044584475122,
+       "speedMs": 10.324441451522675,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1200,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 573.7518656224728,
+       "speedMs": 11.022230845051588,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 584.5117869183433,
+       "speedMs": 10.196996391926863,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 579.7610110215845,
+       "speedMs": 10.030673217963447,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1300,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 628.04041328472,
+       "speedMs": 10.669318673260324,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 634.5176461092897,
+       "speedMs": 9.789378479900664,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 628.8518801109484,
+       "speedMs": 9.591533933643435,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1400,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 680.2140217811219,
+       "speedMs": 10.189416737026635,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 682.2320358296184,
+       "speedMs": 9.290602139766296,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 675.5127309280506,
+       "speedMs": 9.068120357288556,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1500,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 729.7982013986543,
+       "speedMs": 9.642506750449215,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 727.3252910890002,
+       "speedMs": 8.74798560319286,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 719.4402051973655,
+       "speedMs": 8.504900285883876,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1600,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 776.5911581758303,
+       "speedMs": 9.104021938617214,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 769.6737247215761,
+       "speedMs": 8.208134230579645,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 760.5222144695584,
+       "speedMs": 7.9347063313936586,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1700,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 821.4717167091632,
+       "speedMs": 8.911255987416306,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 809.9478177392922,
+       "speedMs": 7.964240293465037,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 799.1533168263802,
+       "speedMs": 7.586933386734535,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1800,
+     "riders": [
+      {
+       "id": "human",
+       "distanceM": 866.1827005046501,
+       "speedMs": 9.009795692376496,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "leader",
+       "distanceM": 849.7862477920694,
+       "speedMs": 8.007805256941436,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "rival",
+       "distanceM": 836.9037505550127,
+       "speedMs": 7.55452157630639,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    }
+   ],
+   "finalSnapshot": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":90000000,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":866.1827005046501,\"speedMs\":9.009795692376496,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":849.7862477920694,\"speedMs\":8.007805256941436,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":836.9037505550127,\"speedMs\":7.55452157630639,\"lateralSlot\":2,\"draftTargetId\":null}]}}"
+  },
+  {
+   "name": "pack-with-drafting",
+   "initialSnapshot": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":1.5,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":6.0,\"minimumDragMultiplierBySlotOffset\":[0.62,0.8,0.95]},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"a1\",\"physical\":{\"totalMassKg\":72.0,\"crr\":0.005,\"cdaM2\":0.3,\"driveTrainEfficiency\":0.975}},{\"id\":\"b2\",\"physical\":{\"totalMassKg\":81.0,\"crr\":0.005,\"cdaM2\":0.34,\"driveTrainEfficiency\":0.975}},{\"id\":\"c3\",\"physical\":{\"totalMassKg\":66.0,\"crr\":0.005,\"cdaM2\":0.27,\"driveTrainEfficiency\":0.975}},{\"id\":\"d4\",\"physical\":{\"totalMassKg\":90.0,\"crr\":0.005,\"cdaM2\":0.36,\"driveTrainEfficiency\":0.975}},{\"id\":\"e5\",\"physical\":{\"totalMassKg\":75.5,\"crr\":0.005,\"cdaM2\":0.31,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"a8f6b4f46059e903\",\"stream\":\"0000000000000017\"},\"riders\":[{\"id\":\"a1\",\"distanceM\":20.0,\"speedMs\":9.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"b2\",\"distanceM\":17.5,\"speedMs\":9.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"c3\",\"distanceM\":15.0,\"speedMs\":9.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"d4\",\"distanceM\":12.0,\"speedMs\":9.0,\"lateralSlot\":0,\"draftTargetId\":\"b2\"},{\"id\":\"e5\",\"distanceM\":9.5,\"speedMs\":9.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "steps": 2400,
+   "inputScript": {
+    "a1": [
+     [
+      0,
+      280,
+      0,
+      null,
+      null
+     ],
+     [
+      700,
+      180,
+      0,
+      null,
+      null
+     ],
+     [
+      1500,
+      340,
+      0,
+      1,
+      null
+     ]
+    ],
+    "b2": [
+     [
+      0,
+      230,
+      0,
+      null,
+      "a1"
+     ],
+     [
+      1200,
+      400,
+      0,
+      2,
+      null
+     ],
+     [
+      1300,
+      260,
+      0,
+      null,
+      "a1"
+     ]
+    ],
+    "c3": [
+     [
+      0,
+      210,
+      0,
+      0,
+      "b2"
+     ],
+     [
+      900,
+      0,
+      25,
+      null,
+      null
+     ],
+     [
+      1000,
+      300,
+      0,
+      null,
+      null
+     ]
+    ],
+    "d4": [
+     [
+      0,
+      260,
+      0,
+      null,
+      null
+     ],
+     [
+      400,
+      260,
+      0,
+      1,
+      "c3"
+     ]
+    ],
+    "e5": [
+     [
+      0,
+      250,
+      0,
+      0,
+      null
+     ],
+     [
+      1800,
+      600,
+      0,
+      2,
+      null
+     ]
+    ]
+   },
+   "checkpoints": [
+    {
+     "step": 60,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 47.04226931752684,
+       "speedMs": 9.012593599310257,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 44.32742056680901,
+       "speedMs": 8.875283279760357,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "c3",
+       "distanceM": 42.02557144961813,
+       "speedMs": 9.00382313990453,
+       "lateralSlot": 0,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "d4",
+       "distanceM": 38.70529579855857,
+       "speedMs": 8.799796839765731,
+       "lateralSlot": 0,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 36.60956119973649,
+       "speedMs": 9.058497749803786,
+       "lateralSlot": 0,
+       "draftTargetId": "d4"
+      }
+     ]
+    },
+    {
+     "step": 120,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 73.99472393143745,
+       "speedMs": 8.945507997903073,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 70.67230098016253,
+       "speedMs": 8.67937087266044,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "c3",
+       "distanceM": 68.96077332544778,
+       "speedMs": 8.946593889630059,
+       "lateralSlot": 0,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "d4",
+       "distanceM": 64.7472899368692,
+       "speedMs": 8.559306522100517,
+       "lateralSlot": 0,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 63.79883617488262,
+       "speedMs": 9.06279304315963,
+       "lateralSlot": 0,
+       "draftTargetId": "d4"
+      }
+     ]
+    },
+    {
+     "step": 180,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 100.6524212187209,
+       "speedMs": 8.820184340682458,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 96.32224438889081,
+       "speedMs": 8.413709406881472,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "c3",
+       "distanceM": 95.67302934215816,
+       "speedMs": 8.860775012338028,
+       "lateralSlot": 0,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "d4",
+       "distanceM": 90.06695000855356,
+       "speedMs": 8.322695674567596,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      },
+      {
+       "id": "e5",
+       "distanceM": 90.90108202337638,
+       "speedMs": 8.943443065694767,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 240,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 126.86697386353309,
+       "speedMs": 8.653196301180289,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 121.07456526479089,
+       "speedMs": 8.083062551338914,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "c3",
+       "distanceM": 122.00521743596532,
+       "speedMs": 8.637425034431464,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "d4",
+       "distanceM": 114.75913285098838,
+       "speedMs": 8.160505905241413,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "e5",
+       "distanceM": 117.31967232541318,
+       "speedMs": 8.67176650598356,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 300,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 152.53383532628294,
+       "speedMs": 8.457423706253206,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 144.97664166043066,
+       "speedMs": 7.8643582996067805,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      },
+      {
+       "id": "c3",
+       "distanceM": 147.40969562074176,
+       "speedMs": 8.303573730313131,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "d4",
+       "distanceM": 138.9332143409132,
+       "speedMs": 7.944794716451989,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "e5",
+       "distanceM": 142.91242408637683,
+       "speedMs": 8.394762313792178,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 360,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 177.58258170478493,
+       "speedMs": 8.24290348200283,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 168.17769386573767,
+       "speedMs": 7.597866782250873,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      },
+      {
+       "id": "c3",
+       "distanceM": 171.80006472900482,
+       "speedMs": 7.960311360558229,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "d4",
+       "distanceM": 162.34578505340932,
+       "speedMs": 7.659071795297868,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "e5",
+       "distanceM": 167.68018058610818,
+       "speedMs": 8.123341524416068,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 420,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 202.03140833085274,
+       "speedMs": 8.083324765521537,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 190.51584396938944,
+       "speedMs": 7.305964250952263,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      },
+      {
+       "id": "c3",
+       "distanceM": 195.17207291267056,
+       "speedMs": 7.648368225640009,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 184.8356534250475,
+       "speedMs": 7.342668440568805,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 191.66424105971558,
+       "speedMs": 7.886326762406285,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 480,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 226.2069753497329,
+       "speedMs": 8.052478995841652,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 212.10992398452473,
+       "speedMs": 7.110900820644287,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      },
+      {
+       "id": "c3",
+       "distanceM": 217.83900581450786,
+       "speedMs": 7.489074384684664,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 206.5166648459378,
+       "speedMs": 7.139628565322608,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 215.15183475090998,
+       "speedMs": 7.7992883094135905,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 540,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 250.44056255455484,
+       "speedMs": 8.115460234703184,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 233.32685481293947,
+       "speedMs": 7.055584960043908,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "c3",
+       "distanceM": 240.2227606483004,
+       "speedMs": 7.451322640982954,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 227.79545615804503,
+       "speedMs": 7.065850686732297,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 238.598323554457,
+       "speedMs": 7.851933485060704,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 600,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 274.97317524223814,
+       "speedMs": 8.247265255481027,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 254.47430621083637,
+       "speedMs": 7.054151835702012,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 262.6365441469079,
+       "speedMs": 7.50311933533501,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 249.00546115367396,
+       "speedMs": 7.08748165154526,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 262.3875797198646,
+       "speedMs": 8.023586066323361,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 660,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 299.98369125561493,
+       "speedMs": 8.43089961778819,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 275.72901385620276,
+       "speedMs": 7.12551255879664,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 285.528950568138,
+       "speedMs": 7.781418445271223,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 270.39529881190066,
+       "speedMs": 7.181391402417509,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 286.5799671144223,
+       "speedMs": 8.083083810801114,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 720,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 325.52862215781613,
+       "speedMs": 8.503920400095419,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 297.2903084460895,
+       "speedMs": 7.254967274610744,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 309.33191801304133,
+       "speedMs": 8.08203834497543,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 292.15624065361175,
+       "speedMs": 7.331789122746857,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 310.9616849341283,
+       "speedMs": 8.181694465357337,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 780,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 350.82326539541424,
+       "speedMs": 8.38366489444,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 319.31133986080306,
+       "speedMs": 7.429478392093589,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 334.0482977519356,
+       "speedMs": 8.394173914374385,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 314.4404793012748,
+       "speedMs": 7.528088105760692,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 335.7395460793653,
+       "speedMs": 8.343400660329367,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 840,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 375.9461063366116,
+       "speedMs": 8.382236024895832,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 341.9129713352724,
+       "speedMs": 7.640242034194137,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 359.74599203279786,
+       "speedMs": 8.738844870034898,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 337.37470827058127,
+       "speedMs": 7.763622068494135,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 361.0806714533549,
+       "speedMs": 8.55450460885141,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 900,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 401.2106891919595,
+       "speedMs": 8.472809915067884,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 365.1944270561928,
+       "speedMs": 7.88140445772066,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 386.5511575225432,
+       "speedMs": 9.134908548881022,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 361.07033270403133,
+       "speedMs": 8.034683516210892,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 387.1180587681808,
+       "speedMs": 8.805631324896941,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 960,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 426.8614525545419,
+       "speedMs": 8.635702441640833,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 389.2406427409632,
+       "speedMs": 8.14913023990828,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 411.4505257437216,
+       "speedMs": 7.521707508040381,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 385.63130163401246,
+       "speedMs": 8.339891238319975,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 413.9614578266119,
+       "speedMs": 9.090421734384092,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1020,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 453.02776136637095,
+       "speedMs": 8.785592805605624,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 414.12726056584364,
+       "speedMs": 8.440945867107256,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 432.23734252729986,
+       "speedMs": 7.035923154668015,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 411.1605146904692,
+       "speedMs": 8.67986351429017,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 441.6972884389109,
+       "speedMs": 9.38721166129097,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1080,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 479.4630113122102,
+       "speedMs": 8.820151917066966,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 439.9186125217896,
+       "speedMs": 8.741865887523604,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 455.3107418881326,
+       "speedMs": 8.239289098208122,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 437.7632821575724,
+       "speedMs": 9.04928889932204,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 470.15082787805414,
+       "speedMs": 9.55447109563236,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1140,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 505.8570708761494,
+       "speedMs": 8.7635121637582,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 466.4539135681084,
+       "speedMs": 8.921586158236922,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 481.298387806033,
+       "speedMs": 9.014658486584258,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 465.35855079559695,
+       "speedMs": 9.320937806670479,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 498.8999004247564,
+       "speedMs": 9.592133524909743,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1200,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 531.9693439794105,
+       "speedMs": 8.636601678867908,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 493.33588272953006,
+       "speedMs": 9.00260252242673,
+       "lateralSlot": 0,
+       "draftTargetId": "d4"
+      },
+      {
+       "id": "c3",
+       "distanceM": 509.13417354649823,
+       "speedMs": 9.492743734601087,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 493.57748918337376,
+       "speedMs": 9.448809750973151,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 527.6219464241011,
+       "speedMs": 9.558259928052607,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      }
+     ]
+    },
+    {
+     "step": 1260,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 557.6158633005999,
+       "speedMs": 8.456453881096635,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 521.4481126634771,
+       "speedMs": 9.676586925740466,
+       "lateralSlot": 2,
+       "draftTargetId": "d4"
+      },
+      {
+       "id": "c3",
+       "distanceM": 538.0577775751841,
+       "speedMs": 9.754524813284123,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 521.7831741403022,
+       "speedMs": 9.344396722202939,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 556.3089035930802,
+       "speedMs": 9.577794528442302,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      }
+     ]
+    },
+    {
+     "step": 1320,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 582.7968655139523,
+       "speedMs": 8.368822777960652,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "b2",
+       "distanceM": 550.9391986916346,
+       "speedMs": 9.805365392021681,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 567.5111795604903,
+       "speedMs": 9.856608122194174,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 549.6966466643005,
+       "speedMs": 9.278079230791027,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 584.9511470162029,
+       "speedMs": 9.437224207098483,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1380,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 607.6679090955864,
+       "speedMs": 8.184174166025537,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "b2",
+       "distanceM": 579.8699594885113,
+       "speedMs": 9.484547193592535,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 597.0819148944432,
+       "speedMs": 9.840708180336417,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 577.3414349258778,
+       "speedMs": 9.137194441200077,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 612.8225744117391,
+       "speedMs": 9.14540107367024,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1440,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 631.7576424987866,
+       "speedMs": 7.875209356500049,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 607.8183823127213,
+       "speedMs": 9.151914149297927,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 626.4665655228405,
+       "speedMs": 9.74067513051517,
+       "lateralSlot": 0,
+       "draftTargetId": "a1"
+      },
+      {
+       "id": "d4",
+       "distanceM": 604.4283146480154,
+       "speedMs": 8.91350391485062,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 639.7937554329496,
+       "speedMs": 8.838686533292076,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1500,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 654.9055791295826,
+       "speedMs": 7.584794957511099,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      },
+      {
+       "id": "b2",
+       "distanceM": 634.7596425563295,
+       "speedMs": 8.81419657736527,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 655.6613839014623,
+       "speedMs": 9.725913423996797,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 630.7575782759949,
+       "speedMs": 8.637135124569793,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 665.8317830639421,
+       "speedMs": 8.524536842431152,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1560,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 678.4423154618534,
+       "speedMs": 8.038389998450926,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 660.6870890215403,
+       "speedMs": 8.47684879713518,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 684.4627396177875,
+       "speedMs": 9.475066556083432,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 656.2048542877935,
+       "speedMs": 8.328907199230928,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 690.9238649069614,
+       "speedMs": 8.208979852729604,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1620,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 702.902799609453,
+       "speedMs": 8.238825270389224,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 685.6088112056583,
+       "speedMs": 8.144295558440028,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 712.5483243480444,
+       "speedMs": 9.280193745017115,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 680.6979423519774,
+       "speedMs": 8.003311269473578,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 715.0734578321193,
+       "speedMs": 7.896877273370268,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1680,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 727.748333568761,
+       "speedMs": 8.305112342707085,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 709.5448363944553,
+       "speedMs": 7.820109591649532,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 740.207450869359,
+       "speedMs": 9.099335941269185,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 704.2012848922344,
+       "speedMs": 7.670645814805465,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 738.3537729570592,
+       "speedMs": 7.67259002170316,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 1740,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 752.6401342058635,
+       "speedMs": 8.27676531475129,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 732.5247757808837,
+       "speedMs": 7.507136855310589,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 766.9918660484707,
+       "speedMs": 8.76971417867046,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 726.7057220508503,
+       "speedMs": 7.33844641786099,
+       "lateralSlot": 1,
+       "draftTargetId": "b2"
+      },
+      {
+       "id": "e5",
+       "distanceM": 761.0356983480639,
+       "speedMs": 7.424614328196547,
+       "lateralSlot": 0,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 1800,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 777.369307705418,
+       "speedMs": 8.222857052235367,
+       "lateralSlot": 1,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "b2",
+       "distanceM": 754.5857852857408,
+       "speedMs": 7.207583985613307,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 792.9605285881061,
+       "speedMs": 8.572751390647936,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 748.2230112066426,
+       "speedMs": 7.014328683974182,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 782.9030783061395,
+       "speedMs": 7.183664528518417,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1860,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 802.1033100369284,
+       "speedMs": 8.280970847077562,
+       "lateralSlot": 1,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "b2",
+       "distanceM": 775.8011417832909,
+       "speedMs": 6.961975496922601,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 818.5578143391189,
+       "speedMs": 8.512163814882072,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 768.8002747719019,
+       "speedMs": 6.721055934475059,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 806.7033968594997,
+       "speedMs": 8.556891312143515,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1920,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 827.1012883832431,
+       "speedMs": 8.384859151800994,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 796.4820101362618,
+       "speedMs": 6.846178041882606,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 844.1297993598051,
+       "speedMs": 8.548842845582678,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 788.6710418602316,
+       "speedMs": 6.550034441983211,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 833.8644636559299,
+       "speedMs": 9.483113720423837,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 1980,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 852.4576206676152,
+       "speedMs": 8.524519667904666,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 816.9714870615836,
+       "speedMs": 6.827372204299442,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 869.9242256315522,
+       "speedMs": 8.655568340452609,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 808.2026529458612,
+       "speedMs": 6.487361105457307,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 863.4083676432442,
+       "speedMs": 10.17216858553099,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 2040,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 878.2953671274704,
+       "speedMs": 8.70332920357403,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 837.5163919667895,
+       "speedMs": 6.878185163510551,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 896.1211591446175,
+       "speedMs": 8.813813226366872,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 827.6723027646209,
+       "speedMs": 6.503228177746062,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 894.808694721689,
+       "speedMs": 10.741661965670033,
+       "lateralSlot": 2,
+       "draftTargetId": "c3"
+      }
+     ]
+    },
+    {
+     "step": 2100,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 904.7174435011297,
+       "speedMs": 8.912388459338716,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 858.2948831798385,
+       "speedMs": 6.979672219543675,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 922.8795451855732,
+       "speedMs": 9.02739985545191,
+       "lateralSlot": 0,
+       "draftTargetId": "e5"
+      },
+      {
+       "id": "d4",
+       "distanceM": 847.2813596891069,
+       "speedMs": 6.576417174112636,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 927.7893892168108,
+       "speedMs": 11.21876501720637,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 2160,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 931.805202253032,
+       "speedMs": 9.145950726079393,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 879.4382012790189,
+       "speedMs": 7.119050353939577,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 950.2976043725586,
+       "speedMs": 9.251844839040558,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 867.1780725416717,
+       "speedMs": 6.6922980520408775,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 962.0968844692918,
+       "speedMs": 11.640657014023567,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 2220,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 959.6261323900424,
+       "speedMs": 9.40033989909174,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 901.046224218009,
+       "speedMs": 7.28785530924269,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 978.4291657291626,
+       "speedMs": 9.502447185696917,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 887.4745029810495,
+       "speedMs": 6.841024177113122,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 997.6310183358472,
+       "speedMs": 12.039490284951063,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 2280,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 988.238899026014,
+       "speedMs": 9.673230435792147,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 923.1982189079662,
+       "speedMs": 7.48056945861929,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 1007.3482475305211,
+       "speedMs": 9.775948817483004,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 908.2585873095353,
+       "speedMs": 7.016096445133207,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 1034.3431454679849,
+       "speedMs": 12.42782166058462,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 2340,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 1017.6966211916135,
+       "speedMs": 9.963172314555862,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 945.9601157079155,
+       "speedMs": 7.693653561611448,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 1037.119330130939,
+       "speedMs": 10.069765778163799,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 929.6024781648642,
+       "speedMs": 7.213305701129109,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 1072.2150202516016,
+       "speedMs": 12.813776788127994,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 2400,
+     "riders": [
+      {
+       "id": "a1",
+       "distanceM": 1048.0489885664347,
+       "speedMs": 10.269277987376638,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "b2",
+       "distanceM": 969.389368774476,
+       "speedMs": 7.924884168172998,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      },
+      {
+       "id": "c3",
+       "distanceM": 1067.8006205339952,
+       "speedMs": 10.382220956387188,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "d4",
+       "distanceM": 951.5682112109959,
+       "speedMs": 7.429988490778381,
+       "lateralSlot": 1,
+       "draftTargetId": null
+      },
+      {
+       "id": "e5",
+       "distanceM": 1111.2481735137887,
+       "speedMs": 13.202668366252892,
+       "lateralSlot": 2,
+       "draftTargetId": null
+      }
+     ]
+    }
+   ],
+   "finalSnapshot": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":1.5,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":6.0,\"minimumDragMultiplierBySlotOffset\":[0.62,0.8,0.95]},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"a1\",\"physical\":{\"totalMassKg\":72.0,\"crr\":0.005,\"cdaM2\":0.3,\"driveTrainEfficiency\":0.975}},{\"id\":\"b2\",\"physical\":{\"totalMassKg\":81.0,\"crr\":0.005,\"cdaM2\":0.34,\"driveTrainEfficiency\":0.975}},{\"id\":\"c3\",\"physical\":{\"totalMassKg\":66.0,\"crr\":0.005,\"cdaM2\":0.27,\"driveTrainEfficiency\":0.975}},{\"id\":\"d4\",\"physical\":{\"totalMassKg\":90.0,\"crr\":0.005,\"cdaM2\":0.36,\"driveTrainEfficiency\":0.975}},{\"id\":\"e5\",\"physical\":{\"totalMassKg\":75.5,\"crr\":0.005,\"cdaM2\":0.31,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":120000000,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"a8f6b4f46059e903\",\"stream\":\"0000000000000017\"},\"riders\":[{\"id\":\"a1\",\"distanceM\":1048.0489885664347,\"speedMs\":10.269277987376638,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"b2\",\"distanceM\":969.389368774476,\"speedMs\":7.924884168172998,\"lateralSlot\":2,\"draftTargetId\":null},{\"id\":\"c3\",\"distanceM\":1067.8006205339952,\"speedMs\":10.382220956387188,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"d4\",\"distanceM\":951.5682112109959,\"speedMs\":7.429988490778381,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"e5\",\"distanceM\":1111.2481735137887,\"speedMs\":13.202668366252892,\"lateralSlot\":2,\"draftTargetId\":null}]}}"
+  },
+  {
+   "name": "standing-start-braking-beyond-end",
+   "initialSnapshot": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":100000,\"lateralSlotCount\":1,\"airDensityKgM3\":1.1,\"headwindMs\":-3.0,\"dynamics\":{\"maxPropulsiveForceN\":420.0},\"drafting\":{\"maxGapM\":3.5,\"minimumDragMultiplierBySlotOffset\":[0.7]},\"terrain\":{\"interpolation\":\"step\",\"beyondEnd\":\"flat\",\"lengthM\":400.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.04},{\"distanceM\":150.0,\"gradeFraction\":-0.06}]},\"riders\":[{\"id\":\"x\",\"physical\":{\"totalMassKg\":66.25,\"crr\":0.0062,\"cdaM2\":0.2405,\"driveTrainEfficiency\":0.9685}},{\"id\":\"y\",\"physical\":{\"totalMassKg\":81.5,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"6147d0b53255fcb7\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"x\",\"distanceM\":0.0,\"speedMs\":0.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"y\",\"distanceM\":1.0,\"speedMs\":0.0,\"lateralSlot\":0,\"draftTargetId\":null}]}}",
+   "steps": 900,
+   "inputScript": {
+    "x": [
+     [
+      0,
+      900,
+      0,
+      null,
+      null
+     ],
+     [
+      100,
+      300,
+      0,
+      null,
+      "y"
+     ],
+     [
+      500,
+      0,
+      300,
+      null,
+      null
+     ],
+     [
+      560,
+      200,
+      0,
+      null,
+      null
+     ]
+    ],
+    "y": [
+     [
+      0,
+      600,
+      0,
+      null,
+      null
+     ],
+     [
+      300,
+      250,
+      0,
+      null,
+      null
+     ]
+    ]
+   },
+   "checkpoints": [
+    {
+     "step": 30,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 15.764169466407361,
+       "speedMs": 7.8415723434723725,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 12.558173902157844,
+       "speedMs": 5.653309955853572,
+       "lateralSlot": 0,
+       "draftTargetId": "x"
+      }
+     ]
+    },
+    {
+     "step": 60,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 43.83128796545207,
+       "speedMs": 10.535472982882027,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 32.64988279966328,
+       "speedMs": 7.510194671398743,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 90,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 78.21907995859097,
+       "speedMs": 12.219431529753406,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 57.10354377028495,
+       "speedMs": 8.676376005666025,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 120,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 115.38983843866653,
+       "speedMs": 12.100723089533858,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 84.45268857366923,
+       "speedMs": 9.483607595418912,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 150,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 150.5762600042517,
+       "speedMs": 11.403431281502918,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 113.85072783106166,
+       "speedMs": 10.065258667353312,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 180,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 188.14811795562179,
+       "speedMs": 13.504813089621084,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 144.74174728843334,
+       "speedMs": 10.493177002837504,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 210,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 231.4173833163628,
+       "speedMs": 15.226487053222769,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 179.69749801068292,
+       "speedMs": 13.009360085399342,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 240,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 279.3459747746793,
+       "speedMs": 16.6306332677474,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 222.4749186846507,
+       "speedMs": 15.333478277805504,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 270,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 331.06077656506284,
+       "speedMs": 17.76729118795847,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 271.38632437512086,
+       "speedMs": 17.137651786341486,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 300,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 385.8286369533867,
+       "speedMs": 18.68033898787641,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 325.0516724258837,
+       "speedMs": 18.532207843788164,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 330,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 441.6297343294495,
+       "speedMs": 18.213849814826908,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 381.42159973229457,
+       "speedMs": 19.01324918675267,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 360,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 495.0478603515324,
+       "speedMs": 17.45152917166674,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 437.8991644800871,
+       "speedMs": 18.301776311717475,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 390,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 546.4188182114939,
+       "speedMs": 16.838159164671296,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 491.10899044032783,
+       "speedMs": 17.245428660014312,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 420,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 596.1389357427006,
+       "speedMs": 16.342534059646066,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 541.4811416947364,
+       "speedMs": 16.39432906342588,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 450,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 644.5229068031742,
+       "speedMs": 15.940784402773867,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 589.5574071586386,
+       "speedMs": 15.703088418142732,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 480,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 691.8224719877251,
+       "speedMs": 15.614361488269958,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 635.7630747208389,
+       "speedMs": 15.13825135728187,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 510,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 735.6282033068894,
+       "speedMs": 10.628420141165385,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 680.436490180841,
+       "speedMs": 14.67454981881901,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 540,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 747.2748308872648,
+       "speedMs": 0.0,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 723.8496587307494,
+       "speedMs": 14.292513482230897,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 570,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 749.0031807860938,
+       "speedMs": 2.4378507380929935,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 766.236164021187,
+       "speedMs": 13.98567317563761,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 600,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 760.2609537112749,
+       "speedMs": 4.720428871918723,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 807.7734976294565,
+       "speedMs": 13.722862849737576,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 630,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 776.7133814233205,
+       "speedMs": 6.123767786151991,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 848.5941436931774,
+       "speedMs": 13.504929093963684,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 660,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 796.7881185666236,
+       "speedMs": 7.181273988611384,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 888.8200784571707,
+       "speedMs": 13.323974051131092,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 690,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 819.6854207517736,
+       "speedMs": 8.026202557991995,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 928.5519494549374,
+       "speedMs": 13.173570085152978,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 720,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 844.8707582503904,
+       "speedMs": 8.718997470941092,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 967.872998832636,
+       "speedMs": 13.048458749693046,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 750,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 871.9459913062778,
+       "speedMs": 9.294658468812024,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 1006.8521990271748,
+       "speedMs": 12.944320461309323,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 780,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 900.5979283903565,
+       "speedMs": 9.776513544518915,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 1045.5467808950473,
+       "speedMs": 12.857595442333878,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 810,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 930.5726736719822,
+       "speedMs": 10.181542299554964,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 1084.004286282986,
+       "speedMs": 12.785342644088622,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 840,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 961.6607940766564,
+       "speedMs": 10.522817211616204,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 1122.2642437726481,
+       "speedMs": 12.725127355262481,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 870,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 993.6877486591148,
+       "speedMs": 10.810769315768537,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 1160.3595428147073,
+       "speedMs": 12.674930848364326,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    },
+    {
+     "step": 900,
+     "riders": [
+      {
+       "id": "x",
+       "distanceM": 1026.50717955006,
+       "speedMs": 11.053912909824525,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      },
+      {
+       "id": "y",
+       "distanceM": 1198.3175644732491,
+       "speedMs": 12.633077208895205,
+       "lateralSlot": 0,
+       "draftTargetId": null
+      }
+     ]
+    }
+   ],
+   "finalSnapshot": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":100000,\"lateralSlotCount\":1,\"airDensityKgM3\":1.1,\"headwindMs\":-3.0,\"dynamics\":{\"maxPropulsiveForceN\":420.0},\"drafting\":{\"maxGapM\":3.5,\"minimumDragMultiplierBySlotOffset\":[0.7]},\"terrain\":{\"interpolation\":\"step\",\"beyondEnd\":\"flat\",\"lengthM\":400.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.04},{\"distanceM\":150.0,\"gradeFraction\":-0.06}]},\"riders\":[{\"id\":\"x\",\"physical\":{\"totalMassKg\":66.25,\"crr\":0.0062,\"cdaM2\":0.2405,\"driveTrainEfficiency\":0.9685}},{\"id\":\"y\",\"physical\":{\"totalMassKg\":81.5,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":90000000,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"6147d0b53255fcb7\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"x\",\"distanceM\":1026.50717955006,\"speedMs\":11.053912909824525,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"y\",\"distanceM\":1198.3175644732491,\"speedMs\":12.633077208895205,\"lateralSlot\":0,\"draftTargetId\":null}]}}"
+  }
+ ],
+ "decodeErrors": [
+  {
+   "label": "not json",
+   "source": "{",
+   "error": "other:SnapshotDecodeException",
+   "path": "<root>",
+   "message": "not valid JSON: Unexpected end of input"
+  },
+  {
+   "label": "not object",
+   "source": "[]",
+   "error": "other:SnapshotDecodeException",
+   "path": "<root>",
+   "message": "expected a JSON object, got an array"
+  },
+  {
+   "label": "wrong format",
+   "source": "{\"format\":\"x\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "error": "other:SnapshotDecodeException",
+   "path": "format",
+   "message": "expected format \"bike-training-race-snapshot\", got \"x\""
+  },
+  {
+   "label": "v1",
+   "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":1,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "error": "other:SnapshotDecodeException",
+   "path": "schemaVersion",
+   "message": "snapshot schema version 1 is not readable by this build, which reads version 2"
+  },
+  {
+   "label": "missing config",
+   "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2}",
+   "error": "other:SnapshotDecodeException",
+   "path": "config",
+   "message": "missing required field \"config\""
+  },
+  {
+   "label": "bad interpolation",
+   "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"cubic\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "error": "other:SnapshotDecodeException",
+   "path": "config.terrain.interpolation",
+   "message": "unknown terrain interpolation \"cubic\"; this build knows [step, linear]"
+  },
+  {
+   "label": "negative speed",
+   "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":-8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "error": "validation:negativeValue",
+   "path": "state.riders[0].speedMs",
+   "message": "expected a non-negative number, got -8.0"
+  },
+  {
+   "label": "upper hex",
+   "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"ABCD83ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "error": "other:SnapshotDecodeException",
+   "path": "state.random.state",
+   "message": "expected exactly 16 lowercase hexadecimal digits, got \"ABCD83ea4f255270\""
+  },
+  {
+   "label": "slot past count",
+   "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":9,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
+   "error": "validation:outOfRange",
+   "path": "state.riders[0].lateralSlot",
+   "message": "lateral slot 9 is not below the configured lateralSlotCount (3)"
+  }
+ ]
+}

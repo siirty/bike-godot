@@ -1,0 +1,12 @@
+
+<workout_file><name>  Intervals  </name><author></author><description>d</description><workout>
+  <Warmup Duration="300" PowerLow="0.4" PowerHigh="0.75" Cadence="85"/>
+  <IntervalsT Repeat="4" OnDuration="60" OffDuration="30" OnPower="1.2" OffPower="0.5" Cadence="100" CadenceResting="80"/>
+  <IntervalsT OnDuration="20" PowerOnLow="1.0" PowerOnHigh="1.3"/>
+  <IntervalsT Repeat="3" OnDuration="45.5" OffDuration="15.25" PowerOnLow="0.9" PowerOnHigh="1.1" PowerOffLow="0.6" PowerOffHigh="0.4"/>
+  <SteadyState Duration="120.5" Power="0.88"/>
+  <FreeRide Duration="90" Cadence="90"/>
+  <Freeride Duration="30"/>
+  <Ramp Duration="200" PowerLow="0.5"/>
+  <Cooldown Duration="240" PowerLow="0.3" PowerHigh="0.7"/>
+</workout></workout_file>

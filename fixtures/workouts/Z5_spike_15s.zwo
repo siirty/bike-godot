@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workout_file>
+    <author>siirty</author>
+    <name>15s Z5 spike</name>
+    <description>A single 15-second Z5 (above-FTP) spike between easy blocks, to confirm short hard intervals stay punchy (not smoothed).</description>
+    <sportType>bike</sportType>
+    <tags/>
+    <workout>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="180">
+            <textevent message="Z1/Z2 easy" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.35" PowerLow="1.25" Duration="15">
+            <textevent message="15s Z5 spike" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="180">
+            <textevent message="Recovery" duration="10"/>
+        </SteadyState>
+    </workout>
+</workout_file>

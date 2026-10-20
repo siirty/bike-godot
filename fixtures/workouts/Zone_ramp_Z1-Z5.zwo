@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workout_file>
+    <author>siirty</author>
+    <name>Zone ramp Z1-Z5</name>
+    <description>Z1 -> Z2 -> Z3 -> Z2 -> Z4 -> Z2 -> Z5 stepping through zones to inspect terrain synthesis at increasing effort.</description>
+    <sportType>bike</sportType>
+    <tags/>
+    <workout>
+        <SteadyState show_avg="1" PowerHigh="0.6" PowerLow="0.45" Duration="180">
+            <textevent message="Z1: Easy" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.65" Duration="180">
+            <textevent message="Z2: Endurance" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.95" PowerLow="0.85" Duration="180">
+            <textevent message="Z3: Tempo" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.65" Duration="180">
+            <textevent message="Z2: Endurance" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.1" PowerLow="1.0" Duration="180">
+            <textevent message="Z4: Threshold" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.65" Duration="180">
+            <textevent message="Z2: Endurance" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.3" PowerLow="1.15" Duration="180">
+            <textevent message="Z5: VO2" duration="10"/>
+        </SteadyState>
+    </workout>
+</workout_file>

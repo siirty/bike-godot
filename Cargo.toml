@@ -1,17 +1,46 @@
-# Cargo workspace for the Godot app's native adapter layer.
+# Cargo workspace for the bike trainer app: the Rust domain core plus the Godot adapter.
 #
-# The trainer core lives in its own repository (siirty/bike-training-core) and is
-# consumed as an ordinary git dependency, pinned by commit rev — the same model
-# bike-training-app uses for its Dart-side bridge. The Godot shell talks to it
-# through a GDExtension built from crates/godot_adapter.
+# The domain crates are a parity-tested port of the Dart prototype in
+# siirty/bike-training-app (see docs/decisions/0002-rust-domain-port.md). Each crate is checked
+# against golden vectors recorded from the Dart reference (fixtures/golden/).
+#
+# The trainer core lives in its own repository (siirty/bike-training-core) and is consumed as an
+# ordinary git dependency, pinned by commit rev. The Godot shell talks to everything through one
+# GDExtension built from crates/godot_adapter.
 [workspace]
 resolver = "2"
-members = ["crates/godot_adapter"]
+members = [
+  "crates/race_physics",
+  "crates/workout_import",
+  "crates/godot_adapter",
+]
 
 [workspace.package]
 edition = "2021"
 license = "MIT"
+rust-version = "1.94"
 
 [workspace.dependencies]
 log = "0.4"
 tokio = "1.53.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+thiserror = "2"
+roxmltree = "0.21"
+rusqlite = { version = "0.40", features = ["bundled"] }
+uuid = { version = "1", features = ["v4"] }
+godot = { version = "0.5.5", features = ["api-4-3"] }
+
+workout_import = { path = "crates/workout_import" }
+race_physics = { path = "crates/race_physics" }
+trainer_control = { path = "crates/trainer_control" }
+session_director = { path = "crates/session_director" }
+race_engine = { path = "crates/race_engine" }
+local_storage = { path = "crates/local_storage" }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+float_cmp = "allow"

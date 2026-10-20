@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workout_file>
+    <author>siirty</author>
+    <name>IRONMAN 70.3 Power Ups</name>
+    <description>Warm Up:
+5 mins in Z1-2,
+5 x (15 secs in Z3, 15 secs Z1-2, 15 secs in Z4, 15 secs in Z1-2)
+5 mins in Z2.</description>
+    <sportType>bike</sportType>
+    <tags/>
+    <workout>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="300">
+            <textevent message="Warm up 1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="15">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="15">
+            <textevent message="Hard" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="15">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="15">
+            <textevent message="Hard" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="15">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="15">
+            <textevent message="Hard" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="15">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="15">
+            <textevent message="Hard" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="15">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="15">
+            <textevent message="Hard" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="15">
+            <textevent message="Active" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.56" Duration="300">
+            <textevent message="Warm up 2" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="540">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="240">
+            <textevent message="Harder" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="240">
+            <textevent message="Recovery" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="420">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="180">
+            <textevent message="Harder" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="180">
+            <textevent message="Recovery" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.9" PowerLow="0.76" Duration="300">
+            <textevent message="Hard 1/1" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="1.05" PowerLow="0.91" Duration="180">
+            <textevent message="Harder" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="120">
+            <textevent message="Recovery" duration="10"/>
+        </SteadyState>
+        <SteadyState show_avg="1" PowerHigh="0.75" PowerLow="0.5" Duration="300">
+            <textevent message="Cool Down" duration="10"/>
+        </SteadyState>
+    </workout>
+</workout_file>

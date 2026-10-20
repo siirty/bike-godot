@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workout_file>
+    <author>siirty</author>
+    <name>Ramp test Z2-to-Z4</name>
+    <description>Smooth ramp from Z2 (75%) to Z4 (115%) over 8 minutes to inspect ramp sub-sampling.</description>
+    <sportType>bike</sportType>
+    <tags/>
+    <workout>
+        <SteadyState show_avg="1" PowerHigh="0.8" PowerLow="0.6" Duration="120"/>
+        <Warmup show_avg="1" PowerLow="0.75" PowerHigh="1.15" Duration="480"/>
+        <SteadyState show_avg="1" PowerHigh="0.8" PowerLow="0.6" Duration="120"/>
+    </workout>
+</workout_file>

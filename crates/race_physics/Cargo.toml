@@ -1,0 +1,28 @@
+[package]
+name = "race_physics"
+version = "0.1.0"
+description = "Pure cycling physics: forces, power/speed and power/grade solvers, fixed-step longitudinal dynamics."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+# The convergence corpus and harness behind the fixed-timestep choice. A testing surface: kept out
+# of default builds so app code cannot depend on it.
+testing = []
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+race_physics = { path = ".", features = ["testing"] }
+serde_json.workspace = true
+
+[lints]
+workspace = true
+
+[[example]]
+name = "convergence_report"
+required-features = ["testing"]
