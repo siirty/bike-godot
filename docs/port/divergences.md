@@ -17,3 +17,21 @@ The interval-repeat invariant (an off phase needs both off powers) is enforced o
 construction path in the port. In the prototype it is a freezed `assert`, so it only applies
 when asserts are on (as in its test suite). The vectors are recorded with `--enable-asserts`,
 so the two sides agree.
+
+## trainer_control
+
+| Case | Prototype | Port | Why |
+| --- | --- | --- | --- |
+| Time and events | Broadcast `Stream`s, `Timer.periodic`, injected `DateTime` clock | Caller-supplied monotonic `now: Duration` and a pull-based `poll(now)` | An engine frame loop drives the trainer, and tests use literal times instead of `fake_async`. No wall clock hides inside a trainer. |
+| Throttle flush | A `Timer` fires exactly at `lastWrittenAt + interval` | Flushed on the first `poll` at or after that instant, stamped with the poll's `now` | Same policy. The flush lands at most one frame later. |
+| Simulated trainer given more power than 30 m/s needs | The solver throws inside a timer callback (uncaught) | Holds 30 m/s | A dev slider must not crash the ride. |
+| Simulated trainer given negative or non-finite power | The solver throws on the next tick | Treated as 0 W | Same reason. |
+| `RecordingManualPowerTrainer` | A subclass | `RecordingTrainerControl::with_manual_power()` | Rust has no subclassing. The capability is still opt-in. |
+
+## session_director
+
+| Case | Prototype | Port | Why |
+| --- | --- | --- | --- |
+| `_DeterministicLcg` | Constructed from the seed and never drawn from | Not ported. The seed parameter is kept and documented as currently unused | Dead code. Output is identical for every seed on both sides. |
+| `SegmentDistanceRange.segment` | `Object` reference | The segment plus its plan index | Typed, and it survives a skipped zero-duration segment. |
+| A plan whose segments are all zero-duration | `StateError` from `samples.last` | `SynthesisError::NoDistance` | Typed error instead of a crash. |

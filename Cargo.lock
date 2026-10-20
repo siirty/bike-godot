@@ -585,6 +585,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "session_director"
+version = "0.1.0"
+dependencies = [
+ "race_physics",
+ "serde_json",
+ "thiserror 2.0.21",
+ "workout_import",
+]
+
+[[package]]
 name = "slab"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -722,6 +732,14 @@ dependencies = [
  "futures-sink",
  "pin-project-lite",
  "tokio",
+]
+
+[[package]]
+name = "trainer_control"
+version = "0.1.0"
+dependencies = [
+ "race_physics",
+ "thiserror 2.0.21",
 ]
 
 [[package]]

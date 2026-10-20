@@ -1,0 +1,19 @@
+[package]
+name = "session_director"
+version = "0.1.0"
+description = "Deterministic pre-ride planning: rider profile, workload zones, and workout-to-terrain synthesis."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+race_physics.workspace = true
+workout_import.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

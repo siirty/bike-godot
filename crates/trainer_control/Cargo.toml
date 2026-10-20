@@ -1,0 +1,15 @@
+[package]
+name = "trainer_control"
+version = "0.1.0"
+description = "Hardware-independent trainer interface (FTMS SIM mode only), the SIM write throttle, and a simulated trainer."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+race_physics.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

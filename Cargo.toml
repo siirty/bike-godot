@@ -11,6 +11,8 @@
 resolver = "2"
 members = [
   "crates/race_physics",
+  "crates/session_director",
+  "crates/trainer_control",
   "crates/workout_import",
   "crates/godot_adapter",
 ]
