@@ -13,7 +13,7 @@ use race_physics::{
 use serde::Serialize;
 use serde_json::{Map, Value};
 
-use crate::dart_json::to_dart_json;
+use crate::canonical_json::to_canonical_json;
 use crate::simulation::error::{
     at, RaceSimulationError, Result, SimulationValidationCode, SnapshotDecodeCode as D, ROOT_PATH,
 };
@@ -220,7 +220,7 @@ pub fn encode_snapshot(config: &RaceSimulationConfig, state: &RaceState) -> Resu
                 .collect(),
         },
     };
-    Ok(to_dart_json(&doc))
+    Ok(to_canonical_json(&doc))
 }
 
 // --- Decoding: strict, typed, with full paths. Nothing is returned until everything is checked. --

@@ -47,9 +47,9 @@ Dependencies point downward only. The domain crates know nothing about Godot. On
   order and self-contained schema-v3 snapshots. Live and headless runs use the same kernel.
 - **Capability lives in config, never in state.** Drafting scales aerodynamic drag only.
 - **Measured telemetry is real.** Simulated outcomes never become recorded human power.
-- **Parity is proven, not assumed.** `fixtures/golden/` holds vectors recorded from the Dart
-  prototype, and each crate's `tests/golden.rs` replays them bit for bit. Deliberate differences
-  are listed in [`docs/port/divergences.md`](../port/divergences.md).
+- **Regression evidence stays independent.** `fixtures/golden/` contains frozen historical vectors
+  replayed by Rust tests. New contracts and their reference tests are owned here; no external
+  code or toolchain generates expectations. See [ADR 0004](../decisions/0004-standalone-rust.md).
 
 ## Documents
 

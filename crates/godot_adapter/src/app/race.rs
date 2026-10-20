@@ -1,8 +1,8 @@
 //! The race view's live kernel: the same deterministic `RaceSimulation` the headless tests step,
 //! stepped in real time at its fixed step and interpolated for display.
 //!
-//! The player follows a scripted power request; opponents follow seeded pack plans. Every
-//! software rider has finite CP/W′/Pmax capability. Trainer integration and tactics are later slices.
+//! The player follows a scripted power request; opponents use reactive spotlight tactics. Every
+//! software rider has finite CP/W′/Pmax capability. Trainer integration is a later slice.
 //! Positions and speeds come only from the kernel.
 
 use std::time::Duration;
@@ -27,11 +27,13 @@ pub const EVENT_FEED_LENGTH: usize = 4;
 /// `(from_step, watts)`: the latest entry at or before a step applies.
 type PowerScript = &'static [(u64, f64)];
 
-const SCRIPT: [(&str, f64, f64, i64, f64, PowerScript); 3] = [
-    // id, mass, start distance, slot, start speed, power script
-    ("human", 78.0, 30.0, 1, 8.0, &[(0, 250.0), (650, 330.0)]),
-    ("rival", 77.0, 35.0, 2, 8.0, &[(0, 275.0), (900, 245.0)]),
-    ("leader", 75.0, 42.0, 0, 8.0, &[(0, 265.0)]),
+const PLAYER_POWER: PowerScript = &[(0, 250.0), (650, 330.0)];
+
+const RIDERS: [(&str, f64, f64, i64, f64); 3] = [
+    // id, mass, start distance, slot, start speed
+    ("human", 78.0, 30.0, 1, 8.0),
+    ("rival", 77.0, 35.0, 2, 8.0),
+    ("leader", 75.0, 42.0, 0, 8.0),
 ];
 
 /// The id the camera follows.
@@ -63,7 +65,7 @@ pub struct LiveRace {
     accumulator: f64,
     finished: bool,
     feed: VecDeque<String>,
-    pace_plans: Vec<race_engine::pack::PackPacePlan>,
+    tactics: Vec<race_engine::tactics::TacticalController>,
 }
 
 fn terrain() -> SimulationTerrain {
@@ -96,7 +98,7 @@ impl LiveRace {
     pub fn new() -> Self {
         let config = RaceSimulationConfig::new(RaceSimulationConfigSpec {
             fixed_step: SimulationTimestep::RECOMMENDED,
-            riders: SCRIPT
+            riders: RIDERS
                 .iter()
                 .map(|(id, mass, ..)| {
                     RiderDefinition::new(
@@ -132,9 +134,9 @@ impl LiveRace {
         let state = RaceState::new(
             Duration::ZERO,
             Pcg32::seeded(20_260_926, 1).state(),
-            SCRIPT
+            RIDERS
                 .iter()
-                .map(|(id, _, d, slot, v, _)| {
+                .map(|(id, _, d, slot, v)| {
                     RiderState::new(RiderId::new(*id).unwrap(), *d, *v, *slot, None)
                         .unwrap()
                         .with_w_prime_balance(20_000.0)
@@ -151,8 +153,16 @@ impl LiveRace {
             accumulator: 0.0,
             finished: false,
             feed: VecDeque::new(),
-            pace_plans: (0..3)
-                .map(|i| race_engine::pack::PackPacePlan::seeded(42 + i))
+            tactics: ["leader", "rival"]
+                .into_iter()
+                .enumerate()
+                .map(|(i, id)| {
+                    race_engine::tactics::TacticalController::new(
+                        RiderId::new(id).unwrap(),
+                        race_engine::tactics::TacticsConfig::default(),
+                        race_engine::tactics::TacticalProfile::seeded(42 + i as u64),
+                    )
+                })
                 .collect(),
         }
     }
@@ -161,34 +171,27 @@ impl LiveRace {
         self.simulation.config().fixed_step().as_secs_f64()
     }
 
-    fn inputs(&self) -> RaceInputFrame {
-        RaceInputFrame::new(
-            SCRIPT
-                .iter()
-                .map(|(id, _, _, _, _, script)| {
-                    let watts = script
-                        .iter()
-                        .rev()
-                        .find(|(from, _)| *from <= self.step)
-                        .map_or(0.0, |(_, w)| *w);
-                    let rider_id = RiderId::new(*id).unwrap();
-                    let watts = if *id == PLAYER_ID {
-                        watts
-                    } else {
-                        let index = SCRIPT.iter().position(|r| r.0 == *id).unwrap();
-                        self.pace_plans[index]
-                            .requested_power(
-                                self.simulation.config().definition_for(&rider_id).unwrap(),
-                                self.current.rider_state(&rider_id).unwrap(),
-                                self.current.simulation_time(),
-                            )
-                            .expect("valid pace plan")
-                    };
-                    RiderControlInput::power(rider_id, watts).unwrap()
-                })
-                .collect(),
-        )
-        .expect("one input per rider")
+    fn inputs(&mut self) -> RaceInputFrame {
+        let script = PLAYER_POWER;
+        let watts = script
+            .iter()
+            .rev()
+            .find(|(from, _)| *from <= self.step)
+            .map_or(0.0, |(_, w)| *w);
+        let mut inputs =
+            vec![RiderControlInput::power(RiderId::new(PLAYER_ID).unwrap(), watts).unwrap()];
+        for controller in &mut self.tactics {
+            inputs.push(
+                controller
+                    .input(
+                        self.simulation.config(),
+                        &self.current,
+                        race_engine::tactics::TacticalRole::Neutral,
+                    )
+                    .expect("valid tactical scenario"),
+            );
+        }
+        RaceInputFrame::new(inputs).expect("one input per rider")
     }
 
     /// Adds `real_seconds` of wall time and steps every whole fixed step it completes. A long
@@ -201,9 +204,10 @@ impl LiveRace {
         self.accumulator += real_seconds.clamp(0.0, 0.25);
         while self.accumulator >= self.step_seconds() {
             self.accumulator -= self.step_seconds();
+            let inputs = self.inputs();
             let result = self
                 .simulation
-                .step(&self.current, &self.inputs(), dt)
+                .step(&self.current, &inputs, dt)
                 .expect("the scripted scenario is valid");
             for line in result.events.iter().filter_map(describe_event) {
                 if self.feed.len() == EVENT_FEED_LENGTH {

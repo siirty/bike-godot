@@ -5,7 +5,7 @@
 //! ```
 //!
 //! The key names, the `"type"` discriminator values and whole-millisecond durations are the
-//! on-disk format the Dart prototype wrote; rows it stored must read back identically, so this
+//! on-disk workout format; existing stored rows must read back identically, so this
 //! module spells them out explicitly rather than leaving them to a derive.
 
 use std::time::Duration;
@@ -162,7 +162,7 @@ pub fn power_to_json(power: PowerTarget) -> Value {
 }
 
 fn duration_ms(d: Duration) -> i64 {
-    // Milliseconds, truncated — Dart's `Duration.inMilliseconds`. Workout files express lengths in
+    // Milliseconds, truncated. Workout files express lengths in
     // whole seconds, so nothing is lost in practice.
     i64::try_from(d.as_millis()).expect("segment durations fit in i64 milliseconds")
 }
@@ -233,7 +233,7 @@ fn required_f64(object: &Map<String, Value>, key: &str) -> Result<f64, String> {
         .ok_or_else(|| format!("\"{key}\" must be a number"))
 }
 
-/// An integer field. Dart's generated reader did `(json[k] as num).toInt()`, so an integral double
+/// An integer field. The persisted format truncates numeric values, so an integral double
 /// such as `90.0` is accepted too.
 fn as_int(value: &Value) -> Option<i64> {
     value.as_i64().or_else(|| {

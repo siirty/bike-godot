@@ -6,8 +6,8 @@ slices, "end-to-end" means through the simulation domain, not through the traine
 [open-race-design-questions.md](open-race-design-questions.md) before implementing Slices 5–9.
 
 Risk drove the order. The risky layer (trainer I/O, physics, the deterministic foundation) is
-built. The differentiating layer is not built yet: training contracts, scenario synthesis, the
-scene planner and tactical AI. Slices 5–9 are the remaining core loop, not a backlog of polish.
+built. The differentiating layer is partly built: spotlight tactics now run, while training contracts,
+scenario synthesis and the scene planner remain. Slices 5–9 are the remaining core loop, not a backlog of polish.
 
 0. **Repo scaffolding** *(done)*: Cargo workspace, Godot project, quality CI on the self-hosted
    runner.
@@ -37,14 +37,19 @@ scene planner and tactical AI. Slices 5–9 are the remaining core loop, not a b
    races and runs them to the finish, checking invariants every step. To print the report, run:
 
    `cargo run -p race_engine --features testing --example headless_corpus --release -- 0 32`
-5. **Headless autonomous race** *(physiology and pack pacing built; tactics pending)*: finite
+5. **Headless autonomous race** *(physiology, pack pacing and initial spotlight tactics built; calibration pending)*: finite
    CP/W′/Pmax, Skiba differential recovery, reserve-limited sprints and seeded pack plans run in
    the headless corpus and live demo. Snapshot v3 carries all capability and reserve state.
-   Remaining work:
+   `TacticalController` supplies reactive recovery/follow/chase/attack/sprint intentions to the live
+   demo and the mixed-field headless corpus. Run:
+
+   `cargo run -p race_engine --features testing --example tactical_corpus --release -- 16`
+
+   The report records action occupancy, not empirical naturalness. Remaining work:
    - calibrated rider profiles and tactical personality distributions;
-   - utility-based tactics for the 2–3 drama-spotlight riders;
+   - empirical tuning of the implemented spotlight utilities and reaction behavior;
    - expand and calibrate the existing capability-limited pack pace templates;
-   - a minimal scene-goal seam, so the spotlight AI has something to have intent about.
+   - connect the bounded tactical-role seam to future scenario/scene goals when Slice 6 provides them.
 
    Full pack/group recognition, cooperation and natural passing statistics wait until larger fields
    make them visible. Validate believable spotlight behavior, determinism, invariants and long-run

@@ -7,6 +7,8 @@ cd "$ROOT"
 
 log() { printf '\n==> %s\n' "$*"; }
 
+python3 scripts/check-fixtures.py
+
 log "Rust: fmt / clippy / test"
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings

@@ -29,7 +29,7 @@ The app turns structured cycling workouts into terrain and race situations ridde
 - Measured activity data contains only actual human telemetry. Simulated outcomes never create synthetic power samples.
 - Ride-loop code targets `TrainerControl`, not `ble_trainer` or `trainer_core`.
 - Domain crates stay free of Godot, BLE, filesystem and wall-clock dependencies. Only `crates/godot_adapter` depends on `godot`, and GDScript is presentation only.
-- The domain crates match the Dart prototype bit for bit (`fixtures/golden/`, `tests/golden.rs`). A deliberate behaviour change is listed in `docs/port/divergences.md`. Tests for new behaviour derive from specifications, references or independent calculation, never from the implementation's current output. Simulation tests use fixed seeds and explicit oracles.
+- The domain contracts are owned by this repository. Frozen regression vectors (`fixtures/golden/`, `tests/golden.rs`) preserve historical evidence without an external implementation or generator. Deliberate behavior changes require an architecture decision and a focused regression test; never regenerate fixtures to bless current output. Tests for new behaviour derive from specifications, references or independent calculation, never from the implementation's current output. Simulation tests use fixed seeds and explicit oracles.
 
 Path-specific conventions live in `.claude/rules/`. Formula, protocol and file-format references live in `.claude/skills/` (`cycling-physics`, `ftms-ble-protocol`, `workout-file-formats`).
 
@@ -87,7 +87,7 @@ In this repository, always flag:
 - a forced narrative repair where a fallback is required;
 - simulated values entering measured activity history;
 - dependency-direction violations between crates (`godot` outside `godot_adapter`, `trainer_core` outside `ble_trainer`);
-- golden-vector drift without a matching entry in `docs/port/divergences.md`;
+- unexplained regression-fixture changes without a documented contract decision;
 - tautological tests, or stochastic tests without reproducible seeds and explicit oracles;
 - stale documentation that could direct an agent toward superseded architecture.
 

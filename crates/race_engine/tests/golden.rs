@@ -27,11 +27,11 @@ fn same(actual: f64, expected: &Value, context: &str) {
     assert_eq!(
         actual.to_bits(),
         expected.to_bits(),
-        "{context}: rust {actual:e} vs dart {expected:e}"
+        "{context}: rust {actual:e} vs fixture {expected:e}"
     );
 }
 
-/// Dart seeds are signed 64-bit; the generator works on their two's-complement bits.
+/// Historical fixture seeds are signed 64-bit; use their two's-complement bits.
 fn seed(v: &Value) -> u64 {
     v.as_str().unwrap().parse::<i64>().unwrap() as u64
 }
@@ -196,7 +196,7 @@ fn decode_errors_match_code_path_and_message() {
         if label == "v1" {
             assert!(err.message().contains("version 3"));
         } else if label == "not json" {
-            // Parser wording differs between serde_json and dart:convert; the prefix is ours.
+            // Parser wording is library-specific; the diagnostic prefix is our contract.
             assert!(
                 err.message().starts_with("not valid JSON: "),
                 "{label}: {}",
@@ -209,7 +209,7 @@ fn decode_errors_match_code_path_and_message() {
 }
 
 // Test-only conversion: production rejects every v2 snapshot. Historical inputs explicitly
-// choose no physiology and the old zero minimum drafting gap, preserving the Dart oracle.
+// choose no physiology and the old zero minimum drafting gap, preserving the frozen observations.
 fn reference_fixture(source: &str) -> String {
     let Ok(mut v) = serde_json::from_str::<Value>(source) else {
         return source.to_owned();

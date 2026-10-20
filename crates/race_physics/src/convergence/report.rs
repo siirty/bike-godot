@@ -2,7 +2,7 @@ use std::fmt::Write as _;
 use std::time::Duration;
 
 use super::corpus::{convergence_corpus, CANDIDATE_STEPS, REFERENCE_STEP};
-use super::harness::{compare_scenario, dart_reduce_max, ScenarioError, COMPARISON_GRID};
+use super::harness::{compare_scenario, maximum_error, ScenarioError, COMPARISON_GRID};
 use super::scenario::ConvergenceScenario;
 use crate::{LongitudinalDynamicsConfig, PhysicsError};
 
@@ -76,9 +76,8 @@ fn render(
             scenario.name,
             errs.iter()
                 .map(|e| {
-                    let speed = dart_reduce_max(e.tracks.iter().map(|t| t.final_speed_error_ms));
-                    let distance =
-                        dart_reduce_max(e.tracks.iter().map(|t| t.final_distance_error_m));
+                    let speed = maximum_error(e.tracks.iter().map(|t| t.final_speed_error_ms));
+                    let distance = maximum_error(e.tracks.iter().map(|t| t.final_distance_error_m));
                     format!("{} / {}", fmt(speed), fmt(distance))
                 })
                 .collect(),
@@ -141,7 +140,7 @@ fn render(
     out.push_str(&header);
     let worst = |f: &dyn Fn(&ScenarioError) -> f64| -> Vec<String> {
         (0..candidates.len())
-            .map(|s| fmt(dart_reduce_max(errors.iter().map(|errs| f(&errs[s])))))
+            .map(|s| fmt(maximum_error(errors.iter().map(|errs| f(&errs[s])))))
             .collect()
     };
     out.push_str(&format!(
@@ -167,7 +166,7 @@ fn fmt(value: f64) -> String {
     if value == 0.0 {
         return "0".to_owned();
     }
-    dart_to_string_as_precision(value, 3)
+    format_significant(value, 3)
 }
 
 /// Dart's (and JavaScript's) `toStringAsPrecision`: `precision` significant digits, in
@@ -175,7 +174,7 @@ fn fmt(value: f64) -> String {
 ///
 /// Rounding follows Rust's exact decimal expansion. That only differs from the prototype on an
 /// exact binary tie at the last digit, which no measured error in the corpus is.
-pub fn dart_to_string_as_precision(value: f64, precision: usize) -> String {
+pub fn format_significant(value: f64, precision: usize) -> String {
     assert!((1..=21).contains(&precision), "precision must be in 1..=21");
     if value.is_nan() {
         return "NaN".to_owned();
@@ -216,10 +215,10 @@ pub fn dart_to_string_as_precision(value: f64, precision: usize) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::dart_to_string_as_precision as p;
+    use super::format_significant as p;
 
     #[test]
-    fn matches_dart_to_string_as_precision() {
+    fn matches_format_significant() {
         // Expected strings are Dart's `toStringAsPrecision(3)` on the same inputs.
         assert_eq!(p(0.0123456, 3), "0.0123");
         assert_eq!(p(1.0, 3), "1.00");

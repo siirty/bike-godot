@@ -1,9 +1,8 @@
 # Deliberate divergences from the Dart prototype
 
-The Rust crates are parity-tested against vectors recorded from the Dart prototype
-(`fixtures/golden/`, see `tools/golden_exporter/`). Where the port intentionally behaves
-differently, the difference is listed here **and** special-cased by name in the relevant
-`tests/golden.rs`, so no divergence is silent.
+This is a historical migration record, not a requirement to consult or run the old application.
+The imported vectors are frozen in `fixtures/golden/`; their provenance is recorded there. Current
+contracts are owned by this repository, per [ADR 0004](../decisions/0004-standalone-rust.md).
 
 ## workout_import
 

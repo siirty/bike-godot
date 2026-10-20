@@ -1,6 +1,6 @@
 # ADR-0002: Port the Dart domain core to Rust, in process
 
-- Status: accepted
+- Status: accepted; legacy-oracle and exporter policy superseded by [ADR 0004](0004-standalone-rust.md)
 - Date: 2026-10-20
 - Owners: Levin Schmidt (siirty)
 - Related: supersedes point 4 of [ADR 0001](0001-repo-split.md) and its "two runtimes" consequence
@@ -14,7 +14,7 @@ would ship two runtimes, and every domain call would cross a process boundary. T
 decided to move fully to Godot + Rust.
 
 The precondition ADR 0001 set for a port, golden vectors recorded from the Dart reference, is now
-met. `tools/golden_exporter/` records them into `fixtures/golden/`.
+met. The recorded vectors were committed to `fixtures/golden/`. The exporter has since been retired.
 
 ## Decision
 
@@ -36,8 +36,8 @@ met. `tools/golden_exporter/` records them into `fixtures/golden/`.
    `crates/godot_adapter`. That gives one runtime, with no IPC protocol and no Dart toolchain.
 4. GDScript stays presentation only: layout, camera, art and input. Formatting, validation,
    persistence, physics and trainer policy live in Rust, so they are unit-tested without Godot.
-5. The Flutter app stays the frozen reference and oracle, as ADR 0001 says. The golden exporter
-   is the only thing that still runs Dart.
+5. The imported observations are frozen local regression fixtures. The external application and
+   exporter are retired from development and verification (ADR 0004).
 
 ## Alternatives considered
 
@@ -67,7 +67,7 @@ saved races resume.
 - Dart's codegen (freezed, json_serializable, drift) is replaced by serde and hand-written
   rusqlite. The schema is pinned by tests instead.
 - A change to the Dart prototype no longer reaches the product. The prototype is frozen, so a
-  new rule is written in Rust with its own tests. Regenerate the vectors only to re-check parity.
+  new rule is written in Rust with its own tests. The vectors are now frozen; ADR 0004 removes the external oracle and exporter.
 
 ## Verification and review
 

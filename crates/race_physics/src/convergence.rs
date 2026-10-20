@@ -18,5 +18,5 @@ pub use corpus::{
 pub use harness::{
     compare_scenario, run_track, ScenarioError, TrackError, TrackTrajectory, COMPARISON_GRID,
 };
-pub use report::{dart_to_string_as_precision, render_convergence_report};
+pub use report::{format_significant, render_convergence_report};
 pub use scenario::{ConvergenceScenario, InputSegment, RiderTrack};

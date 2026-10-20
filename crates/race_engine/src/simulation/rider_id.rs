@@ -5,7 +5,7 @@ use crate::simulation::error::{RaceSimulationError, Result, SimulationValidation
 
 /// A rider's stable identity inside one simulation. Exact string equality, no normalisation.
 ///
-/// Ordered by UTF-16 code units, as the prototype's Dart strings are, so canonical order (and
+/// Ordered by UTF-16 code units, so canonical order (and
 /// therefore RNG consumption order and snapshot bytes) has no locale and matches across ports.
 /// Every rider collection the contracts expose is in this order.
 #[derive(Clone, PartialEq, Eq, Hash)]

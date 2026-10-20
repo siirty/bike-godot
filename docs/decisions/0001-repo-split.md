@@ -1,6 +1,6 @@
 # ADR 0001: Repository split — Godot app in a new repo, prototype frozen
 
-- Status: accepted (2026-09-26); point 4 superseded by [ADR 0002](0002-rust-domain-port.md) (2026-10-20)
+- Status: historical; runtime split superseded by ADR 0002, ongoing legacy-oracle policy by ADR 0004 (2026-09-26); point 4 superseded by [ADR 0002](0002-rust-domain-port.md) (2026-10-20)
 - Deciders: Levin Schmidt (siirty), Hermes
 
 ## Context

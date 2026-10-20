@@ -119,9 +119,9 @@ They are invariants to protect, not preferences.
   the fields of a model owned elsewhere. It goes through that crate's own serde mapping, as it does
   for `RiderPhysicalParams`. Otherwise a field added there is silently dropped from saved races.
 - **Parity:**
-  - `tests/golden.rs` replays the Dart prototype's recorded races and snapshots bit for bit;
+  - `tests/golden.rs` replays the frozen regression vectors without any external toolchain;
   - `tests/kernel_properties.rs` holds the invariants.
 
-  A deliberate change to existing behaviour goes in `docs/port/divergences.md` and is named in the
-  golden test. New behaviour has no Dart oracle. Derive its tests from the spec, published
+  A deliberate change to existing behavior needs a local contract decision and a focused regression
+  test. Historical fixtures are not regenerated. Derive new tests from the spec, published
   references or independent calculation, never from the implementation's current output.

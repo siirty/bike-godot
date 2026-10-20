@@ -1,6 +1,6 @@
 use session_director::TerrainSource;
 
-use crate::dart_json::dart_double;
+use crate::canonical_json::format_number;
 use crate::simulation::error::{RaceSimulationError, Result, SimulationValidationCode as C};
 use crate::simulation::validate::{check_finite, check_finite_non_negative, check_finite_positive};
 
@@ -119,7 +119,7 @@ impl SimulationTerrain {
                 C::TerrainNotOrdered,
                 format!(
                     "the first terrain sample must be at 0 m, got {}",
-                    dart_double(first.distance_m)
+                    format_number(first.distance_m)
                 ),
                 "samples[0].distanceM",
             ));
@@ -130,8 +130,8 @@ impl SimulationTerrain {
                     C::TerrainNotOrdered,
                     format!(
                         "terrain samples must strictly increase in distance: {} does not follow {}",
-                        dart_double(samples[i].distance_m),
-                        dart_double(samples[i - 1].distance_m)
+                        format_number(samples[i].distance_m),
+                        format_number(samples[i - 1].distance_m)
                     ),
                     format!("samples[{i}].distanceM"),
                 ));
@@ -145,8 +145,8 @@ impl SimulationTerrain {
                     C::TerrainLengthBeforeLastSample,
                     format!(
                         "lengthM ({}) is before the last sample at {} m",
-                        dart_double(length),
-                        dart_double(last)
+                        format_number(length),
+                        format_number(last)
                     ),
                     "lengthM",
                 ));

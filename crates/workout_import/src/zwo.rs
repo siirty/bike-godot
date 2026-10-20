@@ -1,6 +1,6 @@
 //! Zwift `.zwo` parsing.
 //!
-//! Segment handling follows GoldenCheetah's `ZwoParser.cpp`, as the Dart prototype did: a flat
+//! Segment handling follows GoldenCheetah's `ZwoParser.cpp`: a flat
 //! power attribute wins over a low/high pair; `<SteadyState>` with `PowerLow`/`PowerHigh` is a zone
 //! band ridden at its midpoint, not a ramp; `<Cooldown>` always ramps high-to-low; `IntervalsT`'s
 //! `Repeat` defaults to 1 and its off phase is optional.
@@ -53,7 +53,7 @@ fn child<'a, 'i>(node: Node<'a, 'i>, tag: &str) -> Option<Node<'a, 'i>> {
         .find(|c| c.is_element() && c.tag_name().name() == tag)
 }
 
-/// All descendant text, concatenated — what Dart's `XmlNode.innerText` returns.
+/// All descendant text, concatenated.
 fn inner_text(node: Node<'_, '_>) -> String {
     node.descendants()
         .filter(Node::is_text)

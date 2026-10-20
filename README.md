@@ -3,10 +3,9 @@
 A bike trainer app that turns structured workouts into terrain you ride in FTMS SIM mode. Your
 real power decides the outcome; the app never forces watts through ERG mode.
 
-It is a **Godot 4** app over a **Rust core**. Every domain package of the Flutter/Dart prototype
-(`siirty/bike-training-app`) has been ported to a Rust crate. Each port is checked bit for bit
-against golden vectors recorded from the Dart code. Created from
-[`template-ai-dev`](https://github.com/siirty/template-ai-dev).
+It is a **Godot 4** app over a **Rust core**. Build, tests, fixture maintenance and simulation
+development are owned by this repository. No legacy application checkout or language toolchain is
+required. Created from [`template-ai-dev`](https://github.com/siirty/template-ai-dev).
 
 ## Layout
 
@@ -17,11 +16,11 @@ against golden vectors recorded from the Dart code. Created from
 | `crates/workout_import/` | ZWO/ERG/MRC parsing and the versioned segment JSON. |
 | `crates/race_physics/` | Forces, power↔speed solvers, fixed-step dynamics, drafting. |
 | `crates/session_director/` | Pre-ride terrain synthesis and training contracts. |
-| `crates/race_engine/` | The deterministic race kernel, PCG32, snapshot codec, and the workout `RideSession`. |
+| `crates/race_engine/` | The deterministic race kernel, spotlight tactics, PCG32, snapshot codec, and workout `RideSession`. |
 | `crates/trainer_control/` | The `TrainerControl` interface, SIM write throttle, and simulated trainer. |
 | `crates/local_storage/` | The workout library on SQLite (rusqlite). |
 | `crates/ble_trainer/` | A SIM-only `TrainerControl` over [`bike-training-core`](https://github.com/siirty/bike-training-core) (pinned git dependency). |
-| `fixtures/golden/`, `tools/golden_exporter/` | Parity vectors and the Dart script that records them. |
+| `fixtures/golden/` | Frozen, self-contained regression vectors with provenance and checksums. |
 | `tools/ftms-spike/` | SIM-mode experiments against a real trainer; results go into [`docs/trainers/`](docs/trainers/). |
 | `docs/` | [Architecture](docs/architecture/README.md) (design, build order, open questions), [decisions](docs/decisions/), [trainer datasheets](docs/trainers/), [port divergences](docs/port/divergences.md). |
 
@@ -47,10 +46,12 @@ To ride without hardware, choose **Ride without a trainer (simulate)** and use t
 
 The Godot steps run when `godot` is on PATH or `GODOT` points at a binary.
 
-## Re-recording parity vectors
+## Regression fixtures
 
-Do this only to re-check parity; the Dart prototype is frozen. The steps are in
-[`tools/golden_exporter/README.md`](tools/golden_exporter/README.md).
+The checked-in vectors are frozen historical evidence, not generated expectations. See
+[`fixtures/golden/README.md`](fixtures/golden/README.md). New behavior is specified here and tested
+with independent calculations, state transitions and deterministic kernel runs. Never regenerate
+expected results from the implementation under test.
 
 ## Runner
 

@@ -35,7 +35,7 @@ fn same(actual: f64, expected: &Value, context: &str) {
     assert_eq!(
         actual.to_bits(),
         expected.to_bits(),
-        "{context}: rust {actual:e} vs dart {expected:e}"
+        "{context}: rust {actual:e} vs fixture {expected:e}"
     );
 }
 
