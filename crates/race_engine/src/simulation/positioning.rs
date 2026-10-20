@@ -125,7 +125,7 @@ fn index_of(state: &RaceState, id: &RiderId) -> Option<usize> {
 }
 
 fn is_eligible(drafting: &BasicDraftingConfig, gap: f64, offset: usize) -> bool {
-    gap > 0.0 && gap < drafting.max_gap_m() && offset < drafting.slot_count()
+    gap > drafting.min_gap_m() && gap < drafting.max_gap_m() && offset < drafting.slot_count()
 }
 
 fn drag_multiplier(drafting: &BasicDraftingConfig, gap: f64, offset: usize) -> f64 {
@@ -133,7 +133,7 @@ fn drag_multiplier(drafting: &BasicDraftingConfig, gap: f64, offset: usize) -> f
         return 1.0;
     }
     let near_wheel = drafting.multiplier_for(offset);
-    let gap_fraction = gap / drafting.max_gap_m();
+    let gap_fraction = (gap - drafting.min_gap_m()) / (drafting.max_gap_m() - drafting.min_gap_m());
     let raw = near_wheel + (1.0 - near_wheel) * gap_fraction;
     raw.clamp(near_wheel, 1.0)
 }

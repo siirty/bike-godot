@@ -13,7 +13,7 @@ in `docs/architecture/physics-design.md`. This doc is the formula/constants refe
 Forward direction (closed-form, `v` known → `P(v)`):
 
 ```
-P(v) = [ m·g·(sinθ + Crr·cosθ) + 0.5·ρ·CdA·(v − w)² ] · v / η
+P(v) = [ m·g·(sinθ + Crr·cosθ) + 0.5·ρ·CdA·|v + w|·(v + w) ] · v / η
 ```
 
 - `m` — combined rider + bike mass (kg)

@@ -1,8 +1,8 @@
 //! The race view's live kernel: the same deterministic `RaceSimulation` the headless tests step,
 //! stepped in real time at its fixed step and interpolated for display.
 //!
-//! The riders' powers are a scripted fixture (the prototype's replay scenario), not AI and not
-//! human telemetry: tactical AI and feeding a real trainer into the kernel are later slices.
+//! The player follows a scripted power request; opponents follow seeded pack plans. Every
+//! software rider has finite CP/W′/Pmax capability. Trainer integration and tactics are later slices.
 //! Positions and speeds come only from the kernel.
 
 use std::time::Duration;
@@ -14,7 +14,9 @@ use race_engine::{
     RaceSimulationConfig, RaceSimulationConfigSpec, RaceState, RiderControlInput, RiderDefinition,
     RiderId, RiderState, SimulationTerrain, TerrainInterpolation, TerrainSample,
 };
-use race_physics::{LongitudinalDynamicsConfig, RiderPhysicalParams, SimulationTimestep};
+use race_physics::{
+    LongitudinalDynamicsConfig, PhysiologyParams, RiderPhysicalParams, SimulationTimestep,
+};
 
 use crate::app::format::format_duration;
 use crate::app::route::elevation_table;
@@ -61,6 +63,7 @@ pub struct LiveRace {
     accumulator: f64,
     finished: bool,
     feed: VecDeque<String>,
+    pace_plans: Vec<race_engine::pack::PackPacePlan>,
 }
 
 fn terrain() -> SimulationTerrain {
@@ -101,11 +104,26 @@ impl LiveRace {
                         RiderPhysicalParams::new(*mass),
                     )
                     .unwrap()
+                    .with_physiology(
+                        PhysiologyParams::new(
+                            match *id {
+                                "human" => 280.0,
+                                "rival" => 265.0,
+                                _ => 270.0,
+                            },
+                            20_000.0,
+                            1100.0,
+                        )
+                        .expect("valid capability"),
+                    )
                 })
                 .collect(),
             terrain: terrain(),
             dynamics: LongitudinalDynamicsConfig::default(),
-            drafting: None,
+            drafting: Some(
+                race_engine::BasicDraftingConfig::new(6.0, vec![0.62, 0.85])
+                    .expect("valid drafting"),
+            ),
             lateral_slot_count: 3,
             air_density_kg_m3: 1.225,
             headwind_ms: 0.0,
@@ -117,7 +135,10 @@ impl LiveRace {
             SCRIPT
                 .iter()
                 .map(|(id, _, d, slot, v, _)| {
-                    RiderState::new(RiderId::new(*id).unwrap(), *d, *v, *slot, None).unwrap()
+                    RiderState::new(RiderId::new(*id).unwrap(), *d, *v, *slot, None)
+                        .unwrap()
+                        .with_w_prime_balance(20_000.0)
+                        .unwrap()
                 })
                 .collect(),
         )
@@ -130,6 +151,9 @@ impl LiveRace {
             accumulator: 0.0,
             finished: false,
             feed: VecDeque::new(),
+            pace_plans: (0..3)
+                .map(|i| race_engine::pack::PackPacePlan::seeded(42 + i))
+                .collect(),
         }
     }
 
@@ -147,7 +171,20 @@ impl LiveRace {
                         .rev()
                         .find(|(from, _)| *from <= self.step)
                         .map_or(0.0, |(_, w)| *w);
-                    RiderControlInput::power(RiderId::new(*id).unwrap(), watts).unwrap()
+                    let rider_id = RiderId::new(*id).unwrap();
+                    let watts = if *id == PLAYER_ID {
+                        watts
+                    } else {
+                        let index = SCRIPT.iter().position(|r| r.0 == *id).unwrap();
+                        self.pace_plans[index]
+                            .requested_power(
+                                self.simulation.config().definition_for(&rider_id).unwrap(),
+                                self.current.rider_state(&rider_id).unwrap(),
+                                self.current.simulation_time(),
+                            )
+                            .expect("valid pace plan")
+                    };
+                    RiderControlInput::power(rider_id, watts).unwrap()
                 })
                 .collect(),
         )

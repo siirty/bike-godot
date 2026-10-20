@@ -38,12 +38,16 @@ so the two sides agree.
 
 ## race_engine
 
-The kernel, PCG32, terrain lookup and snapshot codec match the prototype bit for bit: three
-recorded races replay to identical checkpoints, and their initial and final snapshots are
-byte-identical. Decode errors match on code, path and message.
+The original Dart force, solver, dynamics, RNG and terrain vectors remain unchanged. Historical
+race vectors are replayed using test-only v3 inputs with null physiology and a zero drafting
+minimum gap. Their state and projected legacy snapshot bytes remain exact. Production v3
+snapshots require the new fields and reject v2; they have independent round-trip and resume tests.
 
 | Case | Prototype | Port | Why |
 | --- | --- | --- | --- |
+| Physiology | Requested power is unlimited | Optional fixed CP/W′/Pmax and remaining reserve bound delivered power | Software riders have finite capability; reference fixtures explicitly omit it. |
+| Snapshot schema | v2 | v3, with physiology, reserve and minimum gap; v2 rejected | Changed continuation semantics must be explicit. |
+| Drafting overlap | Shelter extends to any positive gap | Default 2.5 m center-to-center minimum in all eligible slots | Removes shelter between overlapping riders. |
 | Decoded `maxPropulsiveForceN` ≤ 0 | An untyped `ArgumentError` escapes the codec | `validation:notPositive` at `config.dynamics.maxPropulsiveForceN` | The codec promises typed errors with a path. |
 | A physics failure inside a step (drivetrain efficiency above 1, a non-finite result) | An untyped `ArgumentError`/`StateError` escapes `step` | A typed validation error on `state.riders[i].<field>` | Same promise, for the kernel. |
 | `"not valid JSON: …"` detail | `dart:convert`'s wording | `serde_json`'s wording | Parser-specific text. Code, path and prefix match. |

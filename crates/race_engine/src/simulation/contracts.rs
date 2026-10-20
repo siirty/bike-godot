@@ -4,7 +4,9 @@
 use std::collections::HashSet;
 use std::time::Duration;
 
-use race_physics::{LongitudinalDynamicsConfig, PhysicsDefaults, RiderPhysicalParams};
+use race_physics::{
+    LongitudinalDynamicsConfig, PhysicsDefaults, PhysiologyParams, RiderPhysicalParams,
+};
 
 use crate::dart_json::dart_double;
 use crate::simulation::error::{at, RaceSimulationError, Result, SimulationValidationCode as C};
@@ -16,11 +18,12 @@ use crate::{RaceEvent, RandomState, RiderId, SimulationTerrain};
 
 /// Everything about a rider that does not change while the simulation runs. Capability lives
 /// here, in the configuration the kernel never rewrites, which is the mechanical form of the
-/// no-rubber-banding rule. Physiology (CP/W′, sprint) is later-slice work.
+/// no-rubber-banding rule. Optional physiology bounds software rider power.
 #[derive(Debug, Clone, PartialEq)]
 pub struct RiderDefinition {
     id: RiderId,
     physical: RiderPhysicalParams,
+    physiology: Option<PhysiologyParams>,
 }
 
 impl RiderDefinition {
@@ -33,7 +36,22 @@ impl RiderDefinition {
             check_finite_positive(physical.drive_train_efficiency, "driveTrainEfficiency")?;
             Ok(())
         })?;
-        Ok(Self { id, physical })
+        Ok(Self {
+            id,
+            physical,
+            physiology: None,
+        })
+    }
+
+    /// Attach fixed physiology to a software rider.
+    pub fn with_physiology(mut self, physiology: PhysiologyParams) -> Self {
+        self.physiology = Some(physiology);
+        self
+    }
+
+    /// Capability, absent for unconstrained physics reference fixtures.
+    pub fn physiology(&self) -> Option<&PhysiologyParams> {
+        self.physiology.as_ref()
     }
 
     /// The rider's identity.
@@ -50,12 +68,13 @@ impl RiderDefinition {
 /// The minimum 1.5-D drafting model. Shelter is aerodynamic drag only.
 ///
 /// For an eligible target at pre-step gap `g` and slot separation `s`:
-/// `m = near[s] + (1 − near[s]) · g / maxGap`, clamped to `[near[s], 1]`. Eligible means
-/// `0 < g < maxGap` and `s < near.len()`; otherwise the multiplier is exactly 1. The constants are
+/// `m = near[s] + (1 − near[s]) · (g − minGap) / (maxGap − minGap)`, clamped to `[near[s], 1]`. Eligible means
+/// `minGap < g < maxGap` and `s < near.len()`; otherwise the multiplier is exactly 1. The constants are
 /// explicit and uncalibrated by design; there is no default model.
 #[derive(Debug, Clone, PartialEq)]
 pub struct BasicDraftingConfig {
     max_gap_m: f64,
+    min_gap_m: f64,
     minimum_drag_multiplier_by_slot_offset: Vec<f64>,
 }
 
@@ -63,7 +82,25 @@ impl BasicDraftingConfig {
     /// Validates: positive gap; a non-empty, non-decreasing list of values in `(0, 1]` whose
     /// first entry is `< 1`.
     pub fn new(max_gap_m: f64, minimum_drag_multiplier_by_slot_offset: Vec<f64>) -> Result<Self> {
+        Self::with_min_gap(max_gap_m, minimum_drag_multiplier_by_slot_offset, 2.5)
+    }
+
+    /// Explicit center-to-center minimum gap. 2.5 m represents a 1.8 m bicycle plus
+    /// 0.7 m clear air behind the rear wheel; zero is for historical reference fixtures.
+    pub fn with_min_gap(
+        max_gap_m: f64,
+        minimum_drag_multiplier_by_slot_offset: Vec<f64>,
+        min_gap_m: f64,
+    ) -> Result<Self> {
         check_finite_positive(max_gap_m, "maxGapM")?;
+        check_finite_non_negative(min_gap_m, "minGapM")?;
+        if min_gap_m >= max_gap_m {
+            return Err(RaceSimulationError::validation(
+                C::OutOfRange,
+                "minGapM must be below maxGapM",
+                "minGapM",
+            ));
+        }
         let list = &minimum_drag_multiplier_by_slot_offset;
         if list.is_empty() {
             return Err(RaceSimulationError::validation(
@@ -107,6 +144,7 @@ impl BasicDraftingConfig {
         }
         Ok(Self {
             max_gap_m,
+            min_gap_m,
             minimum_drag_multiplier_by_slot_offset,
         })
     }
@@ -114,6 +152,11 @@ impl BasicDraftingConfig {
     /// The longest gap at which a rider may still draft, in metres.
     pub fn max_gap_m(&self) -> f64 {
         self.max_gap_m
+    }
+
+    /// Smallest center-to-center gap providing shelter; overlap gets none.
+    pub fn min_gap_m(&self) -> f64 {
+        self.min_gap_m
     }
 
     /// Best shelter per absolute lateral-slot separation.
@@ -276,6 +319,20 @@ impl RaceSimulationConfig {
             )?;
             for (i, rider) in state.riders.iter().enumerate() {
                 at(&format!("riders[{i}]"), || {
+                    match (
+                        self.definition_for(&rider.id).and_then(|d| d.physiology()),
+                        rider.w_prime_balance_j,
+                    ) {
+                        (Some(p), Some(b)) if b <= p.w_prime_j() => {}
+                        (None, None) => {}
+                        _ => {
+                            return Err(RaceSimulationError::validation(
+                                C::OutOfRange,
+                                "reserve must match configured physiology and not exceed capacity",
+                                "wPrimeBalanceJ",
+                            ))
+                        }
+                    }
                     self.check_lateral_slot(rider.lateral_slot, "lateralSlot")?;
                     self.check_draft_target(rider.draft_target_id.as_ref(), "draftTargetId")
                 })?;
@@ -362,6 +419,7 @@ pub struct RiderState {
     speed_ms: f64,
     lateral_slot: usize,
     draft_target_id: Option<RiderId>,
+    w_prime_balance_j: Option<f64>,
 }
 
 impl RiderState {
@@ -390,7 +448,19 @@ impl RiderState {
             speed_ms,
             lateral_slot: lateral_slot as usize,
             draft_target_id,
+            w_prime_balance_j: None,
         })
+    }
+
+    /// Set continuation reserve (finite, non-negative). Config validation checks capacity.
+    pub fn with_w_prime_balance(mut self, balance_j: f64) -> Result<Self> {
+        check_finite_non_negative(balance_j, "wPrimeBalanceJ")?;
+        self.w_prime_balance_j = Some(balance_j);
+        Ok(self)
+    }
+    /// Remaining supra-CP reserve, absent for a reference fixture without physiology.
+    pub fn w_prime_balance_j(&self) -> Option<f64> {
+        self.w_prime_balance_j
     }
 
     /// Which rider.

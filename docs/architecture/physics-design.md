@@ -242,14 +242,15 @@ processing order can never create a physical advantage.
   3. the nearest eligible rider ahead, with ties going to the lower canonical ID.
 
   A target kept in the state is always still eligible under the post-step geometry.
-- **Shelter.** `BasicDraftingConfig` takes a maximum gap and a minimum drag multiplier for each
-  slot offset. For an eligible target at gap `g` and slot separation `s`, the multiplier is:
+- **Shelter.** `BasicDraftingConfig` carries minimum and maximum center-to-center gaps and
+  minimum drag multipliers by slot offset. Eligibility requires `min_gap < g < max_gap` and
+  `s < near.len()`. Overlapping and side-by-side riders get no shelter in any slot.
 
-  `m = near[s] + (1 − near[s]) · g / max_gap`, clamped to `[near[s], 1]`.
+  `m = near[s] + (1 − near[s]) · (g − min_gap) / (max_gap − min_gap)`.
 
-  "Eligible" means `0 < g < max_gap` and `s < near.len()`. Otherwise the multiplier is exactly 1,
-  so shelter decays linearly with gap and monotonically with lateral separation. The constants are
-  explicit and uncalibrated, and there is no default model.
+  The result is clamped to `[near[s], 1]`. `new` uses a provisional 2.5 m minimum: a 1.8 m bicycle
+  plus 0.7 m clear air behind its rear wheel. `with_min_gap` makes the geometry explicit; zero
+  reproduces historical reference fixtures. Gap and multiplier values require calibration.
 
 ### Determinism guarantee
 
@@ -281,7 +282,7 @@ would then feed the next step.
 
 `encode_snapshot` writes a self-contained UTF-8 JSON document. It contains:
 - the format identifier;
-- `schemaVersion: 2`;
+- `schemaVersion: 3`;
 - the complete configuration, including terrain and rider definitions;
 - the complete state, including the RNG position.
 
@@ -332,7 +333,7 @@ returned beside the applied result.
 **Propulsive force is bounded at low speed.** `P/v` diverges at a standstill, so force is
 `min(wheel_power / v, cap)`. Below the crossover speed `wheel_power / cap`, the cap applies; at
 that speed the two branches meet exactly. The cap is an explicit, configurable *numerical*
-parameter, not a gearing, torque or traction model; Slice 5's physiology replaces it rather than
+parameter, not a gearing, torque or traction model; a future drivetrain model replaces it rather than
 tuning it. It travels in `LongitudinalDynamicsConfig` inside the simulation's configuration
 rather than as a private constant. An input that does not appear in the configuration does not
 appear in the snapshot either.
@@ -447,9 +448,37 @@ remain session state. The rest of the field may come from a broader variable ros
 helps decide whether a move is worth following, together with current-race threat. It is never an
 omniscient replacement for race context.
 
-The initial physiology model is CP, W′ balance and reconstitution, Pmax with short-duration decay,
-mass, CdA and phenotype. Physiology and tactical personality are separate. Race-to-race form
-variation is deferred.
+The physiology model is `race_physics::PhysiologyParams`: independent CP (W), W′ capacity (J),
+and fresh peak power Pmax (W). `RiderDefinition` carries capability and `RiderState` carries
+remaining W′. Config validation requires matching presence and a balance within capacity.
+The corpus and live demo use explicit provisional capability fixtures; no universal CP/FTP
+conversion is assumed. Physiological phenotype and tactical personality distributions remain open.
+
+For requested crank power P below CP, the Skiba differential recovery equation is
+`dB/dt = (W′ − B) (CP − P) / W′`. The exact constant-power update is
+`Bnext = W′ − (W′ − B) exp(−(CP − P) dt / W′)`. At CP the balance holds; above CP, actual
+excess work drains it one joule per joule. The reference is
+[Skiba et al. (2015)](https://doi.org/10.1007/s00421-014-3050-3).
+
+The simulation adds a reserve-dependent instantaneous ceiling
+`Pavailable = CP + (Pmax − CP) B/W′`. This is a provisional sprint approximation, not a
+neuromuscular-fatigue claim from Skiba. On an all-out request it yields exponential decay with
+`tau = W′/(Pmax − CP)`. `step_physiology` integrates both the linear drain and any subsequent
+ceiling-bound portion analytically, returning the actual average power delivered across the step.
+That power drives the longitudinal dynamics. W′ never goes negative, and an empty rider can
+still deliver CP. Rest below CP replenishes reserve and restores peak capacity.
+
+`PackPacePlan` generates a repeating ten-minute schedule from an explicit PCG32 seed, using
+30-second blocks at 85–100% CP with occasional 130–160% surges. When reserve falls below 20%,
+the request blends continuously toward 65% CP as reserve falls to zero. Plans read only their own
+rider's capability, reserve and simulation time. They are immutable scenario input policies;
+resuming a kernel snapshot requires the same future inputs, as it always has. Capability limiting
+lives in the kernel, so a controller cannot bypass it with an excessive request.
+
+Schema v3 serializes physiology, reserve and minimum drafting gap. Schema v2 is rejected by the
+production decoder. Historical Dart races remain independent oracles via test-only v3 fixtures
+that explicitly select null physiology and the original zero minimum gap. No old bytes are
+silently upgraded in production. Race-to-race form variation is deferred.
 
 ## Constrained stochasticity
 

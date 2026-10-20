@@ -75,7 +75,7 @@ They are invariants to protect, not preferences.
 
 - **Capability lives in `RaceSimulationConfig`; only dynamic data lives in `RaceState`.** Never add
   a capability field to `RiderState`, and never have a step rewrite the configuration. Physiology
-  (CP/W′, sprint) belongs on `RiderDefinition` when Slice 5 adds it.
+  (CP/W′, sprint) belongs on `RiderDefinition`; remaining reserve belongs on `RiderState`.
 - **No library RNG anywhere in the kernel** (`rand`, `thread_rng`, `RandomState` hashing order, …).
   Randomness is `Pcg32` (`pcg32-v1`), whose full state is in `RaceState` so that a snapshot resumes
   the same sequence. Changing the algorithm or the seed→state mapping needs a **new algorithm ID**

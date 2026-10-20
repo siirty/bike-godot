@@ -20,21 +20,17 @@ Live utility tactics are for the 2–3 drama-spotlight riders only, plus a minim
 The pack runs scripted pace plans with seeded variance. The first autonomous simulation uses
 hand-authored terrain and starting state. It needs empirical answers for:
 
-- the CP/FTP relationship and the initial W′ depletion/reconstitution equation;
-- the Pmax and short-duration sprint-decay model;
+- athlete-specific CP/FTP estimation and calibration of W′ capacity;
+- empirical calibration of Pmax and the reserve-dependent sprint ceiling;
 - initial rider-profile and tactical-personality distributions;
 - the spotlight riders' utility functions, action set, decision cadence, reaction delay and
   commitment/hysteresis;
 - the threat model, combining persistent reputation with current-race danger;
-- the pack's pace-plan templates and how their seeded variance is drawn;
+- richer pack pace templates and recovery behavior, guided by the seeded baseline;
 - the shape of the minimal scene-goal seam, meaning a targetable future race-state set that the
   spotlight AI's utility is evaluated against;
 - collision avoidance under soft slot occupancy;
-- calibrated drafting constants by gap, depth and lateral slot. The current model gives maximum
-  shelter at zero gap, even to a rider level in the adjacent slot. Two riders of near-equal power
-  riding abreast therefore trade shelter and leapfrog hundreds of times per race: the corpus
-  report's "worst pair" column (up to ~800 swaps per pair). The answer has to settle overlap and
-  side-by-side shelter, not just the constants;
+- calibrated bike-length, wheel-clearance and shelter constants by gap, depth and lateral slot;
 - group events (split, catch, dropped, bridge) and their detection rule, to extend `RaceEventKind`;
 - the initial full-fidelity field ceiling and benchmark hardware;
 - the seed corpus, stability duration and statistical acceptance criteria for calling the

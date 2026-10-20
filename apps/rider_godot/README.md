@@ -10,8 +10,8 @@ Screens:
 - **Connect trainer**: scan over BLE, or ride on the simulated trainer.
 - **Ride**: a 3D road, a HUD and a route strip. SIM grade is written to the trainer. The
   simulated trainer adds a power slider and a SIM debug panel.
-- **Race view**: the deterministic race kernel stepping live, with three riders on scripted
-  powers and a feed of the kernel's race events (passes, wheels, finish).
+- **Race view**: the deterministic race kernel stepping live, with a scripted player request and seeded opponent
+  pace plans, bounded by CP/W′/Pmax and a feed of the kernel's race events (passes, wheels, finish).
 - **Settings**: FTP, saved in `user://settings.cfg`.
 
 The workout library is `user://workouts.sqlite`.

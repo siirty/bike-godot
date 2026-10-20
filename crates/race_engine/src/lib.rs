@@ -7,6 +7,7 @@
 pub mod dart_json;
 #[cfg(feature = "testing")]
 pub mod harness;
+pub mod pack;
 pub mod ride_session;
 pub mod simulation;
 /// Tolerance-aware comparison for tests. Never used by the kernel.

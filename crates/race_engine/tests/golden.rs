@@ -110,16 +110,16 @@ fn inputs_at(script: &BTreeMap<String, Vec<Value>>, step: u64) -> RaceInputFrame
 }
 
 #[test]
-fn races_replay_bit_for_bit_and_snapshots_are_byte_identical() {
+fn historical_reference_races_replay_with_explicit_v3_test_fixtures() {
     let g = golden();
     for race in g["races"].as_array().unwrap() {
         let name = race["name"].as_str().unwrap();
         let initial = race["initialSnapshot"].as_str().unwrap();
-        let (config, mut state) = decode_snapshot(initial)
+        let (config, mut state) = decode_snapshot(&reference_fixture(initial))
             .unwrap_or_else(|e| panic!("{name}: {e}"))
             .into_parts();
         assert_eq!(
-            encode_snapshot(&config, &state).unwrap(),
+            reference_projection(&encode_snapshot(&config, &state).unwrap()),
             initial,
             "{name}: re-encode"
         );
@@ -169,7 +169,7 @@ fn races_replay_bit_for_bit_and_snapshots_are_byte_identical() {
         }
         assert_eq!(seen, checkpoints.len(), "{name}: every checkpoint visited");
         assert_eq!(
-            encode_snapshot(&config, &state).unwrap(),
+            reference_projection(&encode_snapshot(&config, &state).unwrap()),
             race["finalSnapshot"].as_str().unwrap(),
             "{name}: final snapshot"
         );
@@ -189,10 +189,13 @@ fn decode_errors_match_code_path_and_message() {
     let g = golden();
     for c in g["decodeErrors"].as_array().unwrap() {
         let label = c["label"].as_str().unwrap();
-        let err = decode_snapshot(c["source"].as_str().unwrap()).expect_err(label);
+        let err =
+            decode_snapshot(&reference_fixture(c["source"].as_str().unwrap())).expect_err(label);
         assert_eq!(error_label(&err), c["error"], "{label}");
         assert_eq!(err.path(), c["path"], "{label}");
-        if label == "not json" {
+        if label == "v1" {
+            assert!(err.message().contains("version 3"));
+        } else if label == "not json" {
             // Parser wording differs between serde_json and dart:convert; the prefix is ours.
             assert!(
                 err.message().starts_with("not valid JSON: "),
@@ -202,5 +205,61 @@ fn decode_errors_match_code_path_and_message() {
         } else {
             assert_eq!(err.message(), c["message"], "{label}");
         }
+    }
+}
+
+// Test-only conversion: production rejects every v2 snapshot. Historical inputs explicitly
+// choose no physiology and the old zero minimum drafting gap, preserving the Dart oracle.
+fn reference_fixture(source: &str) -> String {
+    let Ok(mut v) = serde_json::from_str::<Value>(source) else {
+        return source.to_owned();
+    };
+    if v["schemaVersion"] != 2 {
+        return source.to_owned();
+    }
+    v["schemaVersion"] = 3.into();
+    if let Some(d) = v
+        .pointer_mut("/config/drafting")
+        .and_then(Value::as_object_mut)
+    {
+        let gap = if d["maxGapM"].is_null() {
+            Value::Null
+        } else {
+            serde_json::json!(0.0)
+        };
+        d.insert("minGapM".into(), gap);
+    }
+    if let Some(riders) = v
+        .pointer_mut("/config/riders")
+        .and_then(Value::as_array_mut)
+    {
+        for rider in riders {
+            rider["physiology"] = Value::Null;
+        }
+    }
+    if let Some(riders) = v.pointer_mut("/state/riders").and_then(Value::as_array_mut) {
+        for rider in riders {
+            rider["wPrimeBalanceJ"] = Value::Null;
+        }
+    }
+    v.to_string()
+}
+fn reference_projection(source: &str) -> String {
+    source
+        .replace("\"schemaVersion\":3", "\"schemaVersion\":2")
+        .replace(",\"minGapM\":null", "")
+        .replace(",\"minGapM\":0.0", "")
+        .replace(",\"physiology\":null", "")
+        .replace(",\"wPrimeBalanceJ\":null", "")
+}
+
+#[test]
+fn production_rejects_all_historical_v2_snapshots() {
+    for race in golden()["races"].as_array().unwrap() {
+        let e = decode_snapshot(race["initialSnapshot"].as_str().unwrap()).unwrap_err();
+        assert_eq!(
+            e.decode_code(),
+            Some(race_engine::SnapshotDecodeCode::UnsupportedSchemaVersion)
+        );
     }
 }

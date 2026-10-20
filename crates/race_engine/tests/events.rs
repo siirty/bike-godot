@@ -76,7 +76,7 @@ fn kinds(events: &[RaceEvent]) -> Vec<RaceEventKind> {
 fn a_wheel_is_lost_when_there_is_no_drafting_model_to_keep_it() {
     let sim = RaceSimulation::new(config(&["a", "b"], None, None)).unwrap();
     let before = state(vec![
-        rider("a", 2.0, 10.0, 0, None),
+        rider("a", 3.0, 10.0, 0, None),
         rider("b", 0.0, 10.0, 0, Some("a")),
     ]);
     let result = sim
@@ -100,9 +100,9 @@ fn a_wheel_is_lost_when_there_is_no_drafting_model_to_keep_it() {
 fn taking_a_wheel_and_moving_slot_are_reported_with_their_values() {
     let drafting = BasicDraftingConfig::new(5.0, vec![0.6, 0.85]).unwrap();
     let sim = RaceSimulation::new(config(&["a", "b"], Some(drafting), None)).unwrap();
-    // b sits 2 m behind a, one slot over, without a wheel; it asks for a's slot.
+    // b sits 3 m behind a, one slot over, without a wheel; it asks for a's slot.
     let before = state(vec![
-        rider("a", 2.0, 10.0, 0, None),
+        rider("a", 3.0, 10.0, 0, None),
         rider("b", 0.0, 10.0, 1, None),
     ]);
     let result = sim

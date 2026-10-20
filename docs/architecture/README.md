@@ -44,7 +44,7 @@ Dependencies point downward only. The domain crates know nothing about Godot. On
 - **Explicit time.** Trainers, the throttle and `RideSession` take a monotonic `now` from
   Godot's frame loop. No timer or wall clock hides inside the core.
 - **One deterministic kernel.** It uses fixed 50 ms steps, `pcg32-v1` randomness, canonical rider
-  order and self-contained schema-v2 snapshots. Live and headless runs use the same kernel.
+  order and self-contained schema-v3 snapshots. Live and headless runs use the same kernel.
 - **Capability lives in config, never in state.** Drafting scales aerodynamic drag only.
 - **Measured telemetry is real.** Simulated outcomes never become recorded human power.
 - **Parity is proven, not assumed.** `fixtures/golden/` holds vectors recorded from the Dart

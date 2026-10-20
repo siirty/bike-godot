@@ -161,3 +161,17 @@ fn replaying_wheel_and_slot_events_reconstructs_the_final_state() {
         }
     }
 }
+
+#[test]
+fn the_default_seed_corpus_has_bounded_pair_leapfrogging() {
+    for report in race_engine::harness::run_corpus(0..16).unwrap() {
+        // At most 20 reversals between one pair in a 6–10 km fixture. This is a broad
+        // regression bound against the hundreds caused by shelter while riding abreast.
+        assert!(
+            report.max_pair_swaps <= 20,
+            "seed {}: {} pair swaps",
+            report.seed,
+            report.max_pair_swaps
+        );
+    }
+}

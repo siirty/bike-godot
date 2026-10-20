@@ -37,13 +37,13 @@ fn drafting() -> BasicDraftingConfig {
     BasicDraftingConfig::new(5.0, vec![0.6, 0.85]).unwrap()
 }
 
-/// `a` leads by 2 m; `b` and `c` sit behind it in the same slot.
+/// `a` leads by 3 m; `b` and `c` sit behind it in the same slot.
 fn start_state() -> RaceState {
     RaceState::new(
         Duration::ZERO,
         Pcg32::seeded(1, 2).state(),
         vec![
-            RiderState::new(id("a"), 2.0, 10.0, 0, None).unwrap(),
+            RiderState::new(id("a"), 3.0, 10.0, 0, None).unwrap(),
             RiderState::new(id("b"), 0.0, 10.0, 0, Some(id("a"))).unwrap(),
             RiderState::new(id("c"), 0.0, 10.0, 2, None).unwrap(),
         ],

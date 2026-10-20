@@ -14,6 +14,7 @@ mod dynamics;
 mod error;
 mod forces;
 mod model;
+mod physiology;
 mod solver;
 mod timestep;
 
@@ -35,3 +36,5 @@ pub use solver::{
     MAX_SOLVABLE_GRADE, MAX_SOLVABLE_SPEED_MS, MIN_SOLVABLE_GRADE, MIN_SOLVABLE_SPEED_MS,
 };
 pub use timestep::SimulationTimestep;
+
+pub use physiology::{step_physiology, PhysiologyParams, PhysiologyStep};

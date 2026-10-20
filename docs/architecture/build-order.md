@@ -37,11 +37,13 @@ scene planner and tactical AI. Slices 5–9 are the remaining core loop, not a b
    races and runs them to the finish, checking invariants every step. To print the report, run:
 
    `cargo run -p race_engine --features testing --example headless_corpus --release -- 0 32`
-5. **Headless autonomous race**: run fully simulated fields on hand-authored terrain and initial
-   conditions. This needs:
-   - rider fixtures with CP, W′, Pmax/decay, physical parameters and tactical personality;
+5. **Headless autonomous race** *(physiology and pack pacing built; tactics pending)*: finite
+   CP/W′/Pmax, Skiba differential recovery, reserve-limited sprints and seeded pack plans run in
+   the headless corpus and live demo. Snapshot v3 carries all capability and reserve state.
+   Remaining work:
+   - calibrated rider profiles and tactical personality distributions;
    - utility-based tactics for the 2–3 drama-spotlight riders;
-   - capability-honest scripted pace plans with seeded variance for the pack;
+   - expand and calibrate the existing capability-limited pack pace templates;
    - a minimal scene-goal seam, so the spotlight AI has something to have intent about.
 
    Full pack/group recognition, cooperation and natural passing statistics wait until larger fields

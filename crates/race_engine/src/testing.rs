@@ -197,6 +197,10 @@ impl DeterministicComparison {
             |x, y, p| {
                 let mut d = Diffs::new();
                 exact(&mut d, x.id(), y.id(), &format!("{p}.id"));
+                match (x.w_prime_balance_j(), y.w_prime_balance_j()) {
+                    (Some(a), Some(b)) => self.approx(&mut d, a, b, &format!("{p}.wPrimeBalanceJ")),
+                    (a, b) => exact(&mut d, &a, &b, &format!("{p}.wPrimeBalanceJ")),
+                }
                 self.approx(
                     &mut d,
                     x.distance_m(),
@@ -305,6 +309,29 @@ impl DeterministicComparison {
     ) -> Diffs {
         let mut d = Diffs::new();
         exact(&mut d, a.id(), b.id(), &format!("{path}.id"));
+        match (a.physiology(), b.physiology()) {
+            (Some(a), Some(b)) => {
+                self.approx(
+                    &mut d,
+                    a.critical_power_w(),
+                    b.critical_power_w(),
+                    &format!("{path}.physiology.criticalPowerW"),
+                );
+                self.approx(
+                    &mut d,
+                    a.w_prime_j(),
+                    b.w_prime_j(),
+                    &format!("{path}.physiology.wPrimeJ"),
+                );
+                self.approx(
+                    &mut d,
+                    a.peak_power_w(),
+                    b.peak_power_w(),
+                    &format!("{path}.physiology.peakPowerW"),
+                );
+            }
+            (a, b) => exact(&mut d, &a, &b, &format!("{path}.physiology")),
+        }
         let to_map = |r: &RiderDefinition| match serde_json::to_value(r.physical()) {
             Ok(Value::Object(m)) => m,
             other => panic!("RiderPhysicalParams must serialize to an object, got {other:?}"),
@@ -343,6 +370,12 @@ impl DeterministicComparison {
             return d;
         };
         let mut d = Diffs::new();
+        self.approx(
+            &mut d,
+            a.min_gap_m(),
+            b.min_gap_m(),
+            &format!("{path}.minGapM"),
+        );
         self.approx(
             &mut d,
             a.max_gap_m(),

@@ -2,12 +2,14 @@
 //!
 //! A resume point with a lifetime of hours, not a history format: no migration, and an unknown
 //! schema version is rejected rather than reinterpreted. No wall-clock value is ever written, so
-//! the same simulation always encodes to the same bytes, byte-identical to the Dart prototype.
+//! the same simulation always encodes to the same bytes.
 //! Storage is someone else's job: this produces and consumes a `String`.
 
 use std::time::Duration;
 
-use race_physics::{LongitudinalDynamicsConfig, PhysicsError, RiderPhysicalParams};
+use race_physics::{
+    LongitudinalDynamicsConfig, PhysicsError, PhysiologyParams, RiderPhysicalParams,
+};
 use serde::Serialize;
 use serde_json::{Map, Value};
 
@@ -25,9 +27,9 @@ use crate::{
 /// The `format` string every snapshot begins with.
 pub const SNAPSHOT_FORMAT: &str = "bike-training-race-snapshot";
 
-/// The schema version this build writes and reads. v2 added `config.dynamics` (and carries
-/// `config.drafting`, `null` for a modelled absence).
-pub const SNAPSHOT_SCHEMA_VERSION: i64 = 2;
+/// Schema v3 adds fixed physiology, continuation reserve and the drafting minimum gap.
+/// Earlier snapshots are rejected; their interpretation is not silently changed.
+pub const SNAPSHOT_SCHEMA_VERSION: i64 = 3;
 
 /// A decoded pair, validated against each other.
 #[derive(Debug, Clone, PartialEq)]
@@ -93,6 +95,7 @@ struct DynamicsJson {
 #[serde(rename_all = "camelCase")]
 struct DraftingJson<'a> {
     max_gap_m: Option<f64>,
+    min_gap_m: Option<f64>,
     minimum_drag_multiplier_by_slot_offset: Option<&'a [f64]>,
 }
 
@@ -117,6 +120,7 @@ struct RiderDefinitionJson<'a> {
     id: &'a str,
     /// `race_physics` owns this mapping; the codec only places it.
     physical: &'a RiderPhysicalParams,
+    physiology: Option<&'a PhysiologyParams>,
 }
 
 #[derive(Serialize)]
@@ -142,6 +146,7 @@ struct RiderStateJson<'a> {
     speed_ms: f64,
     lateral_slot: i64,
     draft_target_id: Option<&'a str>,
+    w_prime_balance_j: Option<f64>,
 }
 
 fn micros(d: Duration) -> i64 {
@@ -166,6 +171,7 @@ pub fn encode_snapshot(config: &RaceSimulationConfig, state: &RaceState) -> Resu
             },
             drafting: DraftingJson {
                 max_gap_m: config.drafting().map(BasicDraftingConfig::max_gap_m),
+                min_gap_m: config.drafting().map(BasicDraftingConfig::min_gap_m),
                 minimum_drag_multiplier_by_slot_offset: config
                     .drafting()
                     .map(BasicDraftingConfig::minimum_drag_multiplier_by_slot_offset),
@@ -189,6 +195,7 @@ pub fn encode_snapshot(config: &RaceSimulationConfig, state: &RaceState) -> Resu
                 .map(|r| RiderDefinitionJson {
                     id: r.id().as_str(),
                     physical: r.physical(),
+                    physiology: r.physiology(),
                 })
                 .collect(),
         },
@@ -208,6 +215,7 @@ pub fn encode_snapshot(config: &RaceSimulationConfig, state: &RaceState) -> Resu
                     speed_ms: r.speed_ms(),
                     lateral_slot: r.lateral_slot() as i64,
                     draft_target_id: r.draft_target_id().map(RiderId::as_str),
+                    w_prime_balance_j: r.w_prime_balance_j(),
                 })
                 .collect(),
         },
@@ -269,6 +277,7 @@ fn decode_config(json: &Map<String, Value>, path: &str) -> Result<RaceSimulation
     let drafting_path = format!("{path}.drafting");
     let drafting_map = as_map(required(json, "drafting", path)?, &drafting_path)?;
     let max_gap_m = nullable_double(drafting_map, "maxGapM", &drafting_path)?;
+    let min_gap_m = nullable_double(drafting_map, "minGapM", &drafting_path)?;
     let multipliers_path = format!("{drafting_path}.minimumDragMultiplierBySlotOffset");
     let multipliers = match drafting_map.get("minimumDragMultiplierBySlotOffset") {
         None | Some(Value::Null) => None,
@@ -290,7 +299,7 @@ fn decode_config(json: &Map<String, Value>, path: &str) -> Result<RaceSimulation
             ))
         }
     };
-    if max_gap_m.is_none() != multipliers.is_none() {
+    if max_gap_m.is_none() != multipliers.is_none() || min_gap_m.is_none() != max_gap_m.is_none() {
         return Err(RaceSimulationError::decode(
             D::MalformedJson,
             format!(
@@ -325,9 +334,13 @@ fn decode_config(json: &Map<String, Value>, path: &str) -> Result<RaceSimulation
         )
     })?;
     let drafting = match (max_gap_m, multipliers) {
-        (Some(gap), Some(list)) => {
-            Some(at(&drafting_path, || BasicDraftingConfig::new(gap, list))?)
-        }
+        (Some(gap), Some(list)) => Some(at(&drafting_path, || {
+            BasicDraftingConfig::with_min_gap(
+                gap,
+                list,
+                min_gap_m.expect("validated drafting block"),
+            )
+        })?),
         _ => None,
     };
     let lateral_slot_count = int(json, "lateralSlotCount", path)?;
@@ -417,7 +430,24 @@ fn decode_rider_definition(
     let raw_id = string(json, "id", path)?;
     let prefix = format!("{config_path}.riders[{index}]");
     let id = at(&prefix, || at("id", || RiderId::new(raw_id)))?;
-    at(&prefix, || RiderDefinition::new(id, physical))
+    let definition = at(&prefix, || RiderDefinition::new(id, physical))?;
+    let raw = required(json, "physiology", path)?;
+    if raw.is_null() {
+        return Ok(definition);
+    }
+    let physiology_path = format!("{path}.physiology");
+    let map = as_map(raw, &physiology_path)?;
+    for key in ["criticalPowerW", "wPrimeJ", "peakPowerW"] {
+        double(map, key, &physiology_path)?;
+    }
+    let params: PhysiologyParams = serde_json::from_value(raw.clone()).map_err(|e| {
+        RaceSimulationError::validation(
+            SimulationValidationCode::OutOfRange,
+            e.to_string(),
+            &physiology_path,
+        )
+    })?;
+    Ok(definition.with_physiology(params))
 }
 
 fn decode_state(json: &Map<String, Value>, path: &str) -> Result<RaceState> {
@@ -444,8 +474,13 @@ fn decode_state(json: &Map<String, Value>, path: &str) -> Result<RaceState> {
             Value::Null => None,
             _ => Some(rider_id(rider, "draftTargetId", &rider_path)?),
         };
+        let balance = nullable_double(rider, "wPrimeBalanceJ", &rider_path)?;
         riders.push(at(&rider_path, || {
-            RiderState::new(id, distance_m, speed_ms, lateral_slot, draft_target_id)
+            let state = RiderState::new(id, distance_m, speed_ms, lateral_slot, draft_target_id)?;
+            match balance {
+                Some(b) => state.with_w_prime_balance(b),
+                None => Ok(state),
+            }
         })?);
     }
     let time_micros = int(json, "simulationTimeMicros", path)?;

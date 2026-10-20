@@ -120,6 +120,12 @@ pub fn run_race(
                     step: steps,
                     source,
                 })?;
+        config
+            .validate_state(&result.next_state, "nextState")
+            .map_err(|source| HarnessError::Simulation {
+                step: steps,
+                source,
+            })?;
         check_step(&state, &result.next_state, &result.events, dt).map_err(|message| {
             HarnessError::Invariant {
                 step: steps,
@@ -204,7 +210,6 @@ fn kind_index(kind: &RaceEventKind) -> u8 {
 #[derive(Debug, Clone, PartialEq)]
 struct PlanSegment {
     start_step: u64,
-    power_watts: f64,
     lateral_slot: Option<usize>,
 }
 
@@ -220,6 +225,7 @@ pub struct CorpusScenario {
     /// A generous step limit: the course at 4 m/s.
     pub max_steps: u64,
     plans: Vec<Vec<PlanSegment>>,
+    pace_plans: Vec<crate::pack::PackPacePlan>,
 }
 
 impl CorpusScenario {
@@ -230,8 +236,8 @@ impl CorpusScenario {
     /// - a 6–10 km course: a bounded random walk of grades in [−4 %, +7 %], sampled every 400 m
     ///   and ramped linearly;
     /// - a line start 1.5 m apart at 8 m/s in random slots of three;
-    /// - plans of 20–60 s blocks at 85–105 % of sustainable power, with a 12 % chance per block of
-    ///   an 8–20 s surge at 150–190 %, and a 25 % chance per block of a slot request.
+    /// - seeded 30-second pack pace blocks bounded by fixed CP/W′/Pmax, plus a 25% chance
+    ///   per block of a lateral-slot request; capability values are provisional fixtures.
     pub fn generate(seed: u64) -> Result<Self, RaceSimulationError> {
         let mut rng = Pcg32::seeded(seed, CORPUS_STREAM);
         let step = Duration::from_millis(50);
@@ -247,10 +253,17 @@ impl CorpusScenario {
                 ..RiderPhysicalParams::new(mass)
             };
             sustainable.push((3.0 + 1.3 * rng.next_f64()) * (mass - 9.0));
-            definitions.push(RiderDefinition::new(
-                RiderId::new(format!("r{:02}", i + 1))?,
-                physical,
-            )?);
+            definitions.push(
+                RiderDefinition::new(RiderId::new(format!("r{:02}", i + 1))?, physical)?
+                    .with_physiology(
+                        race_physics::PhysiologyParams::new(
+                            *sustainable.last().expect("one CP per rider"),
+                            16_000.0 + 800.0 * i as f64,
+                            900.0 + 40.0 * i as f64,
+                        )
+                        .expect("valid capability fixture"),
+                    ),
+            );
         }
 
         let length_m = (6000.0 + 4000.0 * rng.next_f64()).round();
@@ -277,18 +290,26 @@ impl CorpusScenario {
         }
         let mut riders = Vec::with_capacity(rider_count);
         for (position, &rider) in order.iter().enumerate() {
-            riders.push(RiderState::new(
-                definitions[rider].id().clone(),
-                1.5 * position as f64,
-                8.0,
-                rng.next_int_below(slots as u64)? as i64,
-                None,
-            )?);
+            riders.push(
+                RiderState::new(
+                    definitions[rider].id().clone(),
+                    1.5 * position as f64,
+                    8.0,
+                    rng.next_int_below(slots as u64)? as i64,
+                    None,
+                )?
+                .with_w_prime_balance(
+                    definitions[rider]
+                        .physiology()
+                        .expect("fixture physiology")
+                        .w_prime_j(),
+                )?,
+            );
         }
 
         let max_steps = (length_m / 4.0).ceil() as u64 * steps_per_second;
         let mut plans = Vec::with_capacity(rider_count);
-        for &base in &sustainable {
+        for _ in &sustainable {
             let mut plan = Vec::new();
             let mut start = 0u64;
             while start < max_steps {
@@ -296,24 +317,11 @@ impl CorpusScenario {
                     .then(|| rng.next_int_below(slots as u64))
                     .transpose()?
                     .map(|s| s as usize);
-                let block = (20 + rng.next_int_below(41)?) * steps_per_second;
-                let level = 0.85 + 0.20 * rng.next_f64();
                 plan.push(PlanSegment {
                     start_step: start,
-                    power_watts: base * level,
                     lateral_slot: slot,
                 });
-                if rng.next_f64() < 0.12 {
-                    let surge = (8 + rng.next_int_below(13)?) * steps_per_second;
-                    plan.push(PlanSegment {
-                        start_step: start + block,
-                        power_watts: base * (1.5 + 0.4 * rng.next_f64()),
-                        lateral_slot: None,
-                    });
-                    start += block + surge;
-                } else {
-                    start += block;
-                }
+                start += 30 * steps_per_second;
             }
             plans.push(plan);
         }
@@ -336,6 +344,9 @@ impl CorpusScenario {
             initial_state,
             max_steps,
             plans,
+            pace_plans: (0..rider_count)
+                .map(|i| crate::pack::PackPacePlan::seeded(seed.wrapping_add(i as u64)))
+                .collect(),
         })
     }
 
@@ -349,7 +360,8 @@ impl CorpusScenario {
             .riders()
             .iter()
             .zip(&self.plans)
-            .map(|(rider, plan)| {
+            .enumerate()
+            .map(|(index, (rider, plan))| {
                 let i = plan.partition_point(|s| s.start_step <= step).max(1) - 1;
                 let segment = &plan[i];
                 // A slot request applies on the block's first step only; afterwards the rider holds.
@@ -357,7 +369,17 @@ impl CorpusScenario {
                     .lateral_slot
                     .filter(|_| segment.start_step == step)
                     .map(|s| s as i64);
-                RiderControlInput::new(rider.id().clone(), segment.power_watts, 0.0, slot, None)
+                RiderControlInput::new(
+                    rider.id().clone(),
+                    self.pace_plans[index].requested_power(
+                        rider,
+                        state.rider_state(rider.id()).expect("configured rider"),
+                        state.simulation_time(),
+                    )?,
+                    0.0,
+                    slot,
+                    None,
+                )
             })
             .collect::<Result<Vec<_>, _>>()?;
         RaceInputFrame::new(inputs)

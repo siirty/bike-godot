@@ -1,7 +1,8 @@
 use std::time::Duration;
 
 use race_physics::{
-    step_longitudinal_dynamics, EnvironmentParams, LongitudinalStepInput, PhysicsError,
+    step_longitudinal_dynamics, step_physiology, EnvironmentParams, LongitudinalStepInput,
+    PhysicsError,
 };
 
 use crate::simulation::error::{RaceSimulationError, Result, SimulationValidationCode as C};
@@ -102,10 +103,22 @@ impl RaceSimulation {
                 air_density_kg_m3: config.air_density_kg_m3(),
                 headwind_ms: config.headwind_ms(),
             };
+            let physiology = definition
+                .physiology()
+                .map(|p| {
+                    step_physiology(
+                        p,
+                        rider.w_prime_balance_j().expect("validated reserve"),
+                        input.power_watts(),
+                        config.fixed_step(),
+                    )
+                })
+                .transpose()
+                .map_err(|e| physics_error(e, i))?;
             let dynamics = step_longitudinal_dynamics(
                 &LongitudinalStepInput {
                     speed_ms: rider.speed_ms(),
-                    power_watts: input.power_watts(),
+                    power_watts: physiology.map_or(input.power_watts(), |p| p.delivered_power_w),
                     rider: *definition.physical(),
                     environment,
                     timestep: config.fixed_step(),
@@ -115,13 +128,17 @@ impl RaceSimulation {
                 config.dynamics(),
             )
             .map_err(|e| physics_error(e, i))?;
-            next.push(RiderState::stepped(
+            let mut stepped = RiderState::stepped(
                 rider.id().clone(),
                 rider.distance_m() + dynamics.distance_delta_m,
                 dynamics.next_speed_ms,
                 slots[i],
                 None,
-            )?);
+            )?;
+            if let Some(p) = physiology {
+                stepped = stepped.with_w_prime_balance(p.balance_j)?;
+            }
+            next.push(stepped);
         }
 
         let time = state.simulation_time() + config.fixed_step();
@@ -132,13 +149,17 @@ impl RaceSimulation {
             .iter()
             .zip(retained)
             .map(|(r, target)| {
-                RiderState::stepped(
+                let stepped = RiderState::stepped(
                     r.id().clone(),
                     r.distance_m(),
                     r.speed_ms(),
                     r.lateral_slot(),
                     target,
-                )
+                )?;
+                match r.w_prime_balance_j() {
+                    Some(b) => stepped.with_w_prime_balance(b),
+                    None => Ok(stepped),
+                }
             })
             .collect::<Result<Vec<_>>>()?;
         let next_state = RaceState::canonical(time, state.random_state(), riders)?;
