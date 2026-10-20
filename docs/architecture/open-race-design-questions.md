@@ -14,18 +14,6 @@ Do not copy resolved decisions back into this file. When an item below is decide
 durable rule to its authoritative document and remove the item here. Numerical constants and tuning
 values should stay configurable until headless evidence supports them.
 
-## Slice 4: deterministic simulation foundation
-
-- Which typed domain events must the kernel emit for debugging, manager messages, scoring and
-  later replay? The common event seam already exists: simulation time plus canonically ordered
-  involved riders. The real variant set, the transition semantics and the within-step ordering
-  rule do not.
-- How are workout time and wall time represented alongside simulation time, and which clocks pause
-  during a technical interruption? Simulation time is settled as a monotonic count of fixed steps
-  inside `RaceState`. The other two clocks belong to the live adapter.
-- How is the trainer-authoritative human speed model adapted later, so that virtual drafting and
-  pack position stay consistent with trainer telemetry?
-
 ## Slice 5: headless autonomous race
 
 Live utility tactics are for the 2–3 drama-spotlight riders only, plus a minimal scene-goal seam.
@@ -42,7 +30,12 @@ hand-authored terrain and starting state. It needs empirical answers for:
 - the shape of the minimal scene-goal seam, meaning a targetable future race-state set that the
   spotlight AI's utility is evaluated against;
 - collision avoidance under soft slot occupancy;
-- calibrated drafting constants by gap, depth and lateral slot;
+- calibrated drafting constants by gap, depth and lateral slot. The current model gives maximum
+  shelter at zero gap, even to a rider level in the adjacent slot. Two riders of near-equal power
+  riding abreast therefore trade shelter and leapfrog hundreds of times per race: the corpus
+  report's "worst pair" column (up to ~800 swaps per pair). The answer has to settle overlap and
+  side-by-side shelter, not just the constants;
+- group events (split, catch, dropped, bridge) and their detection rule, to extend `RaceEventKind`;
 - the initial full-fidelity field ceiling and benchmark hardware;
 - the seed corpus, stability duration and statistical acceptance criteria for calling the
   simulation natural and numerically stable.
@@ -118,7 +111,9 @@ include:
 
 - how athlete CP, W′ and Pmax are initialized from available profile/test data, and how bad
   calibration is detected;
-- the exact technical-disconnect grace period, and the pause and resume/checkpoint behavior;
+- the exact technical-disconnect grace period, and the pause and resume/checkpoint behavior.
+  This includes how workout time and wall time sit beside simulation time, which is settled as a
+  monotonic count of fixed steps in `RaceState`, and which of those clocks pause;
 - reconciling trainer-authoritative speed with the simulation's dynamic physics, drafting and pack
   state;
 - the timing and default presentation of the explicit ridden-versus-simulated finish choice;

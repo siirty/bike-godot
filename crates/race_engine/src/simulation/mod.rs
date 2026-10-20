@@ -2,6 +2,7 @@
 
 pub mod contracts;
 pub mod error;
+pub mod events;
 /// The stepping kernel.
 pub mod kernel;
 /// The `pcg32-v1` generator and its persisted state.

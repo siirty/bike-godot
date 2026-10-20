@@ -15,6 +15,7 @@ var _status: Label
 var _speed: Label
 var _distance: Label
 var _gap: Label
+var _feed: Label
 
 
 func _ready() -> void:
@@ -67,6 +68,7 @@ func _render() -> void:
 			if gap > 0.0:
 				nearest = minf(nearest, gap)
 	_gap.text = "NEXT RIDER  %.1f m AHEAD" % nearest if nearest < INF else "YOU LEAD THE FIELD"
+	_feed.text = "\n".join(state["events"])
 
 
 func _build_hud() -> void:
@@ -80,5 +82,6 @@ func _build_hud() -> void:
 	_speed = Ui.label(stats, "", 19)
 	_distance = Ui.label(stats, "", 19)
 	_gap = Ui.label(col, "", 15, Ui.MUTED)
+	_feed = Ui.label(col, "", 14, Ui.TEXT)
 	Ui.label(col, "SPACE pause  ·  R restart", 12, Ui.MUTED)
 	Ui.button(col, "← Workouts", func() -> void: App.show_screen(WorkoutListScreen.new()))

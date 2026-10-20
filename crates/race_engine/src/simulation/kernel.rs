@@ -5,6 +5,7 @@ use race_physics::{
 };
 
 use crate::simulation::error::{RaceSimulationError, Result, SimulationValidationCode as C};
+use crate::simulation::events::detect_events;
 use crate::simulation::positioning::{
     compute_drag_multipliers, resolve_lateral_slots, retain_eligible_targets, select_draft_targets,
 };
@@ -24,9 +25,10 @@ use crate::{RaceInputFrame, RaceSimulationConfig, RaceState, RaceStepResult, Rid
 /// 3. compute drag multipliers;
 /// 4. one `race_physics` step per rider, with terrain sampled at that rider's pre-step distance;
 /// 5. build the canonical post-step state, then retain targets under post-step geometry;
-/// 6. advance time once by the fixed step.
+/// 6. advance time once by the fixed step;
+/// 7. derive the step's events from the pre-step and post-step states.
 ///
-/// No RNG is drawn (its state is preserved bit for bit) and no events are emitted yet.
+/// No RNG is drawn: its state is preserved bit for bit.
 #[derive(Debug, Clone)]
 pub struct RaceSimulation {
     config: RaceSimulationConfig,
@@ -139,10 +141,9 @@ impl RaceSimulation {
                 )
             })
             .collect::<Result<Vec<_>>>()?;
-        Ok(RaceStepResult {
-            next_state: RaceState::canonical(time, state.random_state(), riders)?,
-            events: Vec::new(),
-        })
+        let next_state = RaceState::canonical(time, state.random_state(), riders)?;
+        let events = detect_events(config, state, &next_state)?;
+        Ok(RaceStepResult { next_state, events })
     }
 }
 

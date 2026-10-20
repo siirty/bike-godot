@@ -67,6 +67,10 @@ func _run() -> void:
 		race.advance(0.25)
 	var state := race.state()
 	_check(absf(float(state["time_s"]) - 10.0) < 0.06, "race kernel advances in real time (%s s)" % state["time_s"])
+	while not race.state()["finished"]:
+		race.advance(0.25)
+	var feed: PackedStringArray = race.state()["events"]
+	_check(feed.size() > 0 and feed[feed.size() - 1].contains("1st"), "race event feed ends on the winner (%s)" % [feed])
 	_check(state["riders"].size() == 3, "three kernel riders")
 
 	var host := Node.new()

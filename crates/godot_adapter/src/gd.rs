@@ -546,7 +546,8 @@ impl RaceController {
         self.race.advance(delta_s);
     }
 
-    /// `{time_s, finished, riders: [{id, distance_m, speed_m_s, slot, draft_target}]}`.
+    /// `{time_s, finished, riders: [{id, distance_m, speed_m_s, slot, draft_target}], events}`;
+    /// `events` is the latest feed lines, oldest first.
     #[func]
     fn state(&self) -> VarDictionary {
         let mut riders = VarArray::new();
@@ -569,6 +570,16 @@ impl RaceController {
             ("time_s", (self.race.time_s()).to_variant()),
             ("finished", (self.race.is_finished()).to_variant()),
             ("riders", (riders).to_variant()),
+            (
+                "events",
+                (self
+                    .race
+                    .event_feed()
+                    .iter()
+                    .map(|l| gs(l))
+                    .collect::<PackedStringArray>())
+                .to_variant(),
+            ),
         ])
     }
 

@@ -12,7 +12,7 @@ use crate::simulation::validate::{
     check_canonical, check_finite, check_finite_non_negative, check_finite_positive,
     check_non_negative_int, check_positive_duration, check_positive_int,
 };
-use crate::{RandomState, RiderId, SimulationTerrain};
+use crate::{RaceEvent, RandomState, RiderId, SimulationTerrain};
 
 /// Everything about a rider that does not change while the simulation runs. Capability lives
 /// here, in the configuration the kernel never rewrites, which is the mechanical form of the
@@ -568,38 +568,12 @@ impl RaceInputFrame {
     }
 }
 
-/// What the kernel reports about a step. The vocabulary belongs to #26; until then the only
-/// variant is a placeholder the kernel never emits, kept so the shared validation is exercised.
-/// Delete [`RaceEvent::Reference`] with the first real variant.
-#[derive(Debug, Clone, PartialEq)]
-pub enum RaceEvent {
-    /// Placeholder for the seam. Never emitted.
-    Reference {
-        /// When it happened.
-        simulation_time: Duration,
-        /// Who it was about, canonical.
-        involved_rider_ids: Vec<RiderId>,
-    },
-}
-
-impl RaceEvent {
-    /// A validated placeholder event: involved riders must already be canonical (events validate
-    /// order rather than impose it, so a kernel bug is not masked).
-    pub fn reference(simulation_time: Duration, involved_rider_ids: Vec<RiderId>) -> Result<Self> {
-        check_canonical(&involved_rider_ids, |id| id, "involvedRiderIds", "")?;
-        Ok(Self::Reference {
-            simulation_time,
-            involved_rider_ids,
-        })
-    }
-}
-
 /// What one step produced. Events are a report, never an input.
 #[derive(Debug, Clone, PartialEq)]
 pub struct RaceStepResult {
     /// The state after the step.
     pub next_state: RaceState,
-    /// What happened, in emission order. Always empty until #26.
+    /// What happened, in emission order (see [`RaceEventKind`](crate::RaceEventKind)).
     pub events: Vec<RaceEvent>,
 }
 

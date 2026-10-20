@@ -195,12 +195,32 @@ Rider collections come in two constructor forms:
 
 So no value can exist whose encoded bytes depend on the order someone built a list in.
 
-**Events are one exhaustive enum.** `RaceEvent` is a plain Rust enum, deliberately not
-`#[non_exhaustive]`. Every consumer matches every variant, and the compiler proves no case was
-missed. Adding a variant is meant to break those matches. Every variant carries the shared
-simulation time and the canonically ordered involved riders, validated once in a shared check.
-The current `Reference` variant is a placeholder so the seam can be exercised at all. The slice
-that defines the real event vocabulary deletes it.
+**Events are a report derived from two states.** A step's events are computed only from the
+pre-step state, the post-step state and the configuration. They are never an input, never part
+of `RaceState`, and never in a snapshot. So a race resumed from a snapshot reports exactly the
+events an uninterrupted one would have.
+
+A `RaceEvent` is the post-step simulation time plus a `RaceEventKind`. The kinds are deliberately
+limited to what the kernel can observe today:
+
+- **`SlotChanged { rider, from_slot, to_slot }`**: the resolved slot differs.
+- **`WheelLost { rider, target }`**: the rider had `target` and now has none, or has another.
+- **`WheelTaken { rider, target }`**: the rider now drafts `target` and did not before.
+- **`Overtook { rider, passed }`**: `rider` was strictly behind `passed` before the step and is
+  strictly ahead after it. An exact tie is neither ahead nor behind, so passing through one is not
+  reported.
+- **`Finished { rider, place }`**: the rider reached the terrain's explicit length this step. A
+  course without a length has no finish. Places count riders already past the line before the
+  step. Same-step finishers are ordered by when they crossed inside the step (linear in the step's
+  distance), then canonically. A rider that starts past the line is counted, but never reported.
+
+The emission order within a step is part of the contract. It goes by kind in declaration order.
+Finishers then go by place; every other kind goes by its primary rider and then the other rider,
+canonically. So the order never depends on the order detection ran in.
+
+`RaceEventKind` is deliberately not `#[non_exhaustive]`. Consumers match every kind, and a new
+kind is meant to break those matches. Group events (split, catch, dropped, bridge) need group
+detection, which is Slice 5's. They join the enum when that lands.
 
 **A type's JSON belongs to the crate that owns the type.** `RiderPhysicalParams` derives its own
 serde mapping in `race_physics`. The snapshot codec and the determinism-comparison helper both go

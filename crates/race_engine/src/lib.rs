@@ -5,6 +5,8 @@
 //! in [`RaceSimulationConfig`]; only dynamic continuation data lives in [`RaceState`].
 
 pub mod dart_json;
+#[cfg(feature = "testing")]
+pub mod harness;
 pub mod ride_session;
 pub mod simulation;
 /// Tolerance-aware comparison for tests. Never used by the kernel.
@@ -15,12 +17,13 @@ pub use ride_session::{
     RideAdvance, RideFrame, RideSession, RideSessionError, DEFAULT_RENDER_INTERVAL,
 };
 pub use simulation::contracts::{
-    BasicDraftingConfig, RaceEvent, RaceInputFrame, RaceSimulationConfig, RaceSimulationConfigSpec,
-    RaceState, RaceStepResult, RiderControlInput, RiderDefinition, RiderState,
+    BasicDraftingConfig, RaceInputFrame, RaceSimulationConfig, RaceSimulationConfigSpec, RaceState,
+    RaceStepResult, RiderControlInput, RiderDefinition, RiderState,
 };
 pub use simulation::error::{
     RaceSimulationError, Result, SimulationValidationCode, SnapshotDecodeCode, ROOT_PATH,
 };
+pub use simulation::events::{RaceEvent, RaceEventKind};
 pub use simulation::kernel::RaceSimulation;
 pub use simulation::pcg32::{hex64, parse_hex64, Pcg32, RandomState};
 pub use simulation::rider_id::{canonical_rider_ids, RiderId};

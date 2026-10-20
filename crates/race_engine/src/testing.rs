@@ -265,31 +265,20 @@ impl DeterministicComparison {
         )
     }
 
-    /// Two event lists: variant, order, time and riders, all exact.
+    /// Two event lists: kind, order, time and every field, all exact. Events carry no doubles,
+    /// so there is nothing to compare with tolerance.
     pub fn compare_events(&self, a: &[RaceEvent], b: &[RaceEvent], path: &str) -> Diffs {
         lists(a, b, path, |x, y, p| {
-            let (
-                RaceEvent::Reference {
-                    simulation_time: tx,
-                    involved_rider_ids: rx,
-                },
-                RaceEvent::Reference {
-                    simulation_time: ty,
-                    involved_rider_ids: ry,
-                },
-            ) = (x, y);
             let mut d = Diffs::new();
-            exact(&mut d, tx, ty, &format!("{p}.simulationTime"));
-            d.extend(lists(
-                rx,
-                ry,
-                &format!("{p}.involvedRiderIds"),
-                |i, j, q| {
-                    let mut d = Diffs::new();
-                    exact(&mut d, i, j, q);
-                    d
-                },
-            ));
+            exact(
+                &mut d,
+                &x.simulation_time(),
+                &y.simulation_time(),
+                &format!("{p}.simulationTime"),
+            );
+            if x.kind() != y.kind() {
+                d.push(format!("{p}.kind: {:?} != {:?}", x.kind(), y.kind()));
+            }
             d
         })
     }

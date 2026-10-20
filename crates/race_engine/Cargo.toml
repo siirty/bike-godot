@@ -8,8 +8,13 @@ rust-version.workspace = true
 publish = false
 
 [features]
-# DeterministicComparison: tolerance-aware comparison for tests. Never used by the kernel.
+# Test and harness support: DeterministicComparison (tolerance-aware comparison) and the
+# headless corpus harness. Both only drive the kernel; the kernel never uses them.
 testing = []
+
+[[example]]
+name = "headless_corpus"
+required-features = ["testing"]
 
 [dependencies]
 race_physics.workspace = true

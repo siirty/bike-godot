@@ -7,14 +7,20 @@
 
 use std::time::Duration;
 
+use std::collections::VecDeque;
+
 use race_engine::{
-    BeyondEndBehavior, Pcg32, RaceInputFrame, RaceSimulation, RaceSimulationConfig,
-    RaceSimulationConfigSpec, RaceState, RiderControlInput, RiderDefinition, RiderId, RiderState,
-    SimulationTerrain, TerrainInterpolation, TerrainSample,
+    BeyondEndBehavior, Pcg32, RaceEvent, RaceEventKind, RaceInputFrame, RaceSimulation,
+    RaceSimulationConfig, RaceSimulationConfigSpec, RaceState, RiderControlInput, RiderDefinition,
+    RiderId, RiderState, SimulationTerrain, TerrainInterpolation, TerrainSample,
 };
 use race_physics::{LongitudinalDynamicsConfig, RiderPhysicalParams, SimulationTimestep};
 
+use crate::app::format::format_duration;
 use crate::app::route::elevation_table;
+
+/// How many event lines the race view keeps.
+pub const EVENT_FEED_LENGTH: usize = 4;
 
 /// `(from_step, watts)`: the latest entry at or before a step applies.
 type PowerScript = &'static [(u64, f64)];
@@ -54,6 +60,7 @@ pub struct LiveRace {
     /// Real time not yet stepped, s.
     accumulator: f64,
     finished: bool,
+    feed: VecDeque<String>,
 }
 
 fn terrain() -> SimulationTerrain {
@@ -122,6 +129,7 @@ impl LiveRace {
             step: 0,
             accumulator: 0.0,
             finished: false,
+            feed: VecDeque::new(),
         }
     }
 
@@ -156,12 +164,17 @@ impl LiveRace {
         self.accumulator += real_seconds.clamp(0.0, 0.25);
         while self.accumulator >= self.step_seconds() {
             self.accumulator -= self.step_seconds();
-            let next = self
+            let result = self
                 .simulation
                 .step(&self.current, &self.inputs(), dt)
-                .expect("the scripted scenario is valid")
-                .next_state;
-            self.previous = std::mem::replace(&mut self.current, next);
+                .expect("the scripted scenario is valid");
+            for line in result.events.iter().filter_map(describe_event) {
+                if self.feed.len() == EVENT_FEED_LENGTH {
+                    self.feed.pop_front();
+                }
+                self.feed.push_back(line);
+            }
+            self.previous = std::mem::replace(&mut self.current, result.next_state);
             self.step += 1;
             if self
                 .current
@@ -210,6 +223,11 @@ impl LiveRace {
             .collect()
     }
 
+    /// The latest race events as text, oldest first.
+    pub fn event_feed(&self) -> Vec<String> {
+        self.feed.iter().cloned().collect()
+    }
+
     /// Whether a rider has reached the end.
     pub fn is_finished(&self) -> bool {
         self.finished
@@ -231,6 +249,68 @@ impl LiveRace {
     }
 }
 
+fn name(id: &RiderId) -> String {
+    match id.as_str() {
+        PLAYER_ID => "You".to_owned(),
+        other => {
+            let mut c = other.chars();
+            c.next()
+                .map(|f| f.to_uppercase().chain(c).collect())
+                .unwrap_or_default()
+        }
+    }
+}
+
+fn ordinal(place: u32) -> String {
+    let suffix = match (place % 10, place % 100) {
+        (1, n) if n != 11 => "st",
+        (2, n) if n != 12 => "nd",
+        (3, n) if n != 13 => "rd",
+        _ => "th",
+    };
+    format!("{place}{suffix}")
+}
+
+/// One feed line for an event, or `None` for events the view does not narrate (slot changes:
+/// visible on the road, and too frequent to read).
+pub fn describe_event(event: &RaceEvent) -> Option<String> {
+    let is_player = |id: &RiderId| id.as_str() == PLAYER_ID;
+    let text = match event.kind() {
+        RaceEventKind::SlotChanged { .. } => return None,
+        RaceEventKind::Overtook { rider, passed } if is_player(passed) => {
+            format!("{} passes you", name(rider))
+        }
+        RaceEventKind::Overtook { rider, passed } if is_player(rider) => {
+            format!("You pass {}", name(passed))
+        }
+        RaceEventKind::Overtook { rider, passed } => {
+            format!("{} passes {}", name(rider), name(passed))
+        }
+        RaceEventKind::WheelTaken { rider, target } if is_player(target) => {
+            format!("{} is on your wheel", name(rider))
+        }
+        RaceEventKind::WheelTaken { rider, target } => {
+            format!("{} takes {}'s wheel", name(rider), name(target))
+        }
+        RaceEventKind::WheelLost { rider, target } if is_player(target) => {
+            format!("{} drops off your wheel", name(rider))
+        }
+        RaceEventKind::WheelLost { rider, target } => {
+            format!("{} loses {}'s wheel", name(rider), name(target))
+        }
+        RaceEventKind::Finished { rider, place } if is_player(rider) => {
+            format!("You finish {}", ordinal(*place))
+        }
+        RaceEventKind::Finished { rider, place } => {
+            format!("{} finishes {}", name(rider), ordinal(*place))
+        }
+    };
+    Some(format!(
+        "{}  {text}",
+        format_duration(event.simulation_time())
+    ))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -249,6 +329,81 @@ mod tests {
         assert_eq!(coarse.step, 1000);
         assert_eq!(fine.step, 1000);
         assert_eq!(coarse.current, fine.current);
+    }
+
+    fn event(kind: RaceEventKind) -> RaceEvent {
+        RaceEvent::new(Duration::from_secs(83), kind).unwrap()
+    }
+
+    fn rid(s: &str) -> RiderId {
+        RiderId::new(s).unwrap()
+    }
+
+    #[test]
+    fn events_are_narrated_from_the_players_point_of_view() {
+        let line = |k| describe_event(&event(k));
+        assert_eq!(
+            line(RaceEventKind::Overtook {
+                rider: rid("rival"),
+                passed: rid("human")
+            })
+            .unwrap(),
+            "1:23  Rival passes you"
+        );
+        assert_eq!(
+            line(RaceEventKind::Overtook {
+                rider: rid("human"),
+                passed: rid("leader")
+            })
+            .unwrap(),
+            "1:23  You pass Leader"
+        );
+        assert_eq!(
+            line(RaceEventKind::WheelTaken {
+                rider: rid("rival"),
+                target: rid("human")
+            })
+            .unwrap(),
+            "1:23  Rival is on your wheel"
+        );
+        assert_eq!(
+            line(RaceEventKind::Finished {
+                rider: rid("human"),
+                place: 2
+            })
+            .unwrap(),
+            "1:23  You finish 2nd"
+        );
+        assert_eq!(
+            line(RaceEventKind::Finished {
+                rider: rid("leader"),
+                place: 11
+            })
+            .unwrap(),
+            "1:23  Leader finishes 11th"
+        );
+        assert_eq!(
+            line(RaceEventKind::SlotChanged {
+                rider: rid("rival"),
+                from_slot: 0,
+                to_slot: 1
+            }),
+            None
+        );
+    }
+
+    #[test]
+    fn the_feed_reports_the_scripted_race_and_its_winner() {
+        let mut race = LiveRace::new();
+        while !race.is_finished() {
+            race.advance(0.25);
+        }
+        let feed = race.event_feed();
+        assert!(feed.len() <= EVENT_FEED_LENGTH);
+        assert!(
+            feed.last().is_some_and(|l| l.contains("1st")),
+            "the race ends on a finish: {feed:?}"
+        );
     }
 
     #[test]

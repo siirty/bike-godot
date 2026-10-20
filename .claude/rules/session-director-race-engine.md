@@ -103,9 +103,18 @@ They are invariants to protect, not preferences.
   illegal value unrepresentable rather than merely discouraged. Do not add a `pub` field or an
   unchecked constructor to a contract type. Rider collections keep the split: `new` canonicalises,
   and `canonical` adopts the list and rejects a non-canonical one (`RidersNotCanonical`).
-- **`RaceEvent` is one exhaustive enum.** Do not mark it `#[non_exhaustive]`: consumers matching
-  every variant is the point. The shared time/rider validation runs for every variant. `Reference`
-  is a placeholder for the seam, and the slice that adds the real vocabulary deletes it.
+- **Events are derived, never stored.** `detect_events` computes a step's events from the
+  pre-step and post-step states alone. Never put event history in `RaceState` or a snapshot, and
+  never let an event feed back into a step.
+- **`RaceEventKind` is exhaustive, and its declaration order is the emission order.** Do not mark
+  it `#[non_exhaustive]`. Adding a kind means:
+  1. defining it from observable state;
+  2. placing it in the order deliberately;
+  3. giving the harness's `check_step` and the event-reconstruction tests in
+     `tests/headless_corpus.rs` a way to check it.
+- **Use the harness for behavior changes.** Run `tests/headless_corpus.rs` and compare the
+  `headless_corpus` example's report before and after. A kernel change that moves the report
+  should say why in its PR.
 - **A type's JSON belongs to the crate that owns the type.** The snapshot codec must not enumerate
   the fields of a model owned elsewhere. It goes through that crate's own serde mapping, as it does
   for `RiderPhysicalParams`. Otherwise a field added there is silently dropped from saved races.

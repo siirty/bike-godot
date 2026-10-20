@@ -27,13 +27,16 @@ scene planner and tactical AI. Slices 5–9 are the remaining core loop, not a b
    gradient caps, parameter units, resistance smoothing and latency into
    [`docs/trainers/`](../trainers/). Claiming multi-brand support requires ≥2 real trainer models.
    The non-Linux builds are listed in [platform-rollout.md](platform-rollout.md).
-4. **Deterministic simulation foundation** *(mostly done)*: the pure `RaceSimulation::step(state, inputs,
-   dt)` kernel. It has explicit simulation time, `pcg32-v1`, typed validation and resumable
-   snapshots, plus semi-implicit longitudinal dynamics, 1.5-D slots and basic drafting.
+4. **Deterministic simulation foundation** *(done)*: the pure `RaceSimulation::step(state, inputs,
+   dt)` kernel. It has:
+   - explicit simulation time, `pcg32-v1`, typed validation and resumable snapshots;
+   - semi-implicit longitudinal dynamics, 1.5-D slots and basic drafting;
+   - typed race events.
 
-   **Remaining:**
-   - the real `RaceEvent` vocabulary, replacing the `Reference` placeholder;
-   - a headless harness that runs a fixed seed corpus and reports stability.
+   The headless harness (`race_engine::harness`, behind the `testing` feature) generates seeded
+   races and runs them to the finish, checking invariants every step. To print the report, run:
+
+   `cargo run -p race_engine --features testing --example headless_corpus --release -- 0 32`
 5. **Headless autonomous race**: run fully simulated fields on hand-authored terrain and initial
    conditions. This needs:
    - rider fixtures with CP, W′, Pmax/decay, physical parameters and tactical personality;
@@ -97,7 +100,10 @@ scene planner and tactical AI. Slices 5–9 are the remaining core loop, not a b
 - **Slice 4**:
   - a fixed seed plus fixed inputs produce the same state and event sequence;
   - dynamic-physics tests cover acceleration, coasting, braking and drafting;
-  - long accelerated runs remain finite and keep the stated invariants.
+  - the corpus runs every seed to the finish without breaking an invariant;
+  - its events agree with reconstructions from the states: net overtakes equal the change in
+    running order, and replayed wheel and slot events reproduce the final state;
+  - a race resumed from a snapshot reports exactly the remaining events.
 - **Slice 5**:
   - headless races across a seed corpus report pack stability, attacks, splits, catches and finish
     distributions;

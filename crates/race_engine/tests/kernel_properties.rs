@@ -111,7 +111,6 @@ fn a_step_advances_time_by_the_fixed_step_and_draws_no_randomness() {
     let result = sim.step(&before, &same_power(200.0), STEP).unwrap();
     assert_eq!(result.next_state.simulation_time(), STEP);
     assert_eq!(result.next_state.random_state(), before.random_state());
-    assert!(result.events.is_empty());
 }
 
 #[test]
