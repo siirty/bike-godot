@@ -1,44 +1,58 @@
 # bike-godot
 
-Godot shell for the bike trainer app. Created from
+A bike trainer app that turns structured workouts into terrain you ride in FTMS SIM mode. Your
+real power decides the outcome; the app never forces watts through ERG mode.
+
+It is a **Godot 4** app over a **Rust core**. Every domain package of the Flutter/Dart prototype
+(`siirty/bike-training-app`) has been ported to a Rust crate. Each port is checked bit for bit
+against golden vectors recorded from the Dart code. Created from
 [`template-ai-dev`](https://github.com/siirty/template-ai-dev).
-
-## Decision context
-
-The Flutter + Dart app (`siirty/bike-training-app`) is now the **prototype**: it stays
-runnable as the reference behavior and training-oracle, but new product work happens here.
-This repo is a **composition project**, not a port:
-
-| Piece | Where it lives | Role |
-|---|---|---|
-| Godot app shell | this repo, `apps/` | UI, camera, HUD, menus, IPC client. GDScript. |
-| Trainer core | [`siirty/bike-training-core`](https://github.com/siirty/bike-training-core) | Rust crate owning BLE/FTMS I/O. Unchanged, consumed as a git dependency. |
-| Domain core | `siirty/bike-training-app` (`packages/race_engine`, `race_physics`, `session_director`, `workout_import`) | Stays **Dart**, run headless as a separate process behind the replay/IPC protocol. No language port. |
-
-The full rationale — why the Flutter app became a prototype, why the Dart domain is not
-being ported to Rust for now, and the language split — lives in
-[`docs/architecture/README.md`](docs/architecture/README.md).
 
 ## Layout
 
-- `apps/race_viewer_godot/` — seed imported from PR 66 of `bike-training-app`
-  (deterministic-kernel replay viewer, perspective chase camera, low-poly art).
-- `crates/godot_adapter/` — Rust GDExtension adapter over `trainer_core`
-  (SIM-safe subset only: scan / connect / telemetry / SIM params — never ERG routing).
-- `docs/decisions/` — ADRs for the repository split and language choices.
+| Path | What |
+|---|---|
+| `apps/rider_godot/` | The Godot app: workout library, detail and route, trainer connect, ride, race view, settings. GDScript, presentation only. |
+| `crates/godot_adapter/` | The GDExtension: thin Godot bindings (`gd.rs`) over plain, tested Rust (`app/`). |
+| `crates/workout_import/` | ZWO/ERG/MRC parsing and the versioned segment JSON. |
+| `crates/race_physics/` | Forces, power↔speed solvers, fixed-step dynamics, drafting. |
+| `crates/session_director/` | Pre-ride terrain synthesis and training contracts. |
+| `crates/race_engine/` | The deterministic race kernel, PCG32, snapshot codec, and the workout `RideSession`. |
+| `crates/trainer_control/` | The `TrainerControl` interface, SIM write throttle, and simulated trainer. |
+| `crates/local_storage/` | The workout library on SQLite (rusqlite). |
+| `crates/ble_trainer/` | A SIM-only `TrainerControl` over [`bike-training-core`](https://github.com/siirty/bike-training-core) (pinned git dependency). |
+| `fixtures/golden/`, `tools/golden_exporter/` | Parity vectors and the Dart script that records them. |
+| `docs/` | [Architecture](docs/architecture/README.md), [decisions](docs/decisions/), [port divergences](docs/port/divergences.md). |
 
-## First milestones
+## Quick start
 
-1. **M1 — Repo + CI green**: this skeleton, quality CI on the self-hosted runner.
-2. **M2 — Live ride**: trainer connect via the adapter, a rideable workout, live rider
-   position in the Godot view (replay contract becomes live IPC). The gate for the whole
-   architecture: proven on the Linux ride computer with the real trainer.
-3. **M3 — Golden-vector harness**: record trajectories/seed streams from the Dart
-   prototype; compare against any future domain port.
-4. **M4 — Product shell**: workout import UI, persistence, packaging.
+You need Rust (stable) and Godot 4.3 or newer. The private `bike-training-core` dependency is
+fetched over git, so configure cargo's git auth if needed (see
+[`docs/development/RUNNER_SETUP.md`](docs/development/RUNNER_SETUP.md)).
+
+```sh
+cargo build -p godot_adapter
+godot --headless --import --path apps/rider_godot
+godot --path apps/rider_godot
+```
+
+To ride without hardware, choose **Ride without a trainer (simulate)** and use the power slider.
+
+## Checks
+
+```sh
+./scripts/project-ci.sh     # fmt, clippy -D warnings, tests, extension build, Godot smoke test
+```
+
+The Godot steps run when `godot` is on PATH or `GODOT` points at a binary.
+
+## Re-recording parity vectors
+
+Do this only to re-check parity; the Dart prototype is frozen. The steps are in
+[`tools/golden_exporter/README.md`](tools/golden_exporter/README.md).
 
 ## Runner
 
 CI runs on the self-hosted `gh-runner` (labels `[self-hosted, linux, X64]`) via the
-`CI_RUNNER_JSON` repository variable; optional disposable Proxmox CI is wired through
+`CI_RUNNER_JSON` repository variable. Optional disposable Proxmox CI is wired through
 `local-proxmox-ci.yml` after `scripts/setup-local-ci-labels.sh`.

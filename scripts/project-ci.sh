@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deterministic checks for bike-godot: Rust workspace + Godot project sanity.
+# Deterministic checks for bike-godot: the Rust workspace, then the Godot app end to end.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -9,17 +9,20 @@ log() { printf '\n==> %s\n' "$*"; }
 
 log "Rust: fmt / clippy / test"
 cargo fmt --all --check
-cargo clippy --workspace -- -D warnings
+cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 
-if command -v godot >/dev/null 2>&1; then
-  log "Godot: import + script parse"
-  godot --headless --import --path apps/race_viewer_godot
-  # parse-only pass; exits non-zero on script errors
-  godot --headless --check-only --script apps/race_viewer_godot/scripts/race_view.gd 2>/dev/null || \
-    godot --headless --quit-after 2 --path apps/race_viewer_godot >/dev/null
+GODOT="${GODOT:-$(command -v godot || true)}"
+if [[ -n "$GODOT" ]]; then
+  log "Godot: build extension, import, smoke test"
+  # The project loads target/debug/libgodot_adapter.* (see apps/rider_godot/bike_core.gdextension).
+  cargo build -p godot_adapter
+  # --import builds the class_name registry the scripts depend on.
+  "$GODOT" --headless --import --path apps/rider_godot
+  # Runs as a scene so the App autoload is present; exits 1 on any failed check.
+  "$GODOT" --headless --path apps/rider_godot res://tests/smoke_test.tscn
 else
-  log "SKIP godot checks (godot binary not installed on this runner)"
+  log "SKIP Godot checks (no godot binary on PATH and GODOT is unset)"
 fi
 
 log "All checks passed"

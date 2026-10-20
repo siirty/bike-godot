@@ -1,0 +1,14 @@
+; The Rust extension (crates/godot_adapter). Build it with `cargo build -p godot_adapter`
+; (or `--release`) from the repository root; paths are relative to this project.
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.3
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 = "res://../../target/debug/libgodot_adapter.so"
+linux.release.x86_64 = "res://../../target/release/libgodot_adapter.so"
+windows.debug.x86_64 = "res://../../target/debug/godot_adapter.dll"
+windows.release.x86_64 = "res://../../target/release/godot_adapter.dll"
+macos.debug = "res://../../target/debug/libgodot_adapter.dylib"
+macos.release = "res://../../target/release/libgodot_adapter.dylib"

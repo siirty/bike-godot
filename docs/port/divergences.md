@@ -68,3 +68,27 @@ its repository and migration suites and check the same behaviour against both im
 | Upgrade from an unknown schema version | `StateError` from `onUpgrade` | `LocalStorageError::NoMigration`, and nothing is created in the file | Same policy, typed. |
 | `SavedWorkoutRecord.plan` / `unreadable` | Two nullable fields plus an assert | `Result<WorkoutPlan, UnreadableWorkout>` | "Never both, never neither" is the type. |
 | `saveWorkout(sourceFormat: String)` | Any string | `WorkoutFormat`; reads keep the stored text | Only real parser tags are written. |
+
+## ble_trainer
+
+The Dart package was an FFI adapter over `trainer_core`. The Rust crate calls `trainer_core`
+directly, so there are no golden vectors. Its tests drive the command worker against a fake
+`TrainerConnection` and check the SIM-only surface.
+
+| Case | Prototype | Port | Why |
+| --- | --- | --- | --- |
+| Transport | flutter_rust_bridge bindings + Dart streams | A tokio worker task per trainer. Commands go over a channel; `poll(now)` drains telemetry and state | One process, no codegen. The engine's frame loop pulls events. |
+| ERG reachability | No ERG binding generated | The worker's command enum has no target-power variant, and a test greps `src/` for ERG symbols | Same rule, checked mechanically. |
+| Core-simulated trainer | Rust sleeps 500 ms between reports | `CoreSimulatedTrainer` steps `trainer_core`'s simulator on caller time: 100 ms ticks, 500 ms reports | Deterministic tests with no sleeps. |
+| Async failures | Errors surface on a stream | Collected and returned by `take_failures()`, then shown in the ride's message line | Nothing is silently lost. |
+| Connecting from a scan | Scan and connect were independent | `TrainerScanner::connect` stops the scan first | Some BLE stacks refuse to connect while scanning (BlueZ in particular). |
+
+## Godot app (`apps/rider_godot`, `crates/godot_adapter`)
+
+| Case | Prototype (Flutter) | Port | Why |
+| --- | --- | --- | --- |
+| FTP | Fixed in the session | Set in Settings, clamped to 100–400 W in the UI and 50–600 W in the extension, and saved in `user://settings.cfg` | A ride needs a rider; this is the smallest durable setting. |
+| SIM debug screen | A full screen with controls | A toggleable panel showing the simulated trainer's state | Power is already set by the ride screen's slider. |
+| Race view | Replays a JSON file exported by a Dart tool | Steps the Rust kernel live at a fixed 50 ms, using the exporter's scripted powers | No Dart toolchain. It is the same kernel the vectors check. |
+| Ride clock | — | Snaps to FTMS elapsed time, which has whole-second resolution. With 500 ms reports the HUD clock can move by up to 0.5 s | Inherited from the prototype's `RideSession`; recorded so it is not mistaken for a port bug. |
+| Display formatting | Dart widgets format values inline | `godot_adapter::app::format` produces the text, and GDScript only places it | Unit-tested without Godot. |

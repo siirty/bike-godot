@@ -1,12 +1,29 @@
 [package]
 name = "godot_adapter"
 version = "0.1.0"
-edition = "2021"
-license = "MIT"
+description = "The GDExtension: exposes the Rust domain and the SIM-only trainer to GDScript."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-# The trainer core stays its own repository; this adapter binds only the
-# SIM-mode-safe subset, mirroring the Dart bridge's contract in bike-training-app.
-trainer_core = { git = "https://github.com/siirty/bike-training-core", rev = "49bde0bd25be" }
-tokio = { version = "1.53.1", features = ["sync", "rt-multi-thread", "macros", "time"] }
-log = "0.4"
+godot.workspace = true
+ble_trainer.workspace = true
+local_storage.workspace = true
+race_engine.workspace = true
+race_physics.workspace = true
+session_director.workspace = true
+trainer_control.workspace = true
+workout_import.workspace = true
+log.workspace = true
+
+# Not `[lints] workspace = true`: gdext's entry point is an `unsafe impl ExtensionLibrary`, which
+# the workspace's `unsafe_code = "forbid"` cannot allow even locally. Everything below except that
+# one impl is still forbidden from using `unsafe`, through a crate-level `deny` that the impl alone
+# opts out of.
+[lints.rust]
+missing_docs = "warn"

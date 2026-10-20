@@ -1,24 +1,24 @@
 # Fill this file immediately after creating a project from the template.
 project:
   name: "bike-godot"
-  description: "Godot trainer app shell over trainer_core (Rust) and the headless Dart domain core"
+  description: "Godot bike trainer app over a Rust core: domain crates ported from the Dart prototype plus trainer_core"
   default_branch: "main"
   status: "active"
 
 commands:
-  setup: "dart pub get (domain core, in bike-training-app) / cargo fetch"
+  setup: "cargo fetch"
   format: "cargo fmt --all --check"
-  lint: "cargo clippy --workspace -- -D warnings"
+  lint: "cargo clippy --workspace --all-targets -- -D warnings"
   typecheck: "cargo check --workspace"
   test: "cargo test --workspace"
-  build: ""
+  build: "cargo build -p godot_adapter"
   ci: "./scripts/ci.sh"
 
 architecture:
-  summary: "Godot shell + Rust trainer adapter (trainer_core git dep) + headless Dart domain core (separate repo/process)."
+  summary: "Godot app (GDScript presentation) + godot_adapter GDExtension over Rust domain crates (workout_import, race_physics, session_director, race_engine, trainer_control, local_storage) and ble_trainer over trainer_core (git dep). In-process; no Dart."
   primary_languages: ["gdscript", "rust"]
   frameworks: ["godot-4.3"]
-  data_stores: []
+  data_stores: ["sqlite (local workout library, rusqlite)"]
   external_services: []
 
 quality:
