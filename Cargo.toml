@@ -10,6 +10,7 @@
 [workspace]
 resolver = "2"
 members = [
+  "crates/local_storage",
   "crates/race_engine",
   "crates/race_physics",
   "crates/session_director",

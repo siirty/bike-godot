@@ -52,3 +52,19 @@ byte-identical. Decode errors match on code, path and message.
 | `RideSession` grade-write failure | Unawaited future (unhandled async error) | Returned in `RideAdvance::write_errors`; frames continue | Nothing is silently lost. |
 | `RideSession.reportStartFailure` | Pushes a start error onto the frame stream | Not ported | `start` returns a `Result` to a caller that can always see it. |
 | `RideFrame.currentSegment` | Object identity with the plan's segment | A clone plus `segment_index` | Rust has no shared identity to compare. |
+
+## local_storage
+
+There are no golden vectors: the Dart package is a column mapping over drift. The Rust tests port
+its repository and migration suites and check the same behaviour against both implementations.
+
+| Case | Prototype | Port | Why |
+| --- | --- | --- | --- |
+| Engine | drift (`database.g.dart`) | rusqlite with hand-written SQL; schema version in `PRAGMA user_version` | No codegen. The test pins the exact column list, nullability and primary key. |
+| Timestamps | drift `storeDateTimeAsText` (local ISO-8601) | Fixed-width UTC `YYYY-MM-DDTHH:MM:SS.ffffffZ` | Text order is time order, in any timezone. |
+| Same-instant saves | Order undefined | Tie broken by insertion order (`rowid`) | "Newest first" holds without a sleep in the test. |
+| `watchSavedWorkouts()` stream | Reactive drift query | `revision()` counter; callers re-list | A frame-driven UI polls; no async runtime in the store. |
+| Clock | `DateTime.now()` inline | Injectable `Clock` (default: system clock) | Deterministic ordering tests. |
+| Upgrade from an unknown schema version | `StateError` from `onUpgrade` | `LocalStorageError::NoMigration`, and nothing is created in the file | Same policy, typed. |
+| `SavedWorkoutRecord.plan` / `unreadable` | Two nullable fields plus an assert | `Result<WorkoutPlan, UnreadableWorkout>` | "Never both, never neither" is the type. |
+| `saveWorkout(sourceFormat: String)` | Any string | `WorkoutFormat`; reads keep the stored text | Only real parser tags are written. |

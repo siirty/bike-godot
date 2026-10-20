@@ -1,0 +1,17 @@
+[package]
+name = "local_storage"
+version = "0.1.0"
+description = "Local-first SQLite persistence for saved workouts, behind a repository interface."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+workout_import.workspace = true
+rusqlite.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true
