@@ -59,6 +59,7 @@ Map<String, Object?> _error(Object e) => {
     ArgumentError() => 'argument',
     WorkoutImportFormatException() => 'format',
     SimulationValidationException(:final code) => 'validation:${code.name}',
+    SnapshotDecodeException(:final code) => 'decode:${code.name}',
     StateError() => 'state',
     _ => 'other:${e.runtimeType}',
   },

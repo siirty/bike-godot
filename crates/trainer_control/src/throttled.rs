@@ -63,6 +63,11 @@ impl<T: TrainerControl> ThrottledTrainerControl<T> {
         &mut self.inner
     }
 
+    /// Unwraps the trainer. A write still pending in the throttle is dropped.
+    pub fn into_inner(self) -> T {
+        self.inner
+    }
+
     fn write(&mut self, params: SimulationParameters, now: Duration) -> Result<(), TrainerError> {
         self.last_written = Some((params, now));
         self.pending = None;

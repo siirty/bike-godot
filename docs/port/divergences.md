@@ -35,3 +35,20 @@ so the two sides agree.
 | `_DeterministicLcg` | Constructed from the seed and never drawn from | Not ported. The seed parameter is kept and documented as currently unused | Dead code. Output is identical for every seed on both sides. |
 | `SegmentDistanceRange.segment` | `Object` reference | The segment plus its plan index | Typed, and it survives a skipped zero-duration segment. |
 | A plan whose segments are all zero-duration | `StateError` from `samples.last` | `SynthesisError::NoDistance` | Typed error instead of a crash. |
+
+## race_engine
+
+The kernel, PCG32, terrain lookup and snapshot codec match the prototype bit for bit: three
+recorded races replay to identical checkpoints, and their initial and final snapshots are
+byte-identical. Decode errors match on code, path and message.
+
+| Case | Prototype | Port | Why |
+| --- | --- | --- | --- |
+| Decoded `maxPropulsiveForceN` ≤ 0 | An untyped `ArgumentError` escapes the codec | `validation:notPositive` at `config.dynamics.maxPropulsiveForceN` | The codec promises typed errors with a path. |
+| A physics failure inside a step (drivetrain efficiency above 1, a non-finite result) | An untyped `ArgumentError`/`StateError` escapes `step` | A typed validation error on `state.riders[i].<field>` | Same promise, for the kernel. |
+| `"not valid JSON: …"` detail | `dart:convert`'s wording | `serde_json`'s wording | Parser-specific text. Code, path and prefix match. |
+| `RideSession` time | `Timer.periodic` + telemetry stream | `advance(now)` replays each due render tick, polling the trainer at the tick's own time | Engine-driven frame loop. Slicing time finely or coarsely yields identical frames (tested). |
+| `RideSession` clock after a telemetry snap | Snaps to the trainer's elapsed time, *then* adds a render interval, so the frame runs one interval ahead | Adds the interval first, then snaps | A bug fix. Each frame's `elapsed` is now its own tick time on a trainer whose clock agrees. |
+| `RideSession` grade-write failure | Unawaited future (unhandled async error) | Returned in `RideAdvance::write_errors`; frames continue | Nothing is silently lost. |
+| `RideSession.reportStartFailure` | Pushes a start error onto the frame stream | Not ported | `start` returns a `Result` to a caller that can always see it. |
+| `RideFrame.currentSegment` | Object identity with the plan's segment | A clone plus `segment_index` | Rust has no shared identity to compare. |

@@ -3565,42 +3565,42 @@
   {
    "label": "not json",
    "source": "{",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:malformedJson",
    "path": "<root>",
    "message": "not valid JSON: Unexpected end of input"
   },
   {
    "label": "not object",
    "source": "[]",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:wrongType",
    "path": "<root>",
    "message": "expected a JSON object, got an array"
   },
   {
    "label": "wrong format",
    "source": "{\"format\":\"x\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:unsupportedFormat",
    "path": "format",
    "message": "expected format \"bike-training-race-snapshot\", got \"x\""
   },
   {
    "label": "v1",
    "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":1,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:unsupportedSchemaVersion",
    "path": "schemaVersion",
    "message": "snapshot schema version 1 is not readable by this build, which reads version 2"
   },
   {
    "label": "missing config",
    "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2}",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:missingField",
    "path": "config",
    "message": "missing required field \"config\""
   },
   {
    "label": "bad interpolation",
    "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"cubic\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"f5a383ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:unknownEnumValue",
    "path": "config.terrain.interpolation",
    "message": "unknown terrain interpolation \"cubic\"; this build knows [step, linear]"
   },
@@ -3614,7 +3614,7 @@
   {
    "label": "upper hex",
    "source": "{\"format\":\"bike-training-race-snapshot\",\"schemaVersion\":2,\"config\":{\"fixedStepMicros\":50000,\"lateralSlotCount\":3,\"airDensityKgM3\":1.225,\"headwindMs\":0.0,\"dynamics\":{\"maxPropulsiveForceN\":500.0},\"drafting\":{\"maxGapM\":null,\"minimumDragMultiplierBySlotOffset\":null},\"terrain\":{\"interpolation\":\"linear\",\"beyondEnd\":\"holdLastGrade\",\"lengthM\":2000.0,\"samples\":[{\"distanceM\":0.0,\"gradeFraction\":0.005},{\"distanceM\":180.0,\"gradeFraction\":0.025},{\"distanceM\":430.0,\"gradeFraction\":-0.01},{\"distanceM\":760.0,\"gradeFraction\":0.03},{\"distanceM\":1120.0,\"gradeFraction\":-0.015}]},\"riders\":[{\"id\":\"human\",\"physical\":{\"totalMassKg\":78.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"leader\",\"physical\":{\"totalMassKg\":75.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}},{\"id\":\"rival\",\"physical\":{\"totalMassKg\":77.0,\"crr\":0.005,\"cdaM2\":0.32,\"driveTrainEfficiency\":0.975}}]},\"state\":{\"simulationTimeMicros\":0,\"random\":{\"algorithm\":\"pcg32-v1\",\"state\":\"ABCD83ea4f255270\",\"stream\":\"0000000000000003\"},\"riders\":[{\"id\":\"human\",\"distanceM\":30.0,\"speedMs\":8.0,\"lateralSlot\":1,\"draftTargetId\":null},{\"id\":\"leader\",\"distanceM\":42.0,\"speedMs\":8.0,\"lateralSlot\":0,\"draftTargetId\":null},{\"id\":\"rival\",\"distanceM\":35.0,\"speedMs\":8.0,\"lateralSlot\":2,\"draftTargetId\":null}]}}",
-   "error": "other:SnapshotDecodeException",
+   "error": "decode:wrongType",
    "path": "state.random.state",
    "message": "expected exactly 16 lowercase hexadecimal digits, got \"ABCD83ea4f255270\""
   },

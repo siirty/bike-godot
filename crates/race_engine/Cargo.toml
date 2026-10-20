@@ -1,0 +1,27 @@
+[package]
+name = "race_engine"
+version = "0.1.0"
+description = "The deterministic live race kernel: validated contracts, drafting, PCG32, snapshots, and the ride session."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+# DeterministicComparison: tolerance-aware comparison for tests. Never used by the kernel.
+testing = []
+
+[dependencies]
+race_physics.workspace = true
+session_director.workspace = true
+trainer_control.workspace = true
+workout_import.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+race_engine = { path = ".", features = ["testing"] }
+
+[lints]
+workspace = true

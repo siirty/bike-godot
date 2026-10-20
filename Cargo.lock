@@ -481,6 +481,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "race_engine"
+version = "0.1.0"
+dependencies = [
+ "race_engine",
+ "race_physics",
+ "serde",
+ "serde_json",
+ "session_director",
+ "thiserror 2.0.21",
+ "trainer_control",
+ "workout_import",
+]
+
+[[package]]
 name = "race_physics"
 version = "0.1.0"
 dependencies = [
