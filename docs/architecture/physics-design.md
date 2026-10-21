@@ -706,6 +706,16 @@ The athlete's local group and the tactically relevant riders always keep full fi
   goals are matched and anchored onto suitable real segments. An example is an actual climb long
   and steep enough to support a threshold chase for this rider.
 
+## Experimental fixed-action alternative
+
+The user authorized a prototype of pre-ride scripted race actions with no live repair on
+21 October 2026. [ADR 0006](../decisions/0006-scripted-race-prototype.md) scopes this experiment.
+`tools/race-prototype` exercises Z1–Z7 and recovery through the existing kernel, freezes opponent
+intentions after offline fitting, and reports scheduled versus observed transitions. It does not
+implement or require the general Scene Planner described above, nor silently replace production
+contracts. The first measurements show nominal success but substantial sensitivity to small
+changes; inspect failed opportunity/formation gates before deciding whether to adopt this design.
+
 ## Open design work
 
 This document is the source of truth for accepted race behavior. The remaining

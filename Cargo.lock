@@ -737,6 +737,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "race_prototype"
+version = "0.1.0"
+dependencies = [
+ "race_engine",
+ "race_physics",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.5.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
