@@ -3,9 +3,11 @@
 //! Pure and deterministic for fixed inputs and seed: no wall clock, no live rider state, no I/O.
 //! It scripts the opportunity, not the outcome. It never precomputes AI trajectories, and it
 //! never consumes live race state. The planner proper (training contracts, race scenarios, scene
-//! goals) is later-slice work; what exists today is the terrain seam the ride loop consumes.
+//! goals) is still incomplete. Validated learning-situation and player-knowledge contracts are
+//! available alongside the terrain seam; general workout compilation remains future work.
 
 mod profile;
+pub mod situations;
 mod synthesis;
 mod terrain;
 mod zones;

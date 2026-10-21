@@ -11,6 +11,7 @@ publish = false
 race_physics.workspace = true
 workout_import.workspace = true
 thiserror.workspace = true
+serde.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

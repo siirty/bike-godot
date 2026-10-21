@@ -110,3 +110,25 @@ Validated with seven experiment tests and 116 existing domain tests passing, Cli
 warnings, formatting checks, and the four unchanged fixture checks. Browser checks exercised
 mode selection, phase navigation, scrubbing, cue hiding and playback; the mobile layout had no
 page overflow. Godot rendering and physical trainer hardware were not exercised.
+
+## Tactical learning vertical (report version 2)
+
+The export now includes validated `LearningPlan` / `PlayerKnowledge` from `session_director`, a
+public roster and affiliations, and an eighth `CueDriven` policy. Its public-cue reader in
+`race_engine::perception` receives observable motion, course/finish context and the public briefing;
+no phases, target watts, private reserve or authored answer enter that API. Its motor execution
+uses only the athlete's physics/capability and current motion. `FollowAction` is retained as the
+**legacy phase-informed** comparison, not presented as a target-independent perception policy.
+
+Run the same command above. Playback defaults to coaching hidden, with essential context still
+visible. Pause/scrub, record a response and reasoning, then explicitly compare against the
+provisional reference. Download observations as unscored JSON; no data is sent or turned into
+training activity or a validated recognition score. Turn off “Hide coaching and diagnostics” to
+inspect planned intentions and full-run audit evidence.
+
+`learning_audits` separate workload, timing, recognition and a contention/continuity proxy. They
+accept other wheels and being ahead, and exempt cooldown from racing formation. Legacy gates
+remain available for comparison. `result_audit` reports delivered work, peak 50 ms power, minimum
+reserve, maximum climbing deficit and actual finishes. Plausibility and human recognition stay
+`NeedsReview`; mechanical integrity is a different claim. The tempo pull-duty cue and opponent
+team cooperation remain missing, explicitly reported. See [ADR 0008](../../docs/decisions/0008-learning-contracts-and-public-reader.md).

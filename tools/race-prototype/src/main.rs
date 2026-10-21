@@ -50,8 +50,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ));
         }
         println!(
-            "{:?}: {}/{} phases pass provisional gates; finish {:?}",
+            "{:?}: workload {}/{}; contention proxy {}/{} applicable; recognition/result review pending; legacy formation {}/{}; finish {:?}",
             run.mode,
+            run.learning_audits.iter().filter(|a| a.workout == race_prototype::learning::Verdict::MeetsDiagnostic).count(),
+            run.learning_audits.len(),
+            run.learning_audits.iter().filter(|a| a.continuity == race_prototype::learning::Verdict::MeetsDiagnostic).count(),
+            run.learning_audits.iter().filter(|a| a.continuity != race_prototype::learning::Verdict::NotApplicable).count(),
             run.outcomes.iter().filter(|o| o.passed).count(),
             run.outcomes.len(),
             run.finish_s

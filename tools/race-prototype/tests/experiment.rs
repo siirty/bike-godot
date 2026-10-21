@@ -102,7 +102,7 @@ fn ignore_and_cover_decoy_comparison_reports_actual_extra_work() {
 fn bounded_profile_matrix_runs_and_non_finite_options_are_rejected() {
     for (ftp, mass, seed) in [(180.0, 65.0, 1), (320.0, 92.0, 7), (250.0, 110.0, 99)] {
         let plan = compile(Options { ftp, mass, seed }).unwrap();
-        for mode in [Mode::Prescribed, Mode::Under, Mode::Over] {
+        for mode in [Mode::Prescribed, Mode::Under, Mode::Over, Mode::CueDriven] {
             let run = replay(&plan, mode).unwrap();
             assert_eq!(run.outcomes.len(), workout().len());
             assert!(run.samples.iter().all(|s| s.power.is_finite()
@@ -117,4 +117,76 @@ fn bounded_profile_matrix_runs_and_non_finite_options_are_rejected() {
         })
         .is_err());
     }
+}
+
+#[test]
+fn cue_policy_has_no_workout_access_and_authored_answers_do_not_change_motion() {
+    let mut plan = compile(Options::default()).unwrap();
+    let before = replay(&plan, Mode::CueDriven).unwrap();
+    for p in &mut plan.phases {
+        p.intensity *= 0.5;
+        p.decisive = !p.decisive;
+        p.action = "arbitrary author answer".into();
+    }
+    let after = replay(&plan, Mode::CueDriven).unwrap();
+    for (a, b) in before.samples.iter().zip(&after.samples) {
+        assert_eq!(
+            (a.distance, a.power, &a.gaps, &a.reading),
+            (b.distance, b.power, &b.gaps, &b.reading)
+        );
+    }
+    assert_eq!(before.finishers, after.finishers);
+}
+#[test]
+fn separate_workload_and_continuity_accept_being_ahead_and_exempt_cooldown() {
+    use race_prototype::learning::Verdict;
+    let plan = compile(Options::default()).unwrap();
+    let run = replay(&plan, Mode::Over).unwrap();
+    assert!(run.outcomes.iter().all(|o| !o.passed));
+    assert!(run
+        .learning_audits
+        .iter()
+        .all(|a| a.workout == Verdict::MeetsDiagnostic));
+    assert!(run
+        .learning_audits
+        .iter()
+        .any(|a| a.continuity == Verdict::MeetsDiagnostic));
+    assert_eq!(
+        run.learning_audits.last().unwrap().continuity,
+        Verdict::NotApplicable
+    );
+    assert!(run
+        .learning_audits
+        .iter()
+        .all(|a| a.recognition == Verdict::NeedsReview));
+    assert_eq!(run.result_audit.plausibility, Verdict::NeedsReview);
+}
+#[test]
+fn result_witnesses_use_actual_events_and_delivered_work_without_imposing_a_winner() {
+    let plan = compile(Options::default()).unwrap();
+    let run = replay(&plan, Mode::Prescribed).unwrap();
+    for w in &run.result_audit.riders {
+        let event = run.finishers.iter().find(|f| f.rider == w.rider);
+        assert_eq!(w.place, event.map(|f| f.place));
+        assert_eq!(w.finish_s, event.map(|f| f.time_s));
+        assert!(w.work_kj > 0.0 && w.peak_w.is_finite() && (0.0..=1.0).contains(&w.min_reserve));
+    }
+    let from_phases = run
+        .outcomes
+        .iter()
+        .zip(&plan.phases)
+        .filter(|(_, p)| f64::from(p.start) < run.finish_s.unwrap())
+        .map(|(o, p)| o.mean_power * f64::from(p.duration) / 1000.0)
+        .sum::<f64>();
+    assert!((run.result_audit.riders[0].work_kj - from_phases).abs() < 1e-7);
+}
+
+#[test]
+fn inconsistent_fixture_schedule_is_rejected_instead_of_indexing_missing_contracts() {
+    let mut plan = compile(Options::default()).unwrap();
+    plan.script.pop();
+    assert!(replay(&plan, Mode::CueDriven).is_err());
+    let mut plan = compile(Options::default()).unwrap();
+    plan.phases.pop();
+    assert!(replay(&plan, Mode::Prescribed).is_err());
 }
