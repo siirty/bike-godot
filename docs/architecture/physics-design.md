@@ -705,3 +705,11 @@ This document is the source of truth for accepted race behavior. The remaining
 implementation-gating schemas and empirical tuning questions are tracked by slice in
 [`open-race-design-questions.md`](open-race-design-questions.md). Resolve only the questions needed
 for the active slice, promote durable answers back here, and keep numerical tuning configurable.
+
+## Focused cue-policy feasibility experiment
+
+[ADR 0009](../decisions/0009-cue-calibrated-selection-chain.md) records a headless prototype of
+separate public perception/motor execution, offline pace fitting and bounded local group roles.
+Its workload, next-entry contact, finish-window and leader-capacity gates are engineering
+feasibility checks, separate from recognition and empirical result review. The director-first
+boundary and production kernel are unchanged. This is not a general production scenario compiler.

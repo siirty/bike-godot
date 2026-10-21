@@ -1,6 +1,6 @@
 //! Fixture authoring and independent diagnostics; author intent never enters perception.
 use crate::{Error, Phase, Plan, Run, NAMES};
-use race_engine::perception::{MoveDecision, MoveRead};
+use race_engine::perception::{MoveDecision, MoveRead, PublicRaceView};
 use serde::Serialize;
 use session_director::situations::*;
 
@@ -22,7 +22,7 @@ pub fn author(phases: &[Phase], ftp: f64) -> Result<LearningPlan, Error> {
     let knowledge=PlayerKnowledge::new(NAMES[0].into(),PlayerObjective::ContestFinish,
         "Stay in contention for the finish. You and Jo ride for Green; Alex and Morgan for Blue; Sam for Gold. Jo and Morgan are known for sustained efforts, Alex for a fast finish. Short climbs and descents lead to a flat finish. Synthetic reputations and capabilities; no calibrated race class.".into(),roster)?;
     let situations=phases.iter().enumerate().map(|(i,p)|{
-        let intent=if i==phases.len()-1 {LearningIntent::Cooldown}else{match p.zone{1=>LearningIntent::Conserve,2=>LearningIntent::HoldContact,3=>LearningIntent::TakePull,7=>LearningIntent::Finish,_=>LearningIntent::Respond}};
+        let intent=if i==phases.len()-1 && p.zone==1 {LearningIntent::Cooldown}else{match p.zone{1=>LearningIntent::Conserve,2=>LearningIntent::HoldContact,3=>LearningIntent::TakePull,7=>LearningIntent::Finish,_=>LearningIntent::Respond}};
         let cue=match intent{
             LearningIntent::Conserve=>"Observe who moves, the gap and whether others cover it; positional movement alone is not an attack.",
             LearningIntent::HoldContact=>"Observe group speed and available wheels, not one fixed rider.",
@@ -54,6 +54,8 @@ pub(crate) struct LearningAcc {
     pub opportunity: u32,
     pub cue_at: Option<f64>,
     pub response_at: Option<f64>,
+    cue_target: Option<String>,
+    closing_ticks: u32,
 }
 impl LearningAcc {
     pub fn observe(
@@ -63,12 +65,25 @@ impl LearningAcc {
         delivered: f64,
         contender: bool,
         read: &MoveRead,
+        view: &PublicRaceView,
     ) {
         self.ticks += 1;
         self.band += u32::from(p.effort().contains(delivered));
         self.opportunity += u32::from(contender);
         if read.decision == MoveDecision::Respond && self.cue_at.is_none() {
             self.cue_at = Some(time);
+            self.cue_target = read.target.clone();
+        }
+        if let Some(cue_at) = self.cue_at.filter(|_| self.response_at.is_none()) {
+            let closing = self
+                .cue_target
+                .as_ref()
+                .and_then(|id| view.riders.iter().find(|r| &r.id == id))
+                .is_some_and(|r| r.gap_m > 0.0 && (r.relative_speed_ms <= -0.2 || r.gap_m <= 8.0));
+            self.closing_ticks = if closing { self.closing_ticks + 1 } else { 0 };
+            if self.closing_ticks >= 20 {
+                self.response_at = Some((time - 19.0 * crate::DT).max(cue_at));
+            }
         }
     }
 }
@@ -89,7 +104,7 @@ pub struct SituationAudit {
     pub recognition: Verdict,
     /// First reference-reader cue observed in the phase, absolute seconds.
     pub first_cue_s: Option<f64>,
-    /// Delay until a >5 W rise in requested athlete power after the cue.
+    /// Delay until the onset of one second of observable closing/contact with the cued rider.
     pub response_delay_s: Option<f64>,
     /// Provisional cue-relative timing diagnostic.
     pub timing: Verdict,
@@ -132,6 +147,59 @@ pub(crate) fn audit(plan: &Plan, acc: &[LearningAcc], run: &Run) -> Vec<Situatio
         let racing=p.intent()!=LearningIntent::Cooldown&&!run.finish_s.is_some_and(|t|t<=f64::from(p.start_s()));
         let response_delay_s=a.cue_at.zip(a.response_at).map(|(c,r)|(r-c).max(0.0));
         let timing=if p.intent()!=LearningIntent::Respond||!racing{Verdict::NotApplicable}else if let Some(delay)=response_delay_s{if delay<=p.response_window_s(){Verdict::MeetsDiagnostic}else{Verdict::MissedDiagnostic}}else if a.cue_at.is_some(){Verdict::MissedDiagnostic}else{Verdict::NeedsReview};
-        SituationAudit{phase:i,effort_share,workout:if effort_share>=p.effort().minimum_share(){Verdict::MeetsDiagnostic}else{Verdict::MissedDiagnostic},opportunity_share,continuity:if !racing{Verdict::NotApplicable}else if opportunity_share>=0.5{Verdict::MeetsDiagnostic}else{Verdict::MissedDiagnostic},recognition:Verdict::NeedsReview,first_cue_s:a.cue_at,response_delay_s,timing,notes:vec!["Recognition is unassessed; the reference reader is not evidence of human learning.".into(),if p.intent()==LearningIntent::TakePull{"Public pull-duty communication is missing; this lesson's readability is unproven.".into()}else{"Reader, response window and 60 m contention bound are provisional engineering assumptions.".into()},"Contention accepts other formations/being ahead; it does not prove future effort-equivalent reachability.".into()]}
+        SituationAudit{phase:i,effort_share,workout:if effort_share>=p.effort().minimum_share(){Verdict::MeetsDiagnostic}else{Verdict::MissedDiagnostic},opportunity_share,continuity:if !racing{Verdict::NotApplicable}else if opportunity_share>=0.5{Verdict::MeetsDiagnostic}else{Verdict::MissedDiagnostic},recognition:Verdict::NeedsReview,first_cue_s:a.cue_at,response_delay_s,timing,notes:vec!["Recognition is unassessed; the reference reader is not evidence of human learning.".into(),if p.intent()==LearningIntent::TakePull{"Public pull-duty communication is missing; this lesson's readability is unproven.".into()}else{"Reader, response window and 60 m contention bound are provisional engineering assumptions.".into()},"Contention accepts other formations/being ahead; it does not prove future effort-equivalent reachability.".into(), "Response means one second closing at >=0.2 m/s or contact within 8 m with the first cued rider; this is motor evidence, not intent or human recognition.".into()]}
     }).collect()
+}
+
+#[cfg(test)]
+mod response_tests {
+    use super::*;
+    use race_engine::perception::RiderMotion;
+    #[test]
+    fn timing_requires_persistent_observed_action_not_a_power_rise() {
+        let phases = crate::workout();
+        let plan = author(&phases, 250.0).unwrap();
+        let lesson = &plan.situations()[3];
+        let mut a = LearningAcc::default();
+        let read = MoveRead {
+            decision: MoveDecision::Respond,
+            target: Some("rival".into()),
+            reasons: vec![],
+        };
+        let mut view = PublicRaceView {
+            riders: vec![RiderMotion {
+                id: "rival".into(),
+                gap_m: 15.0,
+                relative_speed_ms: 1.0,
+                lateral_slot: 0,
+            }],
+            grade: 0.02,
+            finish_remaining_m: None,
+        };
+        for tick in 0..40 {
+            a.observe(
+                lesson,
+                f64::from(tick) * crate::DT,
+                500.0,
+                true,
+                &read,
+                &view,
+            );
+        }
+        assert_eq!(a.response_at, None);
+        view.riders[0].relative_speed_ms = -0.5;
+        for tick in 40..59 {
+            a.observe(
+                lesson,
+                f64::from(tick) * crate::DT,
+                250.0,
+                true,
+                &read,
+                &view,
+            );
+        }
+        assert_eq!(a.response_at, None);
+        a.observe(lesson, 59.0 * crate::DT, 250.0, true, &read, &view);
+        assert!((a.response_at.unwrap() - 2.0).abs() < 1e-9);
+    }
 }

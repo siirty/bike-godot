@@ -14,6 +14,8 @@ pub struct RiderMotion {
     pub gap_m: f64,
     /// Speed relative to athlete, m/s.
     pub relative_speed_ms: f64,
+    /// Visible lateral file occupied by the rider, not a promised draft target.
+    pub lateral_slot: usize,
 }
 /// Sanitized perception input. Constructed from the same pre-step state as the kernel.
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -49,6 +51,7 @@ impl PublicRaceView {
                     id: r.id().as_str().into(),
                     gap_m: r.distance_m() - h.distance_m(),
                     relative_speed_ms: r.speed_ms() - h.speed_ms(),
+                    lateral_slot: r.lateral_slot(),
                 })
                 .collect(),
             grade: config.terrain().grade_at(h.distance_m()),
@@ -204,18 +207,20 @@ pub fn read_move(
                     matches!(
                         p.strength(),
                         KnownStrength::Sustained | KnownStrength::AllRound
-                    )
+                    ) || r.gap_m > 2.0 * settings.established_gap_m
                 })
         })
         .min_by(|a, b| a.gap_m.total_cmp(&b.gap_m).then(a.id.cmp(&b.id)));
     if let Some(r) = threat {
         let represented = near.iter().any(|ally| {
-            knowledge.teammates(knowledge.player(), &ally.id) && (ally.gap_m - r.gap_m).abs() <= 8.0
+            knowledge.teammates(knowledge.player(), &ally.id)
+                && (ally.gap_m - r.gap_m).abs() <= 8.0
+                && ally.relative_speed_ms >= r.relative_speed_ms - settings.opening_speed_ms
         });
         if represented && knowledge.objective() != PlayerObjective::StayWithGroup {
             return Ok(result(MoveDecision::LetOthersWork,nearest,"Known opposition is ahead, but a teammate is alongside the move; conserve with the group for this objective."));
         }
-        return Ok(result(MoveDecision::Respond,Some(&r.id),"A known sustained/all-round opponent is opening or holding a gap and no teammate covers it for this objective."));
+        return Ok(result(MoveDecision::Respond,Some(&r.id),"Known opposition is opening or holding a gap; an established large gap can override sprint-only reputation. No teammate maintains coverage for this objective."));
     }
     if let Some(r) = moving
         .iter()

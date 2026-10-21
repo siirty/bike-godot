@@ -157,5 +157,9 @@ The live demo's spotlight tactics are an implemented policy, not evidence of les
 [ADR 0008](../decisions/0008-learning-contracts-and-public-reader.md) adds validated situation/public-
 knowledge contracts, a public-motion reference reader, a target-independent cue-driven athlete,
 separate diagnostics and practice observations to the tool. These implement useful seams, not
-full validation: human recognition, public pull-duty communication, team cooperation, calibrated
-future reachability and empirical result plausibility remain unresolved.
+full validation: human recognition, public pull-duty communication, general team cooperation,
+calibrated future reachability and empirical result plausibility remain unresolved.
+
+[ADR 0009](../decisions/0009-cue-calibrated-selection-chain.md) adds a focused cue-fitted group
+selection chain, physically executed changes at the front and explicit bounded plan rejection.
+This supplies limited connected replay evidence; it does not establish the full acceptance matrix.

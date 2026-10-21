@@ -71,7 +71,13 @@ cargo run -p race_prototype --release -- --out race-prototype-output
 ```
 
 This is an experimental frozen-command policy for the director-first direction in
-[ADR 0007](docs/decisions/0007-tactical-training-core.md). The version-2 viewer adds public roster/context, a cue-driven rider, unscored classification
+[ADR 0007](docs/decisions/0007-tactical-training-core.md). The version-3 viewer adds public roster/context, a cue-driven rider, unscored classification
 practice and separate audit evidence. Its provisional formation gates are not
 validated learning or result-plausibility criteria. Nominal fitting and deviation failures remain
 inspectable; the tool does not implement all TT-01–TT-10 requirements.
+
+A focused [connected selection experiment](docs/decisions/0009-cue-calibrated-selection-chain.md)
+adds offline cue-policy fitting, local group roles, a lateral-file playback and explicit plan
+rejection. Run `cargo run -p race_prototype --release --example chain -- connected-selection.json`.
+[Verification](docs/verification/2026-10-21-selection-chain.md) records the accepted bounds and
+failed profiles; this is not a general workout generator or human-learning validation.
