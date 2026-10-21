@@ -24,8 +24,9 @@ The app turns structured cycling workouts into terrain and race situations ridde
 - `race_engine` owns one pure deterministic stepping kernel, with explicit state, inputs, time, RNG (`pcg32-v1`, canonical `RiderId` order) and typed events. Headless and live execution use the same kernel.
 - Fixed rider capability belongs in `RaceSimulationConfig`; only dynamic data belongs in `RaceState`. Never rewrite configuration to influence an outcome.
 - AI may react tactically to observable race state and the human. Never change CP/FTP, W′, sprint ability, mass/aero, physics, speed or power to force a story or keep the human attached. Drafting scales aerodynamic drag only.
-- Only the Scene Planner sees scene goals. Individual rider AI never receives the athlete's workout-target error or fidelity score.
-- When a preferred scene becomes unreachable, choose a plausible, physiologically equivalent fallback. Never teleport riders or manufacture impossible actions.
+- Tactical learning situations, player-visible context, sequential workout opportunities and plausible race progression/results follow TT-01–TT-10 and ADR 0007. Overall placing or prescribed watts alone do not validate a lesson.
+- The director may use workout knowledge offline to compile bounded intentions/roles. Individual rider AI never receives the hidden lesson answer, future workout, athlete target error or fidelity score.
+- Start with deterministic pre-ride situation planning, frozen terrain/capability and ordinary local reactive AI. A general live Scene Planner is not required. Validate continuity within explicit reference bounds; retain ordinary rider-error consequences without automatic rescue. Never teleport riders or manufacture impossible actions.
 - Measured activity data contains only actual human telemetry. Simulated outcomes never create synthetic power samples.
 - Ride-loop code targets `TrainerControl`, not `ble_trainer` or `trainer_core`.
 - Domain crates stay free of Godot, BLE, filesystem and wall-clock dependencies. Only `crates/godot_adapter` depends on `godot`, and GDScript is presentation only.
@@ -84,7 +85,7 @@ In this repository, always flag:
 - a second live/headless simulation implementation, or a hidden clock in the domain crates;
 - AI capability or physics changes used as rubber-banding;
 - target-error leakage into individual AI;
-- a forced narrative repair where a fallback is required;
+- automatic narrative rescue of ordinary athlete mistakes or a forced outcome contrary to ADR 0007;
 - simulated values entering measured activity history;
 - dependency-direction violations between crates (`godot` outside `godot_adapter`, `trainer_core` outside `ble_trainer`);
 - unexplained regression-fixture changes without a documented contract decision;

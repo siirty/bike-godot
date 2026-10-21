@@ -7,7 +7,10 @@ slices, "end-to-end" means through the simulation domain, not through the traine
 
 Risk drove the order. The risky layer (trainer I/O, physics, the deterministic foundation) is
 built. The differentiating layer is partly built: spotlight tactics now run, while training contracts,
-scenario synthesis and the scene planner remain. Slices 5–9 are the remaining core loop, not a backlog of polish.
+situation synthesis, player context and independent learning/result validation remain.
+[ADR 0007](../decisions/0007-tactical-training-core.md) replaces the mandatory Scene Planner slice
+with director-first situation planning. [TT-01–TT-10](../requirements/tactical-training.md) are the
+acceptance requirements; Slices 5–9 are the remaining core loop, not a backlog of polish.
 
 0. **Repo scaffolding** *(done)*: Cargo workspace, Godot project, quality CI on the self-hosted
    runner.
@@ -53,39 +56,43 @@ scenario synthesis and the scene planner remain. Slices 5–9 are the remaining 
 
    Full pack/group recognition, cooperation and natural passing statistics wait until larger fields
    make them visible. Validate believable spotlight behavior, determinism, invariants and long-run
-   numerical stability across seeds. Do all of this before adding workout orchestration or a human
-   rider.
-6. **Threshold vertical: contract → scenario → evaluator.** This is one thin vertical for a single
-   workout type, end to end; it absorbs the first cut of Slices 7 and 8. Threshold is the anchor
-   because it maps to chase, bridge, paceline and long-climb situations, and its power envelope is
-   well defined. The vertical:
-   - derives a versioned `TrainingContract` from the immutable `WorkoutTimeline`;
-   - has `session_director` generate a scenario anchored to that contract;
-   - runs it on the same headless kernel;
-   - evaluates it with the evaluator that later reports post-ride fidelity.
+   numerical stability across seeds. Use the existing baseline for focused situation validation;
+   do not make comprehensive autonomous whole-race realism a prerequisite for the learning vertical.
+6. **Threshold vertical: contract → tactical situation → evaluator.** One thin vertical for
+   a single workout type, including the first cut of Slices 7 and 8:
+   - derive a versioned contract from immutable workout data;
+   - preplan terrain, relevant riders/affiliations, player objective/knowledge and bounded actions;
+   - specify readable cues, response window, acceptable execution, demand and exit conditions;
+   - run continuously on the same kernel, without ordinary-error rescue;
+   - compare prescribed-power control with an independent cue/action-following policy;
+   - inspect workout fidelity, recognition/timing, continuity and path-to-result plausibility.
 
-   Validation is light: deterministic generation plus a feasibility smoke-check, meaning the
-   scenario is completable and the field coherent. The vertical is done when a dogfooder has ridden
-   it.
-7. **Generalize contracts and the Scene Planner**:
-   - extend contracts to all mappings in physics-design.md's table, keeping interval/block
-     explanations, with FTP tests as time trials;
-   - grow the planner to semantic race-state projections, bounded tactical roles/influence, and
-     live fallback selection;
-   - run tactical decisions at a slower explicit cadence than the physics step.
+   A dogfooder ride with essential context available and coaching optionally hidden supplies early
+   evidence. Completion requires the focused TT acceptance evidence, not merely a nominal watt fit.
+   The existing all-zone prototype is an experimental diagnostic, not completion of this vertical.
+7. **Generalize contracts and tactical situation validation**:
+   - extend mappings and interval/block explanations, with FTP tests as time trials;
+   - add state projections, accepted response/formation alternatives and context-transfer tests;
+   - validate low-threat recovery movement and connected execution through reasonable variations;
+   - keep local tactical decisions at a slower explicit cadence than physics;
+   - calibrate proficiency assumptions and result plausibility against appropriate evidence.
+
+   A general runtime Scene Planner and automatic rider-error repair are not prerequisites.
 8. **Full Workout Director**:
-   - whole-session outline;
-   - frozen generated terrain;
-   - field composition and persistent rider selection;
-   - objectives and acceptable scene regions;
-   - structured non-race fallbacks when no feasible pack race exists.
+   - compose the whole workout into connected tactical learning situations;
+   - freeze generated terrain and field capabilities;
+   - compile bounded opponent action/role plans and entry/exit/opportunity windows;
+   - provide relevant roster, affiliations, known strengths and player objectives;
+   - check future opportunities within explicit reference bounds and credible path to contention;
+   - reject/regenerate infeasible candidates before riding, or offer an explicit non-race alternative.
 
-   Forward-running validation across bounded under/at/over-target controllers and seed corpora is
-   added when it is shown to catch real failures.
+   Expand the reference-policy and seed corpus as focused cases become credible. Exact scheduling
+   anchors, compute budget and production schemas remain open.
+
 9. **Human, trainer and race UI integration**:
    - turn real trainer telemetry into rider inputs, and drive the same kernel from the Godot app;
    - add technical-interruption pause semantics, SIM parameter output, manager radio and event
-     presentation, and configurable HUD guidance;
+     presentation, roster/briefing context and configurable coaching/HUD guidance;
    - keep measured and simulated data separate;
    - offer the athlete the ridden-versus-simulated finish choice.
 
@@ -116,18 +123,19 @@ scenario synthesis and the scene planner remain. Slices 5–9 are the remaining 
     distributions;
   - no Godot, wall-clock timer or trainer dependency is reachable from the kernel.
 - **Slice 6**:
-  - golden tests assert deterministic contract derivation, scenario generation and evaluator
-    results for canonical threshold workouts;
-  - a dogfooder ride confirms the vertical.
+  - deterministic threshold contract derivation, situation generation and effort evaluation;
+  - a cue/action-following policy independent of target watts and a prescribed-power control;
+  - rider review of recognition/timing with essential context available and optional hints hidden;
+  - observed local consequences and plausible course/field progression.
 - **Slice 7**:
-  - golden tests cover contract derivation for every mapping, including interval-level explanations
-    and FTP test → TT;
-  - seeded tests cover tactical choices, coordinated roles, fallback selection, and the rule that
-    AI-driven transitions keep viable continuations without mutating capability.
+  - contract derivation for every mapping, including interval/block explanations and FTP test → TT;
+  - context-sensitive and identity-transfer cases, ignore/cover comparisons and plausible selection/
+    finishing cases; reported uncertainty and calibration limits;
+  - continuous reference variations distinguish valid alternatives from lost opportunities.
 - **Slice 8**:
-  - generated scenarios pass the feasibility smoke-check;
-  - once the heavy battery exists, it reports reachability, fidelity and regeneration/fallback
-    rates.
+  - generated plans pass separate workout, learning, continuity and race-plausibility checks;
+  - failures remain recorded; no hidden runtime repair or predetermined winner;
+  - larger corpora report validity and generation rejection/regeneration rates.
 - **Slice 9**:
   - integration tests prove the live adapter drives the same kernel;
   - technical pauses do not create race consequences;

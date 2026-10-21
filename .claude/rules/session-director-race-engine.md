@@ -21,21 +21,26 @@ before changing either crate.
   - field composition;
   - fixed AI capabilities and personalities;
   - race objectives;
-  - major physiological scene goals, as acceptable future race states.
+  - tactical learning situations with cues, response/exit windows and effort envelopes;
+  - player role, knowledge, relevant affiliations and course context;
+  - bounded opponent intentions/roles, without predetermined results.
 
   It has no wall clock, no live rider state and no I/O. It must stay deterministic for a fixed
   input and seed.
 - **`session_director` does not precompute complete AI position-over-time trajectories.** It
   scripts the opportunity, not the exact outcome.
-- **`race_engine` owns the race simulation and live replanning.** Its core is a pure deterministic
+- **`race_engine` owns race execution and local reactive policies.** Its core is a pure deterministic
   stepping kernel with explicit time, seeded randomness, rider inputs and typed events.
   - The headless harness calls that kernel directly.
   - The live adapter supplies trainer telemetry, drives stepping from Godot's frame loop, presents
     events and state, and writes SIM parameters.
   - Neither timers nor trainer streams belong inside the kernel.
-- **The short-horizon Scene Planner is the only live layer that replans** after player or AI
-  actions make the preferred scene unreachable. `session_director` remains pre-ride and never
-  consumes live race state.
+- **The initial orchestration is director-first**, per ADR 0007 and TT-01–TT-10. Validate a
+  connected plan before riding; freeze terrain and capability. A general live Scene Planner is
+  not required, and ordinary athlete mistakes are not repaired through automatic regroup or
+  target-error feedback. Exact fixed command frames remain an experimental policy, not a rule
+  for every controller. Revisit adaptation only through explicit evidence and a decision.
+
 - **AI riders may react to the human and to each other.** None of these is rubber-banding:
   - following an attack;
   - refusing a pull;
@@ -54,14 +59,19 @@ before changing either crate.
 - **The pack tier's scripted pace plans are bound by the same rule.** A pace plan chooses
   intentions within the rider's fixed physiology. It never reads the human's workout target or
   error.
-- **The scene planner may assign bounded temporary tactical roles** and bias intentions and
-  transition utilities, but only within each AI rider's available physiology and plausible threat
-  model. Individual rider AI observes local race state, not the human's target error or fidelity
-  score.
-- **Viability guarantees are evaluated for explicitly bounded reference rider behaviors.**
-  AI-driven transitions must not eliminate every training-equivalent continuation for those cases.
-  Arbitrary human input stays authoritative. It may require a live fallback or, exceptionally, a
-  separately defined neutralization.
+- **Preplanned bounded roles/intentions may influence local AI**, within available physiology
+  and plausible tactical conditions. Individual controllers never receive the lesson's hidden
+  answer, human target error, future workout or fidelity score. The director may use those
+  workout constraints offline when compiling the plan.
+- **Continuity is checked for explicitly bounded reference behaviors before execution.** The
+  remaining steps must be sequentially available after accepted execution, including declared
+  reasonable variation. Arbitrary human input stays authoritative and can lose opportunities.
+  Do not add automatic neutralization or rescue to make a failed plan appear viable.
+- **Validate learning and race plausibility separately from watts.** Required context must be
+  player-visible, observed state must be separate from authored labels, and the path to any result
+  must fit course, capabilities, selections and fatigue. A different valid wheel/formation is
+  not automatically failure; a desired winner cannot justify capability changes.
+
 - **The app presents the intended physiological problem; it does not enforce the human's watts.**
   A rider who under-rides may get dropped or fail to bridge. A rider who over-rides may catch early
   and gain shelter. Do not add hidden correction logic that recreates ERG mode.

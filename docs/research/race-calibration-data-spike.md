@@ -29,9 +29,15 @@ A negative result is valid if it is supported by evidence and identifies the nex
 
 ## Product context
 
-The product turns structured cycling workouts into simulated races. A pure deterministic headless
-kernel will simulate rider physics, fatigue, groups and tactical decisions before any workout
-orchestration or trainer/UI integration is added.
+The product turns structured workouts into connected tactical learning situations; it does not
+seek full historical race reproduction. [TT-01–TT-10](../requirements/tactical-training.md) define
+recognition/timing, player knowledge, effort, continuity and plausible progression/results.
+The implemented deterministic kernel and initial tactics provide the execution baseline.
+
+Extract representative situations and the preceding context needed to interpret them. Data may
+calibrate physical or group behavior without validating perceptual learning. Record course, field,
+affiliations and selections when available, and inspect the path to the result rather than merely
+matching finishing order.
 
 The eventual calibration target is **believable race development**, not reproduction of an exact
 historical trajectory. Expected comparison dimensions include:
@@ -325,7 +331,9 @@ Do not:
 
 ## Expected decision after the spike
 
-If a source is viable, build the deterministic headless kernel and autonomous race first. Keep its
-behavioral constants configurable and emit the recommended comparison fields/events. Construct the
-larger calibration corpus only after the autonomous baseline reveals which parameters and
-distributions need calibration.
+If a source is viable, compare its representative situation windows with the existing headless
+kernel/tactics, keeping behavioral constants configurable. Include novice, experienced amateur
+and elite assumptions where evidence permits; do not infer proficiency solely from FTP. Identify
+which observations constrain local behavior, course-specific selection and outcome plausibility.
+A telemetry source alone cannot validate player recognition or learning transfer. Build a larger
+corpus after focused comparisons reveal which parameters and distributions need calibration.

@@ -1,7 +1,9 @@
 # bike-godot
 
-A bike trainer app that turns structured workouts into terrain you ride in FTMS SIM mode. Your
-real power decides the outcome; the app never forces watts through ERG mode.
+A bike trainer app that turns structured workouts into credible race situations, teaching when
+to commit power and how to classify moves. Your real effort decides the consequences in FTMS SIM
+mode; the app never forces watts through ERG mode. The accepted product behavior is defined by
+[TT-01–TT-10](docs/requirements/tactical-training.md); implementation is still in progress.
 
 It is a **Godot 4** app over a **Rust core**. Build, tests, fixture maintenance and simulation
 development are owned by this repository. No legacy application checkout or language toolchain is
@@ -68,5 +70,7 @@ schedule across Z1–Z7 and recovery. It exports browser playback and machine-re
 cargo run -p race_prototype --release -- --out race-prototype-output
 ```
 
-This is an experiment in an alternative to runtime scene replanning. Its nominally calibrated
-sequence passes, while small deviations expose failures that remain visible in the report.
+This is an experimental frozen-command policy for the director-first direction in
+[ADR 0007](docs/decisions/0007-tactical-training-core.md). Its provisional formation gates are not
+validated learning or result-plausibility criteria. Nominal fitting and deviation failures remain
+inspectable; the tool does not implement all TT-01–TT-10 requirements.

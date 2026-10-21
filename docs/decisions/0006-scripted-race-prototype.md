@@ -2,6 +2,8 @@
 
 - Status: accepted for an experimental tool; production orchestration remains unimplemented
 - Date: 2026-10-21
+- Follow-up: [ADR 0007](0007-tactical-training-core.md) defines the situation-training product
+  direction and director-first baseline; this tool remains experimental and its gates provisional.
 
 ## Purpose
 
