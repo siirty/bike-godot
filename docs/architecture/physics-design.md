@@ -34,7 +34,14 @@ The app owns *what* environment the rider feels: grade, wind, rolling resistance
 drafting-driven Cw. Once real hardware is connected, it does not own the trainer's sub-second
 resistance actuation.
 
-## Product invariant: the workout constrains the race, not the result
+## Product invariant: train the tactical eye; simulate credible consequences
+
+[ADR 0007](../decisions/0007-tactical-training-core.md) and
+[TT-01–TT-10](../requirements/tactical-training.md) define the accepted product behavior. The
+unit of design is a tactical learning situation, not reproduction of a full race. Workout effort,
+recognition/timing, continuity and result plausibility have separate acceptance criteria.
+
+The workout constrains the opportunity, not the result.
 
 The app does not reproduce ERG mode indirectly. It turns the prescribed workout into a set of
 physiological constraints. It then creates a race situation in which riding approximately the
@@ -55,9 +62,9 @@ RaceScenario
   ├─ terrain
   ├─ field composition
   ├─ AI physiology/personality
-  ├─ race objectives
-  ├─ scene goals / acceptable future race states
-  └─ tactical opportunities
+  ├─ player objectives, role and available knowledge
+  ├─ connected tactical situations / acceptable response and exit windows
+  └─ bounded opponent action/role plans
 ```
 
 A `TrainingContract` is not a second-by-second watt trace. It describes the important stimulus:
@@ -95,7 +102,8 @@ The race does not materialize every possible state as a graph node. On each simu
 concrete `RaceState` is evaluated to determine the valid rider actions and their utilities or
 probabilities. The deterministic kernel then applies the selected actions, physics and fatigue.
 That produces the next state and typed domain events. Semantic labels such as peloton, breakaway
-or chase are lower-dimensional projections, used by the director and the planner.
+or chase are lower-dimensional observations used to compare planned situations with what actually
+happens. An authored scene name is not an observation or a tactical-validity oracle.
 
 Conceptually:
 
@@ -375,53 +383,35 @@ exact continuous trajectories. The gap budget matters most: riders riding togeth
 all of their integration error, while riders in different phases do not. `SimulationTimestep`
 exports the budget as constants, so a threshold can name the number it depends on.
 
-## Scenario is planned; race outcome is live
+## Director-first situation planning; outcomes stay live
 
-`session_director` is pure pre-ride planning. Its inputs are:
-- the workout;
-- an optional route;
-- the rider profile;
-- an explicit random seed, where variation is wanted.
+`session_director` remains pure pre-ride planning. Inputs include the immutable workout, optional
+route, rider profile, scenario assumptions and explicit seed. It produces a deterministic plan of
+terrain, field, player objectives/knowledge and connected learning situations. Each situation
+specifies cues, response windows, acceptable actions, physiological demand, consequences and exit
+conditions as required by TT-01. Exact schemas and scheduling anchors remain unresolved.
 
-From these it produces a deterministic `RaceScenario`. That scenario defines the terrain and the
-major physiological story goals, but it **does not precompute AI position-over-time
-trajectories**.
+The initial design compiles bounded opponent intentions or tactical roles before the ride. It may
+use offline nominal simulations to size effort and gaps, but must validate with independent
+execution policies and variations. It does not impose position/speed trajectories or a winner.
+Terrain and capability are frozen; ordinary kernel stepping resolves all actual movement, fatigue,
+drafting and finishes. Opponents may still respond locally to observable race state.
 
-A story goal describes an acceptable set of future race states, not a single forced point. For an
-eight-minute threshold block, for example, acceptable situations may include:
+Validate that reasonable accepted execution leaves the remaining workout situations available in
+sequence. Alternative wheels, gaps and formations are allowed when they preserve the learning
+problem and effort envelope. For example, a threshold opportunity may be a bridge or work in an
+existing break if the authored plan allows both and the cues remain credible. A label change alone
+does not demonstrate equivalent effort.
 
-- chase a small break,
-- bridge between groups,
-- work in or hold an existing break,
-- survive a climb selection, or
-- sustain a hard paceline.
+A general live Scene Planner is not an initial prerequisite. There is no automatic target-error
+repair, neutralization or regroup to restore missed opportunities after ordinary rider mistakes.
+Record failures and actual consequences. Technical-disconnect pause handling remains separate.
+The need for any future bounded adaptation must be demonstrated and accepted explicitly.
 
-The preferred story may be "a 2–4 rider break is 10–30 seconds ahead when the threshold block
-starts". Even so, the exact riders, the exact gap and the exact attack timing are soft outcomes. If
-the human has already joined the break, the scene planner switches to a physiologically equivalent
-goal, such as working in or defending the break. It does not force the original story back into
-place.
-
-This makes the planning problem receding-horizon rather than screenplay-like:
-
-```
-whole workout: SessionDirector chooses physiological scenes and terrain
-minutes ahead: scene planner steers toward one reachable acceptable race state
-seconds ahead: individual riders choose tactical actions
-continuous: physics + fatigue determine what actually happens
-```
-
-The live Scene Planner, not `session_director`, is the only layer that replans after the race
-diverges. It may coordinate bounded temporary roles, such as:
-- instigator;
-- follower;
-- chase organizer;
-- non-cooperator;
-- protected rider.
-
-It may also bias tactical utilities across several riders. It does not animate puppets: local
-state, threat, physiology and physics can prevent the intended transition. It must not teleport
-riders, rewrite physiology, or force an impossible action.
+The existing `TacticalRole` seam can carry bounded intentions; its presence does not mandate a
+runtime replanner. [ADR 0006](../decisions/0006-scripted-race-prototype.md) records the stricter
+experimental frozen-command policy. Production may use local reactive controllers without
+changing the pre-ride ownership boundary.
 
 ## No rubber-banding does not mean non-reactive AI
 
@@ -443,7 +433,7 @@ A human riding easier may fail to bridge or get dropped. Riding harder may close
 reach shelter sooner. That is a legitimate race outcome, not something the engine repairs.
 
 A persistent subset of named AI riders carries identity, physical and physiological capability,
-tactical personality and reputation across sessions. Temporary fatigue, position and planner role
+tactical personality and reputation across sessions. Temporary fatigue, position and assigned tactical role
 remain session state. The rest of the field may come from a broader variable roster. Reputation
 helps decide whether a move is worth following, together with current-race threat. It is never an
 omniscient replacement for race context.
@@ -490,47 +480,26 @@ hysteresis. All tuning is validated and checkpointed. Following corrects gap/spe
 power request; the kernel alone applies physiological limits and physical movement.
 
 A `TacticalRole` adds at most 0.15 utility to an already valid action. Recovery overrides roles.
-This supplies the minimal bounded planner-influence seam; it does not implement full SceneGoals,
-viability or the Scene Planner. Controller checkpoints must accompany a kernel snapshot for exact
-autonomous continuation. See [ADR 0005](../decisions/0005-spotlight-tactics.md).
+This supplies a bounded role-input seam; it does not implement the situation compiler, player
+knowledge model, continuity validation or a general live Scene Planner. Controller checkpoints
+must accompany a kernel snapshot for exact autonomous continuation. See [ADR 0005](../decisions/0005-spotlight-tactics.md).
 
-## Constrained stochasticity
+## Constrained variation and local tactics
 
-Riders come in two tiers:
-- **The 2–3 drama-spotlight riders** (break instigator, chase organizer, the rival at the finish)
-  run live utility tactics.
-- **The rest of the pack** rides scripted pace plans with seeded variance. These plans are
-  capability-honest templates that consume real physiology.
+Spotlight utility controllers and seeded pack pace plans are implemented policies, not a mandate
+for full-field utility AI. Use the simplest policy that makes the tactical situation and its
+consequences credible. Stochasticity uses explicit seeded RNG and remains reproducible.
 
-A rider is escalated to utility AI on evidence of visible breakage, not on spec. The full
-utility-AI field is the end state. Everything in this section binds both tiers.
+Local reactive AI evaluates valid actions from observable race state, its fixed profile, current
+physiology and bounded assigned intentions/roles. It receives no human target error, fidelity,
+future workout or hidden lesson answer. The director may use workout knowledge offline to plan
+and calibrate those intentions; it cannot use live target tracking to keep the athlete attached.
+Capability, physiology, threat and physics still bound execution.
 
-Individual rider AI evaluates locally valid actions from three things: observable race state, its
-persistent profile, and its current physiology. It does not receive the human's target error,
-fidelity score or future workout structure.
-
-The live Scene Planner knows the current scene goal. It may assign bounded temporary roles or bias
-tactical utilities across riders. It uses that influence to keep AI-driven transitions inside the
-viable region for explicitly bounded reference athlete behaviors. Physics, fatigue and the threat
-model still decide whether an action is plausible and whether it succeeds.
-
-Conceptually:
-
-```
-concrete race state
-        ↓
-valid actions from physics + physiology
-        ↓
-local tactics + personality + threat   (spotlight)  /  pace plan + seeded variance (pack)
-        ↓
-bounded planner role/influence
-        ↓
-chosen actions → deterministic simulation step
-```
-
-For the defined reference cases, the app guarantees that AI behavior preserves an opportunity to
-encounter the intended physiological problem. It cannot guarantee that arbitrary human behavior
-remains naturally recoverable, or that the human produces the prescribed watts.
+For declared bounded reference behaviors, generation checks sequential access to the remaining
+training opportunities. This is a pre-ride validation obligation, not a runtime guarantee for
+arbitrary input. It must not be implemented by rewinding, teleporting, secretly changing power or
+forcing an impossible action.
 
 ## Race primitives
 
@@ -562,12 +531,14 @@ field composition, AI intent and existing gaps.
 
 ## Workout translation rules and examples
 
-The director should translate the *whole workout* into a coherent race arc. It should not paint
-each interval independently onto unrelated terrain.
+The director translates the *whole workout* into connected tactical learning situations. Local
+lessons must fit a coherent course, field and progression; this does not require reproducing a
+complete real-world race. Do not paint each interval onto unrelated terrain or reset riders between
+blocks. Validate the resulting path to contention as well as each opportunity.
 
 Common mappings:
 
-- recovery → sheltered bunch, descent, or regroup;
+- recovery → sheltered group, descent, or a preplanned physically plausible regroup;
 - endurance → steady peloton or group ride with benign positional movement;
 - tempo → fast rotating paceline or controlled chase;
 - sweet spot → working breakaway or sustained chase;
@@ -596,57 +567,51 @@ A regressive block can arise from:
 - the rider spending longer sheltered;
 - the terrain easing.
 
-## Scenario feasibility and fidelity
+## Situation validation, fidelity and result plausibility
 
-Scenario generation is anchored to the training contract: the race is built around the workout.
-That is not cuttable, because without it the product thesis collapses.
+[TT-01–TT-10](../requirements/tactical-training.md) specify the independent acceptance dimensions:
 
-Validation starts **light**: deterministic generation plus a feasibility smoke-check, meaning the
-scenario is completable and the field is coherent. The dogfooder rides every build, and that is
-part of the validation loop.
+- **Workout fidelity**: action execution offers the prescribed effort, duration and recovery.
+- **Tactical learning**: players can classify the move and its timing from information available
+  to them; coaching and target hints can be hidden without removing essential context.
+- **Continuity**: accepted bounded execution enables later steps without resets or live rescue.
+- **Race plausibility**: course, capability, selections, cooperation, gaps and accumulated fatigue
+  explain the local consequences and any finishing result.
 
-The heavier machinery is added later, once it is shown to catch real failures. Candidate scenarios
-are simulated with explicitly bounded under-target, at-target and over-target reference
-controllers. The director searches over variables until the intended stimulus and outcome
-sensitivity fall inside acceptable ranges. Those variables include:
-- starting gap;
-- AI strength;
-- group size;
-- gradient;
-- drafting.
+The first vertical needs focused evidence for all four. A prescribed-watt replay is a control, not
+proof that the race induces that effort. Add a cue/action-following policy independent of workout
+watts, continuous bounded variation and isolated mistakes. Mechanical pace-demand estimates are
+supporting diagnostics, not proof of tactical necessity. Human observation is needed for cue
+readability; a software controller alone does not demonstrate learning transfer.
 
-The guarantee is bounded. AI-driven transitions must not eliminate every training-equivalent
-continuation for those reference behaviors. Arbitrary human behavior is never restricted, and it
-may leave no natural viable path. In that case, the live Scene Planner first seeks an equivalent
-fallback. A visible neutralization or regroup is the current preference for the exceptional
-fallback, but it is still unresolved.
+Use matched scenes with changed team/strength/objective/course context and equivalent scenes with
+changed identities. Check whether players use the relevant information rather than memorize an
+avatar or phase label. Report unavailable information and uncertain interpretations explicitly.
 
-Example: for an eight-minute threshold chase, a reference rider near target power might be expected
-to close the gap around minute 7–8. Under-riding should often fail, and over-riding should close it
-earlier. The exact tolerances and fidelity metric are open design questions.
+Background moves must be legibly safe to ignore under stated conditions. Covering one may improve
+position or change a later placing; that alone does not make the move mandatory. Validate whether
+ignoring creates an unplanned race-saving obligation relative to the player's objective.
 
-The generated race should not be expected to reproduce the smooth ERG trace second by second. Short
-tactical excursions and sheltered periods are desirable, as long as these remain appropriate:
-- interval-level load;
-- time in the intended intensity range;
-- work above CP;
-- recovery characteristics.
+Candidate generation may tune gaps, field composition, terrain and policy parameters offline;
+freeze the resulting capabilities and course before execution. Numerical effort bands, response
+windows, acceptable formations and proficiency distributions need calibration. The prototype's
+13 geometric phase gates are not production acceptance criteria. Riding ahead or taking a different
+wheel is not automatically failure. After finishing, cooldown requires recovery, not race formation.
 
-The deterministic headless simulator is built first. It is the executable foundation for physics,
-AI, planner and scenario validation. Candidate scenarios are tuned statistically across many random
-seeds, using the same stepping kernel that the live app drives.
+A sprinter's win on a course with 4,000+ m ascent requires inspecting the path to contention:
+climb placement, grade, duration, selection pace, regroup opportunities and remaining reserve.
+Total ascent and archetype alone cannot prohibit or justify the outcome. Explain surprising
+results from simulated events; never manufacture the expected winner. Proficiency assumptions
+must be explicit and distinguish physical capability from anticipation, positioning and cooperation.
 
 ## Failure, objectives and finish handling
 
-Race result, tactical objectives and training fidelity remain separate. Winning does not compensate
-for poor training execution, and high fidelity does not imply winning. The field keeps attacking,
-cooperating and chasing when the athlete rides above or below the prescription. It never carries
-the athlete through or yields a result.
-
-Ordinary player failure permanently changes the race state. There is no rewind or position
-restoration. The manager communicates the race consequence and the revised objective. The Scene
-Planner replans from the new state, while the remaining `TrainingContract` stays unchanged.
-Intensity reduction is an explicit athlete action, never silent adaptation.
+Workout fidelity, tactical performance and race result are separate. Winning cannot compensate
+for missing training; target watts cannot validate an unreadable lesson. Ordinary athlete mistakes
+permanently change state and may lose later opportunities. Report the consequence and which
+remaining opportunities were actually reached; do not restore the nominal plan automatically.
+Intensity reduction remains an explicit athlete action. The workout and training history are not
+silently rewritten to match what happened.
 
 ## Sprint handling
 
@@ -665,12 +630,23 @@ Simulated gameplay must never create fake power samples in the recorded training
 files contain only what the human actually produced. Simulated race results are separate game
 state.
 
-## Player information
+## Player information and tactical readability
 
-Manager radio messages explain the tactical requirement. The HUD can show power, heart rate,
-cadence, gradient and terrain, and the expected demand envelope. Guidance is layered and
-configurable. In particular, the athlete may hide manager messages and/or the target envelope, to
-practice reading the race without explicit instruction.
+Player knowledge is part of the authored situation, not merely a HUD preference. Provide objective
+and role, recognizable relevant riders, team affiliations, qualitative known strengths, relevant
+terrain/finish context and observable recent actions. If a required judgment depends on a fact,
+communicate it beforehand or make it observable. Unknowns are allowed when explicit and fair.
+Use a roster/briefing or equivalent accessible presentation; exact UI and persistence remain open.
+
+Distinguish stable knowledge from inferred current danger and private AI state. Never expose exact
+opponent reserve or hidden intention as if a real rider knew it. Reputation does not override the
+current constellation. A permanent dangerous/safe avatar label does not teach move classification.
+
+Optional manager radio and target-envelope coaching can explain decisions during guided practice.
+Both can be hidden for assessment while essential context remains available. Physical movement,
+constellation, timing and terrain must carry the lesson without a flashing threat indicator.
+Post-situation feedback should explain relevant cues and consequences, separating recognition,
+timing and effort. HUD power, heart rate, cadence and route information remain configurable.
 
 ## Reproducibility and interruptions
 
@@ -679,8 +655,10 @@ Persist enough context to reproduce generation and explain behavior:
 - the derivation and evaluator version;
 - the generated scenario and terrain;
 - the random seed;
-- the relevant persistent rider-profile versions;
-- important actions and transitions.
+- the relevant rider-profile versions and proficiency/model assumptions;
+- player-visible briefing, affiliations, known strengths, objective and coaching settings;
+- planned situations/cues/windows separately from observed actions and transitions;
+- effort/reserve, gaps and selections supporting the path to any result.
 
 Bit-exact live telemetry replay is not an initial requirement.
 
@@ -706,15 +684,18 @@ The athlete's local group and the tactically relevant riders always keep full fi
   goals are matched and anchored onto suitable real segments. An example is an actual climb long
   and steep enough to support a threshold chase for this rider.
 
-## Experimental fixed-action alternative
+## All-zone fixed-action experiment and implementation status
 
-The user authorized a prototype of pre-ride scripted race actions with no live repair on
-21 October 2026. [ADR 0006](../decisions/0006-scripted-race-prototype.md) scopes this experiment.
-`tools/race-prototype` exercises Z1–Z7 and recovery through the existing kernel, freezes opponent
-intentions after offline fitting, and reports scheduled versus observed transitions. It does not
-implement or require the general Scene Planner described above, nor silently replace production
-contracts. The first measurements show nominal success but substantial sensitivity to small
-changes; inspect failed opportunity/formation gates before deciding whether to adopt this design.
+[ADR 0006](../decisions/0006-scripted-race-prototype.md) scopes `tools/race-prototype`: a synthetic
+Z1–Z7 fixture over the existing kernel, with intentions frozen after offline fitting and scheduled
+versus observed transitions reported separately. ADR 0007 adopts director-first situation planning
+as the initial direction; it does not promote this tool to a validated production compiler.
+
+The prototype lacks the player knowledge model, human recognition validation and a progression/
+result plausibility evaluator. Its provisional formation gates can reject acceptable alternatives.
+Neither nominal fitting nor sensitivity to deviations settles real-world lesson validity. The
+existing reactive tactics, physiology and kernel remain unchanged; production requirements added
+here still require implementation and evidence.
 
 ## Open design work
 

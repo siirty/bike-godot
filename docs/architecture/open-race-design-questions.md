@@ -7,6 +7,7 @@ architecture does not live here:
 - crate ownership and dependencies: [README.md](README.md)
 - implementation sequence and verification: [build-order.md](build-order.md)
 - product identity and priorities: [product-alignment.md](product-alignment.md)
+- tactical learning and player-context requirements: [TT-01–TT-10](../requirements/tactical-training.md)
 - pre-ride versus live ownership rules:
   [session-director-race-engine.md](../../.claude/rules/session-director-race-engine.md)
 
@@ -16,7 +17,7 @@ values should stay configurable until headless evidence supports them.
 
 ## Slice 5: headless autonomous race
 
-Live utility tactics are for the 2–3 drama-spotlight riders only, plus a minimal scene-goal seam.
+The implemented utility tactics serve the 2–3 spotlight riders, with a bounded role-input seam.
 The pack runs scripted pace plans with seeded variance. The first autonomous simulation uses
 hand-authored terrain and starting state. It needs empirical answers for:
 
@@ -61,42 +62,51 @@ The first cut covers threshold only. Implementation still requires decisions abo
 - how to treat structured workouts that contain free-ride segments. Whole-session unstructured or
   free rides remain outside the initial scope.
 
-## Slice 7: Scene Planner
+## Slice 7: situation semantics and validation
 
-The live Scene Planner owns short-horizon steering and replanning. Its questions are answered when
-the threshold vertical reaches the planner layer. They are:
+[ADR 0007](../decisions/0007-tactical-training-core.md) settles director-first orchestration,
+context-dependent safe-to-ignore movement and independent learning/result validation. A mandatory
+live Scene Planner or automatic repair of athlete errors is no longer an open implementation task.
+Remaining questions are:
 
-- the semantic projection from concrete race state into situations such as peloton, breakaway,
-  chase, bridge and selection;
-- the `SceneGoal` and planner input/output types;
-- planner cadence, horizon, and how early it may prepare the next workout block;
-- the exact temporary tactical roles and the typed, bounded influence channel;
-- how strongly planner influence may bend personality without erasing a named rider's character;
-- the finite-horizon viability representation for bounded reference behavior;
-- which AI transitions are blocked when they would remove every training-equivalent continuation;
-- fallback ranking, continuity cost, replan triggers and hysteresis;
-- the exceptional live fallback when arbitrary human behavior leaves no natural viable path.
-  Visible neutralization/regroup is the current preference, but it is not yet accepted.
+- projection of actual state/actions into group membership, move classifications and opportunity
+  windows without using authored labels as the oracle;
+- the typed situation specification and validation evidence linking cues, player knowledge,
+  acceptable responses, effort envelopes and exit conditions;
+- numerical reaction/effort tolerances and acceptable alternatives by situation/workout shape;
+- bounded action-following reference controllers that do not receive prescribed watts;
+- bounded execution variations and continuity criteria for remaining steps;
+- information/identity transfer tests, human-review protocol and recognition/timing rubrics;
+- ignore-versus-cover criteria relative to the player's objective;
+- trajectory/result plausibility checks, including terrain-dependent selections, fatigue,
+  regrouping and path to contention;
+- proficiency-specific physical and tactical assumptions and evidence for calibrating them.
+
+If a scenario cannot satisfy these checks through pre-ride planning, record the failure before
+proposing a revised policy. A future runtime adaptation requires an explicit design decision;
+it is not implicitly authorized by the existing role seam.
 
 ## Slice 8: Workout Director and scenario synthesis
 
 The pre-ride director owns the whole-session outline, the generated frozen terrain, the field and
-the scenario. Generation is deterministic, with a light feasibility smoke-check first. It still
-needs:
+the scenario. Generation is deterministic and starts with focused evidence across the TT acceptance
+dimensions. It still needs:
 
-- the `RaceScenario` schema, and the generation order between outline, terrain, field and scene
-  goals;
-- the initial reusable situation/template vocabulary, and each template's entry, demand and exit
-  contract;
+- the `RaceScenario` schema and generation order between workout, terrain, field, situation
+  sequence, player knowledge and bounded action/role plans;
+- time/distance/event anchors, response windows and permitted transitions in the frozen plan;
+- the initial reusable situation/template vocabulary, including cues, known context, local
+  objectives, acceptable responses, demand and exit conditions;
 - the low-dimensional free parameters per template, and which of them support monotone solving;
 - distributions for terrain gradient, climb length, smoothing and total elevation;
 - how the director balances terrain-driven demand against race-mechanics-driven demand;
 - field composition, persistent named-rider selection, and generation of variable supporting
   riders;
 - feasibility outcome windows, sensitivity targets and the generation-time compute budget;
-- once the heavy validation returns, how many seeds are needed during generation versus offline
+- as validation expands, how many seeds are needed during generation versus offline
   Monte Carlo validation;
-- regeneration limits, and the structured non-race fallbacks for an infeasible pack race;
+- pre-ride rejection/regeneration limits and explicit non-race alternatives for an infeasible
+  situation sequence;
 - which coached solo/group experiences are supported initially, beyond the explicitly supported
   FTP-test time trial.
 
@@ -115,10 +125,13 @@ include:
 - the timing and default presentation of the explicit ridden-versus-simulated finish choice;
 - the separate data types and storage paths that keep simulated performance out of measured history
   and training load;
-- manager-radio event selection, wording and delivery cadence;
+- roster/briefing format, recognizable affiliations and qualitative strengths, relevant course
+  preview, player objective and knowledge persistence;
+- manager-radio event selection, wording and delivery cadence without replacing visual learning;
 - the default HUD layers, and how finely to configure radio messages, target envelope, power, heart
   rate, cadence and terrain;
-- post-block feedback, and how overall and interval fidelity are presented;
+- post-block explanations of classification, timing, effort and consequence, separately from
+  overall placing and interval fidelity;
 - the persistence schema for scenario seed, generated terrain, rider-profile versions and important
   events/transitions;
 - how race results affect the persistent leaderboard and reputation, independently of training
@@ -131,7 +144,8 @@ These are intentionally not prerequisites for the initial headless-to-live seque
 - race-to-race form variation;
 - full pack/group recognition, cooperation and natural passing statistics, once larger fields make
   them visible;
-- teams, domestiques, protection and richer classification objectives;
+- richer team tactics, domestiques, protection and classification systems beyond the minimum
+  affiliations and objectives needed to make initial lessons fair;
 - manual high-level positioning controls;
 - reduced-fidelity distant visual populations beyond the benchmarked full-simulation ceiling;
 - real-route alignment, wind, crosswind and echelons;

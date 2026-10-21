@@ -3,7 +3,9 @@
 The product is a **Godot app over a Rust core**. Both run in one process, joined by a single
 GDExtension. Decision records:
 - [ADR 0001](../decisions/0001-repo-split.md): the repo split;
-- [ADR 0002](../decisions/0002-rust-domain-port.md): the in-process Rust domain port.
+- [ADR 0002](../decisions/0002-rust-domain-port.md): the in-process Rust domain port;
+- [ADR 0007](../decisions/0007-tactical-training-core.md): tactical learning situations and the
+  director-first baseline, superseding mandatory live scene repair.
 
 ```
 ┌──────────────────────────────── bike-godot ─────────────────────────────────┐
@@ -53,10 +55,12 @@ Dependencies point downward only. The domain crates know nothing about Godot. On
 
 ## Documents
 
-- [`physics-design.md`](physics-design.md): the accepted race, training and physics design. It covers the simulation contracts, positioning and drafting, the determinism guarantee, snapshots, dynamics and the timestep, scenario planning, AI tiers, and fidelity. This is the source of truth for race behavior.
+- [`../requirements/tactical-training.md`](../requirements/tactical-training.md): normative core
+  behavior TT-01–TT-10, including player context and result plausibility.
+- [`physics-design.md`](physics-design.md): the accepted race, training and physics design. It covers the simulation contracts, positioning and drafting, the determinism guarantee, snapshots, dynamics and the timestep, situation planning, local AI policies, learning validation and fidelity. This is the source of truth for race behavior.
 - [`open-race-design-questions.md`](open-race-design-questions.md): unresolved, implementation-gating questions by slice. It is not accepted architecture.
 - [`build-order.md`](build-order.md): vertical slices, what is built, what is next, and how each slice is verified.
-- [`product-alignment.md`](product-alignment.md): product identity, the first user and platform, the AI tiers, and the threshold-first vertical.
+- [`product-alignment.md`](product-alignment.md): product identity, the first user and platform, the director-first approach, and the threshold-first vertical.
 - [`trainer-core.md`](trainer-core.md): the `trainer_core` boundary, the SIM-only chokepoint, and the write-rate policy.
 - [`risks.md`](risks.md): platform and implementation risks to budget for.
 - [`platform-rollout.md`](platform-rollout.md): Linux first, then Windows, Android, and macOS/iOS.

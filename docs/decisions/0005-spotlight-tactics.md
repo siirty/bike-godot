@@ -1,6 +1,6 @@
 # ADR 0005: Explicit-time utility tactics for spotlight riders
 
-- Status: accepted
+- Status: accepted for implemented tactics; future mandatory Scene Planner expectations superseded by ADR 0007
 - Date: 2026-10-20
 - Scope: next Slice 5 component, issue #1
 
@@ -22,7 +22,9 @@ finished riders are excluded. A sprint is allowed only on a course with an expli
 The minimal planner seam is `TacticalRole::{Neutral, Instigator, Chaser, Conserving}`. A role adds
 at most 0.15 utility to a valid action; it never enables an invalid action, changes capability or
 bypasses mandatory recovery. Roles are inputs held until the next decision, not goals injected
-into local AI. This is the bounded influence boundary only; full Scene Planner/viability is later.
+into local AI. This is the bounded influence boundary only. [ADR 0007](0007-tactical-training-core.md)
+supersedes the expectation of a required later live Scene Planner; preplanned roles can use the
+same boundary without runtime repair.
 
 Controllers hold their last action, target, power request, decision time and commitment start.
 Kernel snapshots still cover kernel continuation only. To resume an autonomous race exactly,

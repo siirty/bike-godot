@@ -1,5 +1,13 @@
 # All-zone race transition laboratory
 
+[ADR 0007](../../docs/decisions/0007-tactical-training-core.md) defines the accepted director-first
+product direction. This tool is an experiment, not a validated implementation of
+[TT-01–TT-10](../../docs/requirements/tactical-training.md). In particular, exact formation gates
+are provisional: a different valid wheel or riding ahead need not invalidate a lesson, finishing
+position does not establish workout fidelity, and covering a safe-to-ignore move may still improve
+position. Player knowledge, human recognition/transfer validation and path-to-result assessment
+remain to be built.
+
 A runnable experiment in deterministic pre-ride race-action scheduling, using the **existing
 production Rust race kernel at 50 ms**. It does not change Godot, trainer control or production
 orchestration. The fixture covers Z1–Z7 over **17 minutes**, with 13 phases, repeated recovery,
