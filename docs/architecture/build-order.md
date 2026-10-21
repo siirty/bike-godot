@@ -58,7 +58,10 @@ acceptance requirements; Slices 5–9 are the remaining core loop, not a backlog
    make them visible. Validate believable spotlight behavior, determinism, invariants and long-run
    numerical stability across seeds. Use the existing baseline for focused situation validation;
    do not make comprehensive autonomous whole-race realism a prerequisite for the learning vertical.
-6. **Threshold vertical: contract → tactical situation → evaluator.** One thin vertical for
+6. **Threshold vertical: contract → tactical situation → evaluator.** Authoring/public-knowledge
+   contracts, a cue reader and separate diagnostic exports are built in the all-zone experiment
+   ([ADR 0008](../decisions/0008-learning-contracts-and-public-reader.md)); general compilation,
+   calibrated evaluation and human acceptance evidence remain. One thin vertical for
    a single workout type, including the first cut of Slices 7 and 8:
    - derive a versioned contract from immutable workout data;
    - preplan terrain, relevant riders/affiliations, player objective/knowledge and bounded actions;

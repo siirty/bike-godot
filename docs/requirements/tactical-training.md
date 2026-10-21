@@ -149,6 +149,13 @@ are useful evidence but do not establish perceptual training transfer on their o
 
 `tools/race-prototype` supplies a synthetic all-zone fixture, frozen opponent commands and
 provisional diagnostics ([ADR 0006](../decisions/0006-scripted-race-prototype.md)). Its nominal fit
-and perturbation results do not establish TT-01 through TT-10. It does not yet provide the player
-knowledge model, validated recognition study, general situation compiler or race-result evaluator.
+and perturbation results do not establish TT-01 through TT-10. The original experiment does not
+establish a validated recognition study, general situation compiler or empirical race-result
+evaluator.
 The live demo's spotlight tactics are an implemented policy, not evidence of lesson validity.
+
+[ADR 0008](../decisions/0008-learning-contracts-and-public-reader.md) adds validated situation/public-
+knowledge contracts, a public-motion reference reader, a target-independent cue-driven athlete,
+separate diagnostics and practice observations to the tool. These implement useful seams, not
+full validation: human recognition, public pull-duty communication, team cooperation, calibrated
+future reachability and empirical result plausibility remain unresolved.

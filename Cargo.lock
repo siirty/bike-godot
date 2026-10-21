@@ -744,6 +744,7 @@ dependencies = [
  "race_physics",
  "serde",
  "serde_json",
+ "session_director",
 ]
 
 [[package]]
@@ -870,6 +871,7 @@ name = "session_director"
 version = "0.1.0"
 dependencies = [
  "race_physics",
+ "serde",
  "serde_json",
  "thiserror 2.0.21",
  "workout_import",

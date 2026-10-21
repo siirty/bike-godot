@@ -8,6 +8,7 @@ publish = false
 
 [dependencies]
 race_engine.workspace = true
+session_director.workspace = true
 race_physics.workspace = true
 serde.workspace = true
 serde_json.workspace = true

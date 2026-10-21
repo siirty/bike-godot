@@ -691,8 +691,10 @@ Z1–Z7 fixture over the existing kernel, with intentions frozen after offline f
 versus observed transitions reported separately. ADR 0007 adopts director-first situation planning
 as the initial direction; it does not promote this tool to a validated production compiler.
 
-The prototype lacks the player knowledge model, human recognition validation and a progression/
-result plausibility evaluator. Its provisional formation gates can reject acceptable alternatives.
+The learning vertical now supplies validated authoring/public-knowledge contracts, a sanitized
+reference reader, cue-driven execution and separate evidence reports
+([ADR 0008](../decisions/0008-learning-contracts-and-public-reader.md)). Human recognition,
+production compilation, future reachability and empirical progression/result validation remain open. Its provisional formation gates can reject acceptable alternatives.
 Neither nominal fitting nor sensitivity to deviations settles real-world lesson validity. The
 existing reactive tactics, physiology and kernel remain unchanged; production requirements added
 here still require implementation and evidence.

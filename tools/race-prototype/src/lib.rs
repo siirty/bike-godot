@@ -1,10 +1,13 @@
 //! Offline race-action compilation and honest replay diagnostics over the production kernel.
+pub mod learning;
+use race_engine::perception::{read_move, MoveDecision, MoveRead, PublicRaceView, ReaderSettings};
 use race_engine::*;
 use race_physics::{
     power_for_speed, solve_speed_for_power, step_physiology, EnvironmentParams,
     LongitudinalDynamicsConfig, PhysiologyParams, RiderPhysicalParams, SolverOptions,
 };
 use serde::Serialize;
+use session_director::situations::LearningPlan;
 use std::time::Duration;
 
 /// Fixed production step (seconds); all phase durations are whole seconds.
@@ -285,6 +288,8 @@ pub struct Plan {
     pub script: Vec<[Command; 4]>,
     /// Nominal athlete distance at the end of the finishing sprint.
     pub finish_m: f64,
+    /// Authored teaching contracts and separate public player knowledge.
+    pub learning: LearningPlan,
 }
 fn desired_gap(i: usize, phase: &Phase, elapsed: f64) -> f64 {
     let progress = (elapsed / f64::from(phase.duration)).clamp(0.0, 1.0);
@@ -390,7 +395,9 @@ pub fn compile(options: Options) -> Result<Plan, Error> {
         air_density_kg_m3: config.air_density_kg_m3(),
         headwind_ms: config.headwind_ms(),
     })?;
+    let learning = learning::author(&phases, options.ftp)?;
     Ok(Plan {
+        learning,
         options,
         phases,
         config,
@@ -416,9 +423,11 @@ pub enum Mode {
     CoverDecoy,
     /// Skip the anaerobic bridge effort deliberately; consequences persist.
     MissBridge,
+    /// Read only public roster, motion and finish context; never the workout schedule.
+    CueDriven,
 }
 /// Replay variants included in the default report.
-pub const MODES: [Mode; 7] = [
+pub const MODES: [Mode; 8] = [
     Mode::Prescribed,
     Mode::Under,
     Mode::Over,
@@ -426,8 +435,12 @@ pub const MODES: [Mode; 7] = [
     Mode::FollowAction,
     Mode::CoverDecoy,
     Mode::MissBridge,
+    Mode::CueDriven,
 ];
 fn athlete_command(plan: &Plan, state: &RaceState, tick: usize, mode: Mode) -> Command {
+    if mode == Mode::CueDriven {
+        return cue_command(&plan.config, state, plan.learning.knowledge());
+    }
     let t = tick as f64 * DT;
     let p = &plan.phases[at(&plan.phases, t)];
     let requested = p.intensity * plan.options.ftp;
@@ -463,6 +476,77 @@ fn athlete_command(plan: &Plan, state: &RaceState, tick: usize, mode: Mode) -> C
     };
     Command {
         power,
+        brake: 0.0,
+        slot: 0,
+    }
+}
+/// Reference execution from public cues and the athlete's own physics/capability only.
+fn cue_command(
+    config: &RaceSimulationConfig,
+    state: &RaceState,
+    knowledge: &session_director::situations::PlayerKnowledge,
+) -> Command {
+    let view =
+        PublicRaceView::observe(config, state, knowledge.player()).expect("validated replay state");
+    let read = read_move(knowledge, &view, ReaderSettings::default()).expect("finite observation");
+    let h = &state.riders()[0];
+    let own = &config.riders()[0];
+    let cap = own.physiology().unwrap();
+    if read.decision == MoveDecision::Finished {
+        return Command {
+            power: 0.4 * cap.critical_power_w(),
+            brake: 0.0,
+            slot: 0,
+        };
+    }
+    if read.decision == MoveDecision::Sprint {
+        return Command {
+            power: cap.peak_power_w(),
+            brake: 0.0,
+            slot: 0,
+        };
+    }
+    let target = if read.decision == MoveDecision::Respond {
+        read.target
+            .as_deref()
+            .and_then(|id| state.riders().iter().find(|r| r.id().as_str() == id))
+    } else {
+        state
+            .riders()
+            .iter()
+            .skip(1)
+            .filter(|r| {
+                r.distance_m() > h.distance_m() && (r.distance_m() - h.distance_m()) <= 12.0
+            })
+            .min_by(|a, b| a.distance_m().total_cmp(&b.distance_m()))
+    };
+    let controls = RaceInputFrame::new(
+        state
+            .riders()
+            .iter()
+            .map(|r| RiderControlInput::power(r.id().clone(), 0.0).unwrap())
+            .collect(),
+    )
+    .unwrap();
+    let slots = race_engine::simulation::positioning::resolve_lateral_slots(state, &controls);
+    let targets = race_engine::simulation::positioning::select_draft_targets(
+        config, state, &slots, &controls,
+    );
+    let drag = race_engine::simulation::positioning::compute_drag_multipliers(
+        config, state, &slots, &targets,
+    );
+    let mut physical = *own.physical();
+    physical.cda_m2 *= drag[0];
+    let steady = power_for_speed(
+        h.speed_ms(),
+        &physical,
+        &environment(config, h.distance_m()),
+    );
+    let correction = target.map_or(0.0, |r| {
+        12.0 * (r.distance_m() - h.distance_m() - 4.0) + 35.0 * (r.speed_ms() - h.speed_ms())
+    });
+    Command {
+        power: (steady + correction).clamp(0.0, cap.peak_power_w()),
         brake: 0.0,
         slot: 0,
     }
@@ -521,6 +605,8 @@ pub struct Transition {
 pub struct Sample {
     /// Debounced semantic observation, not the authored phase name.
     pub scene: ObservedScene,
+    /// Public-cue reference interpretation, not the authored answer or human recognition.
+    pub reading: MoveRead,
     /// Workout time, seconds.
     pub t: f64,
     /// Scheduled phase index (not an observed scene classification).
@@ -589,6 +675,10 @@ pub struct Finish {
 pub struct Run {
     /// Actual kernel finishing order, including opponents.
     pub finishers: Vec<Finish>,
+    /// Independent workload, timing, recognition and continuity diagnostics.
+    pub learning_audits: Vec<learning::SituationAudit>,
+    /// Recorded path evidence; empirical plausibility remains review pending.
+    pub result_audit: learning::ResultAudit,
     /// Scene changes classified from observed geometry, independent of phase timing.
     pub transitions: Vec<Transition>,
     /// Reference policy used.
@@ -618,6 +708,27 @@ struct Acc {
 }
 /// Execute a frozen plan without feeding athlete errors back into opponent commands.
 pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
+    if plan.phases.len() != plan.learning.situations().len()
+        || plan
+            .phases
+            .iter()
+            .zip(plan.learning.situations())
+            .any(|(p, s)| p.start != s.start_s() || p.duration != s.duration_s())
+        || plan.script.len() != duration(&plan.phases) as usize * 20
+        || plan.learning.knowledge().player() != NAMES[0]
+        || plan.config.riders().len() != NAMES.len()
+        || plan
+            .config
+            .riders()
+            .iter()
+            .zip(NAMES)
+            .any(|(r, id)| r.id().as_str() != id || r.physiology().is_none())
+    {
+        return Err(
+            "fixture plan, teaching schedule, script or rider identities are inconsistent".into(),
+        );
+    }
+
     let sim = RaceSimulation::new(plan.config.clone())?;
     let mut state = plan.initial.clone();
     let mut sums: Vec<Acc> = plan
@@ -629,6 +740,20 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
         })
         .collect();
     let mut samples = Vec::new();
+    let mut learning_acc = vec![learning::LearningAcc::default(); plan.phases.len()];
+    let mut previous_requested = 0.0;
+    let mut witnesses: Vec<_> = NAMES
+        .iter()
+        .map(|id| learning::RiderWitness {
+            rider: (*id).into(),
+            work_kj: 0.0,
+            peak_w: 0.0,
+            min_reserve: 1.0,
+            max_climb_deficit_m: 0.0,
+            finish_s: None,
+            place: None,
+        })
+        .collect();
     let mut finish_s = None;
     let mut events = 0;
     let mut finishers = Vec::new();
@@ -659,6 +784,9 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
                 pending_ticks = 0;
             }
         }
+        let view =
+            PublicRaceView::observe(&plan.config, &state, plan.learning.knowledge().player())?;
+        let reading = read_move(plan.learning.knowledge(), &view, ReaderSettings::default())?;
         let hcmd = athlete_command(plan, &state, tick, mode);
         let h = &state.riders()[0];
         let target_index = if p.decisive { 3 } else { 2 };
@@ -706,6 +834,62 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
             .max(0.0);
         let gap = target.distance_m() - h.distance_m();
         let wheel = gap > 2.5 && gap < 8.0 && targets[0].as_ref() == Some(target.id());
+        let contender = view
+            .riders
+            .iter()
+            .filter(|r| !plan.learning.knowledge().teammates(NAMES[0], &r.id))
+            .all(|r| r.gap_m <= 60.0);
+        let la = &mut learning_acc[index];
+        la.observe(
+            &plan.learning.situations()[index],
+            t,
+            delivered,
+            contender,
+            &reading,
+        );
+        if la.cue_at.is_some() && la.response_at.is_none() && hcmd.power > previous_requested + 5.0
+        {
+            la.response_at = Some(t);
+        }
+        previous_requested = hcmd.power;
+        let leader = state
+            .riders()
+            .iter()
+            .map(|r| r.distance_m().min(plan.finish_m))
+            .fold(0.0, f64::max);
+        for (i, w) in witnesses.iter_mut().enumerate() {
+            if state.riders()[i].distance_m() >= plan.finish_m {
+                continue;
+            }
+            let rp = plan.config.riders()[i].physiology().unwrap();
+            let request = if i == 0 {
+                hcmd.power
+            } else {
+                cmds[i - 1].power
+            };
+            let actual = step_physiology(
+                rp,
+                state.riders()[i].w_prime_balance_j().unwrap(),
+                request,
+                plan.config.fixed_step(),
+            )?
+            .delivered_power_w;
+            w.work_kj += actual * DT / 1000.0;
+            w.peak_w = w.peak_w.max(actual);
+            w.min_reserve = w
+                .min_reserve
+                .min(result.next_state.riders()[i].w_prime_balance_j().unwrap() / rp.w_prime_j());
+            if plan
+                .config
+                .terrain()
+                .grade_at(state.riders()[i].distance_m())
+                > 0.01
+            {
+                w.max_climb_deficit_m = w
+                    .max_climb_deficit_m
+                    .max(leader - state.riders()[i].distance_m());
+            }
+        }
         let a = &mut sums[index];
         if a.n == 0 {
             a.entry = gap;
@@ -748,6 +932,7 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
         if tick % 20 == 0 {
             samples.push(Sample {
                 scene: observed,
+                reading,
                 t,
                 phase: index,
                 distance: h.distance_m(),
@@ -808,7 +993,15 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
             }
         })
         .collect();
-    Ok(Run {
+    for f in &finishers {
+        if let Some(w) = witnesses.iter_mut().find(|w| w.rider == f.rider) {
+            w.finish_s = Some(f.time_s);
+            w.place = Some(f.place);
+        }
+    }
+    let mut run=Run {
+        learning_audits:Vec::new(),
+        result_audit:learning::ResultAudit{plausibility:learning::Verdict::NeedsReview,mechanical_integrity_checked:true,riders:witnesses,notes:vec!["Synthetic capability profiles and simple drafting; no empirical result-validity claim.".into(),"Inspect course, selections, work and reserve before accepting a surprising winner. Archetype or total ascent alone does not decide validity.".into()]},
         finishers,
         transitions,
         mode,
@@ -816,13 +1009,17 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
         outcomes,
         finish_s,
         events,
-    })
+    };
+    run.learning_audits = learning::audit(plan, &learning_acc, &run);
+    Ok(run)
 }
 /// Complete export. Script is stored separately so invariance can be inspected directly.
 #[derive(Serialize)]
 pub struct Report {
     /// Versioned experimental report, not a kernel snapshot or activity file.
     pub version: u32,
+    /// Public context and authored teaching contracts are separate.
+    pub learning: LearningPlan,
     /// Fixed generation settings.
     pub options: Options,
     /// Stable rider names.
@@ -842,7 +1039,8 @@ impl Plan {
     /// Run all comparison policies against this single compiled schedule.
     pub fn report(&self) -> Result<Report, Error> {
         Ok(Report {
-            version: 1,
+            version: 2,
+            learning: self.learning.clone(),
             options: self.options.clone(),
             riders: NAMES,
             capabilities: self
