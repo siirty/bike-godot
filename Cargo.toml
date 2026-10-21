@@ -18,6 +18,7 @@ members = [
   "crates/workout_import",
   "crates/godot_adapter",
   "tools/ftms-spike",
+  "tools/race-prototype",
 ]
 
 [workspace.package]

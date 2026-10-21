@@ -34,3 +34,6 @@ node_modules/
 
 # Runner-side cargo config is injected by setup, not committed
 /.runner-setup/
+
+# Generated race-prototype playback/data; reproduce with the CLI.
+race-prototype-output/

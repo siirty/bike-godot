@@ -58,3 +58,15 @@ expected results from the implementation under test.
 CI runs on the self-hosted `gh-runner` (labels `[self-hosted, linux, X64]`) via the
 `CI_RUNNER_JSON` repository variable. Optional disposable Proxmox CI is wired through
 `local-proxmox-ci.yml` after `scripts/setup-local-ci-labels.sh`.
+
+## All-zone race experiment
+
+The [race transition laboratory](tools/race-prototype/README.md) tests a frozen opponent-action
+schedule across Z1–Z7 and recovery. It exports browser playback and machine-readable diagnostics:
+
+```sh
+cargo run -p race_prototype --release -- --out race-prototype-output
+```
+
+This is an experiment in an alternative to runtime scene replanning. Its nominally calibrated
+sequence passes, while small deviations expose failures that remain visible in the report.
