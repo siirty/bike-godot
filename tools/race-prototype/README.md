@@ -5,8 +5,8 @@ product direction. This tool is an experiment, not a validated implementation of
 [TT-01–TT-10](../../docs/requirements/tactical-training.md). In particular, exact formation gates
 are provisional: a different valid wheel or riding ahead need not invalidate a lesson, finishing
 position does not establish workout fidelity, and covering a safe-to-ignore move may still improve
-position. Player knowledge, human recognition/transfer validation and path-to-result assessment
-remain to be built.
+position. Human recognition/transfer validation and comprehensive path-to-result assessment
+remain to be built; public knowledge and initial mechanical path evidence are implemented.
 
 A runnable experiment in deterministic pre-ride race-action scheduling, using the **existing
 production Rust race kernel at 50 ms**. It does not change Godot, trainer control or production
@@ -132,3 +132,34 @@ remain available for comparison. `result_audit` reports delivered work, peak 50 
 reserve, maximum climbing deficit and actual finishes. Plausibility and human recognition stay
 `NeedsReview`; mechanical integrity is a different claim. The tempo pull-duty cue and opponent
 team cooperation remain missing, explicitly reported. See [ADR 0008](../../docs/decisions/0008-learning-contracts-and-public-reader.md).
+
+## Connected selection experiment
+
+[ADR 0009](../../docs/decisions/0009-cue-calibrated-selection-chain.md) separates the public reader
+from motion execution and adds a smaller cue-fitted exercise with local group roles. It uses the
+same production kernel, fixed 1.5% climb/capabilities and continuous fatigue. Opponents follow
+frozen pace/leader roles, not athlete workout error. Jo's turn at the front and Alex's other-file
+movement are physically simulated. The reference athlete chooses a useful visible wheel without
+access to the workout. This is a group selection exercise, not yet a tempo pull or finish contest.
+
+```sh
+cargo run -p race_prototype --release --example chain -- connected-selection.json
+cargo run -p race_prototype --release --example chain -- chain-matrix.json matrix
+```
+
+The first command writes JSON evidence and `connected-selection.html`, a self-contained playback
+showing actual lateral files, public roster and a diagnostic view hidden by default. The matrix
+runs FTP 180/250/330 W × total mass 65/85/110 kg × seeds 1/42/99, with seven execution variants per
+plan. Failed engineering acceptance is exported, not disguised as success or a software crash.
+
+Every step's actual effort, contact at the next selection, finish timing and pace-leader capacity
+must pass for continuous control, one-second held controls and ±3% variation. ±5% output, covering
+and deliberately skipping the second selection remain reported counterfactuals. Acceptance is
+limited to these explicit bounds; it does not establish human recognition or arbitrary-input
+reachability. See the [results and limitations](../../docs/verification/2026-10-21-selection-chain.md).
+
+The all-zone report is now version 3, with explicit cue-fit rejection and physical closing/contact
+timing in place of requested-power-rise timing. The motor executor respects observable lateral
+files and uses ordinary braking when needed. Existing seven phase-informed controls retain their
+physical trajectories; the cue-driven policy intentionally changes. Its remaining all-zone
+failures are retained rather than hidden by refitting historical output.

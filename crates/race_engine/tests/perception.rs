@@ -32,6 +32,7 @@ fn view() -> PublicRaceView {
             id: "q".into(),
             gap_m: 12.0,
             relative_speed_ms: 1.0,
+            lateral_slot: 0,
         }],
         grade: 0.02,
         finish_remaining_m: Some(2000.0),
@@ -92,6 +93,7 @@ fn teammate_representation_changes_chase_responsibility() {
         id: "a".into(),
         gap_m: 14.0,
         relative_speed_ms: 1.0,
+        lateral_slot: 0,
     });
     assert_eq!(read(&k, &v).decision, MoveDecision::LetOthersWork);
     assert_eq!(
@@ -198,4 +200,33 @@ fn irrelevant_roster_names_do_not_change_the_read() {
     )
     .unwrap();
     assert_eq!(read(&k, &view()), read(&renamed, &view()));
+}
+
+#[test]
+fn reputation_does_not_make_an_established_sprinter_gap_harmless() {
+    let k = knowledge(
+        "blue",
+        KnownStrength::Sprint,
+        PlayerObjective::ContestFinish,
+    );
+    let mut v = view();
+    assert_eq!(read(&k, &v).decision, MoveDecision::Monitor);
+    v.riders[0].gap_m = 45.0;
+    assert_eq!(read(&k, &v).decision, MoveDecision::Respond);
+}
+#[test]
+fn a_teammate_losing_the_wheel_is_not_coverage() {
+    let k = knowledge(
+        "blue",
+        KnownStrength::Sustained,
+        PlayerObjective::ContestFinish,
+    );
+    let mut v = view();
+    v.riders.push(RiderMotion {
+        id: "a".into(),
+        gap_m: 10.0,
+        relative_speed_ms: -1.0,
+        lateral_slot: 0,
+    });
+    assert_eq!(read(&k, &v).decision, MoveDecision::Respond);
 }

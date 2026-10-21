@@ -1,5 +1,7 @@
 //! Offline race-action compilation and honest replay diagnostics over the production kernel.
+pub mod chain;
 pub mod learning;
+pub mod motor;
 use race_engine::perception::{read_move, MoveDecision, MoveRead, PublicRaceView, ReaderSettings};
 use race_engine::*;
 use race_physics::{
@@ -516,40 +518,23 @@ fn cue_command(
             .iter()
             .skip(1)
             .filter(|r| {
-                r.distance_m() > h.distance_m() && (r.distance_m() - h.distance_m()) <= 12.0
+                r.distance_m() > h.distance_m()
+                    && (r.distance_m() - h.distance_m()) <= 12.0
+                    && r.lateral_slot() == h.lateral_slot()
             })
             .min_by(|a, b| a.distance_m().total_cmp(&b.distance_m()))
     };
-    let controls = RaceInputFrame::new(
-        state
-            .riders()
-            .iter()
-            .map(|r| RiderControlInput::power(r.id().clone(), 0.0).unwrap())
-            .collect(),
+    motor::track(
+        config,
+        state,
+        knowledge.player(),
+        motor::MotionGoal {
+            speed_ms: target.map_or(h.speed_ms(), |r| r.speed_ms()),
+            error_m: target.map_or(0.0, |r| r.distance_m() - h.distance_m() - 4.0),
+            slot: target.map_or(h.lateral_slot(), |r| r.lateral_slot()) as i64,
+        },
     )
-    .unwrap();
-    let slots = race_engine::simulation::positioning::resolve_lateral_slots(state, &controls);
-    let targets = race_engine::simulation::positioning::select_draft_targets(
-        config, state, &slots, &controls,
-    );
-    let drag = race_engine::simulation::positioning::compute_drag_multipliers(
-        config, state, &slots, &targets,
-    );
-    let mut physical = *own.physical();
-    physical.cda_m2 *= drag[0];
-    let steady = power_for_speed(
-        h.speed_ms(),
-        &physical,
-        &environment(config, h.distance_m()),
-    );
-    let correction = target.map_or(0.0, |r| {
-        12.0 * (r.distance_m() - h.distance_m() - 4.0) + 35.0 * (r.speed_ms() - h.speed_ms())
-    });
-    Command {
-        power: (steady + correction).clamp(0.0, cap.peak_power_w()),
-        brake: 0.0,
-        slot: 0,
-    }
+    .expect("validated reference motion")
 }
 /// Semantic observation derived from geometry alone, independently of the workout schedule.
 #[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
@@ -741,7 +726,6 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
         .collect();
     let mut samples = Vec::new();
     let mut learning_acc = vec![learning::LearningAcc::default(); plan.phases.len()];
-    let mut previous_requested = 0.0;
     let mut witnesses: Vec<_> = NAMES
         .iter()
         .map(|id| learning::RiderWitness {
@@ -846,12 +830,8 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
             delivered,
             contender,
             &reading,
+            &view,
         );
-        if la.cue_at.is_some() && la.response_at.is_none() && hcmd.power > previous_requested + 5.0
-        {
-            la.response_at = Some(t);
-        }
-        previous_requested = hcmd.power;
         let leader = state
             .riders()
             .iter()
@@ -1013,6 +993,18 @@ pub fn replay(plan: &Plan, mode: Mode) -> Result<Run, Error> {
     run.learning_audits = learning::audit(plan, &learning_acc, &run);
     Ok(run)
 }
+/// Offline cue-policy suitability check; never an empirical learning verdict.
+#[derive(Debug, Clone, Serialize)]
+pub struct CueFit {
+    /// Non-cooldown effort contracts met by the cue-driven reference.
+    pub envelopes_met: usize,
+    /// Number of required non-cooldown effort contracts.
+    pub envelopes_required: usize,
+    /// Athlete finishes during the authored finishing effort.
+    pub finish_aligned: bool,
+    /// Both workload and finish timing match; this does not establish human recognition.
+    pub suitable: bool,
+}
 /// Complete export. Script is stored separately so invariance can be inspected directly.
 #[derive(Serialize)]
 pub struct Report {
@@ -1034,12 +1026,44 @@ pub struct Report {
     pub terrain: Vec<[f64; 2]>,
     /// All replay outcomes.
     pub runs: Vec<Run>,
+    /// Reject unsuitable cue/workout combinations before any production use.
+    pub cue_fit: CueFit,
 }
 impl Plan {
     /// Run all comparison policies against this single compiled schedule.
     pub fn report(&self) -> Result<Report, Error> {
+        let runs = MODES
+            .into_iter()
+            .map(|mode| replay(self, mode))
+            .collect::<Result<Vec<_>, _>>()?;
+        let cue = runs
+            .iter()
+            .find(|r| r.mode == Mode::CueDriven)
+            .expect("mode list contains cue policy");
+        let required: Vec<_> = self
+            .learning
+            .situations()
+            .iter()
+            .zip(&cue.learning_audits)
+            .filter(|(s, _)| s.intent() != session_director::situations::LearningIntent::Cooldown)
+            .collect();
+        let envelopes_met = required
+            .iter()
+            .filter(|(_, a)| a.workout == learning::Verdict::MeetsDiagnostic)
+            .count();
+        let finish_aligned = self.phases.iter().find(|p| p.zone == 7).is_some_and(|p| {
+            cue.finish_s
+                .is_some_and(|t| t >= f64::from(p.start) && t <= f64::from(p.start + p.duration))
+        });
+        let cue_fit = CueFit {
+            envelopes_met,
+            envelopes_required: required.len(),
+            finish_aligned,
+            suitable: !required.is_empty() && envelopes_met == required.len() && finish_aligned,
+        };
         Ok(Report {
-            version: 2,
+            cue_fit,
+            version: 3,
             learning: self.learning.clone(),
             options: self.options.clone(),
             riders: NAMES,
@@ -1061,10 +1085,7 @@ impl Plan {
                 .iter()
                 .map(|s| [s.distance_m(), s.grade_fraction()])
                 .collect(),
-            runs: MODES
-                .into_iter()
-                .map(|mode| replay(self, mode))
-                .collect::<Result<Vec<_>, _>>()?,
+            runs,
         })
     }
 }

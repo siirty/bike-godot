@@ -190,3 +190,12 @@ fn inconsistent_fixture_schedule_is_rejected_instead_of_indexing_missing_contrac
     plan.phases.pop();
     assert!(replay(&plan, Mode::Prescribed).is_err());
 }
+
+#[test]
+fn all_zone_template_is_rejected_when_the_cue_policy_cannot_match_its_contracts() {
+    let plan = compile(Options::default()).unwrap();
+    let report = plan.report().unwrap();
+    assert_eq!(report.version, 3);
+    assert!(!report.cue_fit.suitable);
+    assert!(report.cue_fit.envelopes_met < report.cue_fit.envelopes_required);
+}

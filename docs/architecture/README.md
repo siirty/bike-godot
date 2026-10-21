@@ -69,3 +69,8 @@ Dependencies point downward only. The domain crates know nothing about Godot. On
 - [`../research/race-calibration-data-spike.md`](../research/race-calibration-data-spike.md): a time-boxed spike on sourcing real race data for calibration.
 
 When a decision is accepted, update its authoritative document and remove the matching open question in the same change. Edit stale text in place; do not append correction notes.
+
+The [focused selection-chain experiment](../decisions/0009-cue-calibrated-selection-chain.md)
+separates motion execution from public-cue interpretation and rejects unsuitable pre-ride fits.
+Its [verification record](../verification/2026-10-21-selection-chain.md) distinguishes bounded
+engineering acceptance from human learning and empirical race plausibility.
