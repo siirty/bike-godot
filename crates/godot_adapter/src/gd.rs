@@ -625,6 +625,21 @@ impl MixedRaceController {
     fn reset(&mut self) {
         self.race.reset();
     }
+    /// Pause/resume the game lifecycle without advancing any clock.
+    #[func]
+    fn set_paused(&mut self, value: bool) -> bool {
+        self.race.set_paused(value)
+    }
+    /// Jump explicitly to recovery, preserving an incomplete competitive result.
+    #[func]
+    fn skip_to_cooldown(&mut self) -> bool {
+        self.race.skip_to_cooldown()
+    }
+    /// End the session now without claiming workout completion.
+    #[func]
+    fn finish(&mut self) -> bool {
+        self.race.finish()
+    }
     /// Execute every fixed step at the selected playback rate.
     #[func]
     fn advance(&mut self, seconds: f64, rate: f64) {
@@ -701,6 +716,11 @@ impl MixedRaceController {
         }
         dict(vec![
             ("context", gs(&view.context).to_variant()),
+            ("phase", gs(&view.phase).to_variant()),
+            ("instruction", gs(&view.instruction).to_variant()),
+            ("result", gs(&view.result).to_variant()),
+            ("paused", view.paused.to_variant()),
+            ("at_bus", view.at_bus.to_variant()),
             ("clock", gs(&view.clock).to_variant()),
             ("diagnostics", gs(&view.diagnostics).to_variant()),
             ("message", gs(&view.message).to_variant()),

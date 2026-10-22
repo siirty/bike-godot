@@ -5,7 +5,10 @@ extends Node
 const JERSEYS := {"human": Color("f6bb63"), "mara": Color("6ed8c9"), "alex": Color("94e0a2"), "pacer": Color("8eb3e8"), "rival": Color("ef918a"), "independent": Color("c0a0e5")}
 var _race := MixedRaceController.new()
 var _world: RoadWorld
-var _paused := false
+var _bus: TeamBusScene
+var _phase: Label
+var _instruction: Label
+var _result: Label
 var _rate := 1.0
 var _clock: Label
 var _detail: Label
@@ -18,22 +21,24 @@ func _ready() -> void:
 	add_child(_world)
 	var course := _race.course()
 	_world.configure(course["elevations"], course["elevation_step_m"])
-	for rider in _race.state()["riders"]:
-		_world.add_rider(rider["id"], JERSEYS.get(rider["id"], Ui.ACCENT))
-		_world.set_rider_label(rider["id"], course["names"][rider["id"]], JERSEYS.get(rider["id"], Ui.ACCENT))
+	for id in course["names"]:
+		_world.add_rider(id, JERSEYS.get(id, Ui.ACCENT))
+		_world.set_rider_label(id, course["names"][id], JERSEYS.get(id, Ui.ACCENT))
+	_bus = TeamBusScene.new()
+	_bus.position = _world.point(124.0, 7.0, 0.0)
+	_world.add_child(_bus)
 	_build_hud(course)
 	_render()
 
 
 func _process(delta: float) -> void:
-	if not _paused:
-		_race.advance(delta, _rate)
+	_race.advance(delta, _rate)
 	_render()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_SPACE:
-		_paused = not _paused
+		_race.set_paused(not bool(_race.state()["paused"]))
 
 
 func _render() -> void:
@@ -45,12 +50,21 @@ func _render() -> void:
 	if player.is_empty():
 		return
 	var distance := float(player["distance_m"])
-	_world.follow(distance)
+	_bus.visible = state["at_bus"]
+	if state["at_bus"]:
+		_world.show_team_bus()
+	else:
+		_world.follow(distance)
+	for id in JERSEYS:
+		_world.set_rider_visible(id, false)
 	for rider in state["riders"]:
-		_world.place_rider(rider["id"], float(rider["distance_m"]), _world.slot_offset(int(rider["slot"]), 3), distance)
+		_world.place_rider(rider["id"], float(rider["distance_m"]), (4.8 if state["at_bus"] else _world.slot_offset(int(rider["slot"]), 3)), distance)
+	_phase.text = state["phase"]
+	_instruction.text = state["instruction"]
+	_result.text = state["result"]
 	_clock.text = state["clock"]
 	_detail.text = state["diagnostics"]
-	_message.text = "SESSION COMPLETE" if state["complete"] else ("PAUSED" if _paused else state["message"])
+	_message.text = state["message"]
 
 
 func _build_hud(course: Dictionary) -> void:
@@ -64,8 +78,23 @@ func _build_hud(course: Dictionary) -> void:
 	get_viewport().size_changed.connect(func() -> void: scroll.size.y = get_viewport().get_visible_rect().size.y - 36)
 	var col := Ui.panel(scroll, 440)
 	col.get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	Ui.label(col, "MIXED WORKOUT RACE · SOFTWARE RIDER", 13, Ui.ACCENT)
-	Ui.label(col, _race.state()["context"], 13)
+	Ui.label(col, "MIXED WORKOUT GAME · SOFTWARE RIDER", 13, Ui.ACCENT)
+	_phase = Ui.label(col, "", 18)
+	_instruction = Ui.label(col, "", 13)
+	_result = Ui.label(col, "", 14, Ui.ACCENT)
+	_clock = Ui.label(col, "", 18)
+	var playback := Ui.row(col)
+	Ui.button(playback, "Pause / resume", func() -> void: _race.set_paused(not bool(_race.state()["paused"])))
+	Ui.button(playback, "Restart", func() -> void: _race.reset())
+	var rate := OptionButton.new()
+	for caption in ["×1", "×10", "×60"]:
+		rate.add_item(caption)
+	rate.item_selected.connect(func(index: int) -> void: _rate = [1.0, 10.0, 60.0][index])
+	playback.add_child(rate)
+	var end_controls := Ui.row(col)
+	Ui.button(end_controls, "Finish session", func() -> void: _race.finish())
+	Ui.button(end_controls, "Skip to cooldown", func() -> void: _race.skip_to_cooldown())
+	Ui.label(col, _race.state()["context"], 12)
 	var coaching := CheckButton.new()
 	coaching.name = "CoachingToggle"
 	coaching.text = "Show coaching and private diagnostics"
@@ -74,18 +103,9 @@ func _build_hud(course: Dictionary) -> void:
 		for control in _diagnostics:
 			control.visible = enabled
 	)
-	_clock = Ui.label(col, "", 18)
 	_detail = Ui.label(col, "", 14)
 	_diagnostics.assign([_detail])
 	_detail.visible = false
-	var playback := Ui.row(col)
-	Ui.button(playback, "Pause / resume", func() -> void: _paused = not _paused)
-	Ui.button(playback, "Restart", func() -> void: _race.reset())
-	var rate := OptionButton.new()
-	for caption in ["×1", "×10", "×60"]:
-		rate.add_item(caption)
-	rate.item_selected.connect(func(index: int) -> void: _rate = [1.0, 10.0, 60.0][index])
-	playback.add_child(rate)
 	var input_row := Ui.row(col)
 	var reference := CheckButton.new()
 	reference.text = "Reference power"
@@ -94,7 +114,7 @@ func _build_hud(course: Dictionary) -> void:
 	var manual := SpinBox.new()
 	manual.min_value = 0
 	manual.max_value = 1800
-	manual.step = 5
+	manual.step = 1
 	manual.value = 204
 	manual.suffix = " W"
 	manual.editable = false

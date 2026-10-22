@@ -38,3 +38,4 @@ node_modules/
 # Generated race-prototype playback/data; reproduce with the CLI.
 race-prototype-output/
 mixed-race-output/
+game-session-output/
