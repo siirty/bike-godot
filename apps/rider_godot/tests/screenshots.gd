@@ -39,6 +39,9 @@ func _ready() -> void:
 	await _shot(out_dir, "4_ride.png", 240)
 	App.show_screen(RaceScreen.new())
 	await _shot(out_dir, "5_race.png", 400)
+	var mixed := MixedRaceScreen.new()
+	App.show_screen(mixed)
+	await _shot(out_dir, "6_mixed_race.png", 3)
 	App.show_screen(Node.new())
 	await get_tree().process_frame
 	DirAccess.remove_absolute(db)

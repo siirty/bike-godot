@@ -20,6 +20,8 @@ session_director.workspace = true
 trainer_control.workspace = true
 workout_import.workspace = true
 log.workspace = true
+serde.workspace = true
+serde_json.workspace = true
 
 # Not `[lints] workspace = true`: gdext's entry point is an `unsafe impl ExtensionLibrary`, which
 # the workspace's `unsafe_code = "forbid"` cannot allow even locally. Everything below except that

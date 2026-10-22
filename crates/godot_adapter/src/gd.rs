@@ -603,3 +603,109 @@ impl RaceController {
         ])
     }
 }
+
+/// Software-only mixed workout: no trainer connection or activity writer.
+#[derive(GodotClass)]
+#[class(base = RefCounted)]
+pub struct MixedRaceController {
+    race: crate::app::mixed::MixedRace,
+}
+#[godot_api]
+impl IRefCounted for MixedRaceController {
+    fn init(_base: Base<RefCounted>) -> Self {
+        Self {
+            race: crate::app::mixed::MixedRace::new(),
+        }
+    }
+}
+#[godot_api]
+impl MixedRaceController {
+    /// Restart all dynamic continuation and clear the audit.
+    #[func]
+    fn reset(&mut self) {
+        self.race.reset();
+    }
+    /// Execute every fixed step at the selected playback rate.
+    #[func]
+    fn advance(&mut self, seconds: f64, rate: f64) {
+        self.race.advance(seconds, rate);
+    }
+    /// Software rider input, never a trainer target.
+    #[func]
+    fn set_manual_power(&mut self, watts: f64) -> bool {
+        self.race.set_power(Some(watts))
+    }
+    /// Resume nominal prescribed software input.
+    #[func]
+    fn use_reference(&mut self) {
+        self.race.set_power(None);
+    }
+    /// Request a lateral slot.
+    #[func]
+    fn set_slot(&mut self, slot: i64) -> bool {
+        self.race.set_slot(slot)
+    }
+    /// Request a known wheel, or empty for automatic selection.
+    #[func]
+    fn set_wheel(&mut self, name: GString) -> bool {
+        self.race.set_wheel(&name.to_string())
+    }
+    /// Export only simulated data.
+    #[func]
+    fn export_trace(&mut self, path: GString) -> bool {
+        self.race.export_trace(&path.to_string())
+    }
+    /// Validate and replay the saved control stream through the same session/kernel.
+    #[func]
+    fn load_trace(&mut self, path: GString) -> bool {
+        self.race.load_trace(&path.to_string())
+    }
+    /// Course samples and public rider names for rendering.
+    #[func]
+    fn course(&self) -> VarDictionary {
+        let k = session_director::mixed::knowledge();
+        let names = dict(
+            k.riders()
+                .iter()
+                .map(|r| (r.id(), gs(r.name()).to_variant()))
+                .collect(),
+        );
+        dict(vec![
+            ("names", names.to_variant()),
+            ("elevation_step_m", ELEVATION_STEP_M.to_variant()),
+            (
+                "elevations",
+                self.race
+                    .elevations()
+                    .into_iter()
+                    .collect::<PackedFloat64Array>()
+                    .to_variant(),
+            ),
+        ])
+    }
+    /// Prepared text and actual kernel rider positions.
+    #[func]
+    fn state(&self) -> VarDictionary {
+        let view = self.race.view();
+        let mut riders = VarArray::new();
+        for r in view.riders {
+            riders.push(
+                &dict(vec![
+                    ("id", gs(&r.id).to_variant()),
+                    ("distance_m", r.distance_m.to_variant()),
+                    ("speed_m_s", r.speed_ms.to_variant()),
+                    ("slot", (r.slot as i64).to_variant()),
+                ])
+                .to_variant(),
+            );
+        }
+        dict(vec![
+            ("context", gs(&view.context).to_variant()),
+            ("clock", gs(&view.clock).to_variant()),
+            ("diagnostics", gs(&view.diagnostics).to_variant()),
+            ("message", gs(&view.message).to_variant()),
+            ("complete", view.complete.to_variant()),
+            ("riders", riders.to_variant()),
+        ])
+    }
+}

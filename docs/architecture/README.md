@@ -74,3 +74,7 @@ The [focused selection-chain experiment](../decisions/0009-cue-calibrated-select
 separates motion execution from public-cue interpretation and rejects unsuitable pre-ride fits.
 Its [verification record](../verification/2026-10-21-selection-chain.md) distinguishes bounded
 engineering acceptance from human learning and empirical race plausibility.
+
+The [mixed-session experiment](mixed-session-experiment.md) adds playable software input,
+semantic group observation and an endurance-heavy connected session. It remains an
+engineering fixture rather than a validated general situation compiler.

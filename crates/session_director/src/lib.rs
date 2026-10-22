@@ -6,6 +6,7 @@
 //! goals) is still incomplete. Validated learning-situation and player-knowledge contracts are
 //! available alongside the terrain seam; general workout compilation remains future work.
 
+pub mod mixed;
 mod profile;
 pub mod situations;
 mod synthesis;
