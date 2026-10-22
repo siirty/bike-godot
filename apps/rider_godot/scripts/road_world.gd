@@ -110,6 +110,18 @@ func follow(distance_m: float) -> void:
 	_camera.look_at(point(distance_m + 9.0, 2.2, 1.4), Vector3.UP)
 
 
+## Stationary team-bus composition, separate from competitive rider positions.
+func show_team_bus() -> void:
+	follow(120.0)
+	_camera.global_position = point(110.0, -2.0, 4.5)
+	_camera.look_at(point(122.0, 5.0, 1.8), Vector3.UP)
+
+
+func set_rider_visible(id: String, shown: bool) -> void:
+	if _riders.has(id):
+		_riders[id].visible = shown
+
+
 func _rebuild_window(start: float) -> void:
 	if _window_root:
 		_window_root.queue_free()

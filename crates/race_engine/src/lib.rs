@@ -5,6 +5,7 @@
 //! in [`RaceSimulationConfig`]; only dynamic continuation data lives in [`RaceState`].
 
 pub mod canonical_json;
+pub mod game_session;
 #[cfg(feature = "testing")]
 pub mod harness;
 pub mod mixed;

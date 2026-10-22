@@ -75,8 +75,8 @@ func _run() -> void:
 	var mixed := MixedRaceController.new()
 	for i in range(4):
 		mixed.advance(0.25, 10.0)
-	_check(mixed.state()["riders"].size() == 6, "mixed session has six persistent riders")
-	_check(str(mixed.state()["clock"]).begins_with("0:10"), "mixed accelerated playback preserves fixed steps")
+	_check(mixed.state()["riders"].size() == 1 and mixed.state()["at_bus"], "warm-up has only the player at the bus")
+	_check(str(mixed.state()["clock"]).begins_with("Workout 0:10"), "mixed accelerated playback preserves fixed steps")
 	_check(mixed.set_manual_power(0.0), "mixed software power is adjustable")
 	_check(mixed.set_slot(2) and mixed.set_wheel("pacer"), "mixed positioning is adjustable")
 	_check(not mixed.set_wheel("unknown"), "mixed unknown wheel rejected")
@@ -86,8 +86,23 @@ func _run() -> void:
 	_check(audit["software_only"] and audit["samples"].size() == 10, "mixed trace contains simulated data at one sample per second")
 	_check(mixed.load_trace(trace_path), "mixed replay loads")
 	mixed.advance(0.25, 10.0)
-	_check(str(mixed.state()["clock"]).begins_with("0:02"), "mixed replay executes recorded input")
+	_check(str(mixed.state()["clock"]).begins_with("Workout 0:02"), "mixed replay executes recorded input")
 	DirAccess.remove_absolute(trace_path)
+	mixed.reset()
+	_check(mixed.set_paused(true), "game pauses")
+	var paused_clock: String = mixed.state()["clock"]
+	mixed.advance(0.25, 60.0)
+	_check(mixed.state()["clock"] == paused_clock, "pause holds workout and active clocks")
+	_check(mixed.skip_to_cooldown(), "skip enters recovery")
+	_check(str(mixed.state()["result"]).contains("Incomplete") and str(mixed.state()["result"]).contains("Skipped"), "skip preserves incomplete race and skipped workout")
+	_check(mixed.finish(), "finish ends the session")
+	_check(mixed.state()["complete"] and str(mixed.state()["result"]).contains("Abandoned"), "early finish is not workout completion")
+	mixed.reset()
+	mixed.use_reference()
+	for i in range(40):
+		mixed.advance(0.25, 60.0)
+	_check(not mixed.state()["at_bus"] and mixed.state()["riders"].size() == 6, "race field starts after preparation")
+
 
 	var host := Node.new()
 	add_child(host)

@@ -16,6 +16,12 @@ must be plausible together. SIM-only control and actual athlete power remain aut
 
 ## Requirements
 
+Current implementation stage (22 October 2026): the designed race is a game prototype with a
+provisional world model, per [ADR 0011](../decisions/0011-game-session-lifecycle.md). Its explicit
+session rules and game/workout alignment can be tested now. The requirements below still govern
+claims of validated tactical training; game outcomes or passing software checks do not establish
+those claims.
+
 ### TT-01: Define a tactical learning situation
 
 Each situation must specify, conceptually (no serialization schema is settled here):

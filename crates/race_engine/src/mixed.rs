@@ -64,6 +64,8 @@ pub enum Scene {
     Pursue,
     /// Maintain a contribution with company nearby.
     MaintainContribution,
+    /// Leading nearby company without a wheel; distinct from losing contact behind.
+    FrontWork,
     /// No usable wheel: continue independently, with no automatic rescue.
     SoloFallback,
     /// Measured sustained work.
@@ -129,6 +131,8 @@ pub struct MixedSession {
     simulation: RaceSimulation,
     state: RaceState,
     timeline: WorkoutTimeline,
+    start: Duration,
+    end: Duration,
     pace: Arc<Vec<(f64, f64)>>,
     spotlight: TacticalController,
     observer: RaceObserver,
@@ -272,6 +276,13 @@ fn pack_input(
 impl MixedSession {
     /// Fit only the supporting pace offline; freeze it before accepting any runtime controls.
     pub fn new(options: MixedOptions) -> Result<Self, MixedError> {
+        Self::build(options, Duration::ZERO, Duration::from_secs(3600))
+    }
+    /// Frozen competitive-only plan: a fresh common field at workout minute ten.
+    pub fn race_template(options: MixedOptions) -> Result<Self, MixedError> {
+        Self::build(options, Duration::from_secs(600), Duration::from_secs(3300))
+    }
+    fn build(options: MixedOptions, start: Duration, end: Duration) -> Result<Self, MixedError> {
         let riders = RIDERS
             .into_iter()
             .map(|name| {
@@ -328,7 +339,7 @@ impl MixedSession {
             headwind_ms: 0.0,
         })?;
         let state = RaceState::new(
-            Duration::ZERO,
+            start,
             Pcg32::seeded(options.seed, 1).state(),
             RIDERS
                 .into_iter()
@@ -358,8 +369,9 @@ impl MixedSession {
             WorkoutTimeline::new(session_director::mixed::workout()).expect("valid fixture");
         let mut nominal = state.clone();
         let mut actor = spotlight();
-        let mut pace = Vec::with_capacity(72000);
-        for _ in 0..72000 {
+        let steps = ((end - start).as_millis() / 50) as usize;
+        let mut pace = Vec::with_capacity(steps);
+        for _ in 0..steps {
             let block = block_at(nominal.simulation_time());
             let human = nominal.rider_state(&id(PLAYER)).unwrap();
             let jo = nominal.rider_state(&id("pacer")).unwrap();
@@ -407,6 +419,8 @@ impl MixedSession {
             simulation,
             state,
             timeline,
+            start,
+            end,
             pace: Arc::new(pace),
             spotlight: spotlight(),
             observer,
@@ -432,6 +446,33 @@ impl MixedSession {
         }
         Ok(RaceInputFrame::new(inputs)?)
     }
+    /// Apply actual preparation reserve only before the competitive kernel starts.
+    pub(crate) fn with_starting_reserve(mut self, reserve: f64) -> Result<Self, MixedError> {
+        if self.state.simulation_time() != self.start || self.last.is_some() {
+            return Err(MixedError::Invalid("race already started"));
+        }
+        let riders = self
+            .state
+            .riders()
+            .iter()
+            .map(|r| {
+                if r.id().as_str() == PLAYER {
+                    r.clone().with_w_prime_balance(reserve)
+                } else {
+                    Ok(r.clone())
+                }
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let state = RaceState::new(self.start, self.state.random_state(), riders)?;
+        self.config().validate_state(&state, "race.start")?;
+        self.state = state;
+        self.observer = RaceObserver::default();
+        self.observation = self
+            .observer
+            .observe(self.simulation.config(), &self.state, ChaseIntent::None)
+            .map_err(MixedError::Invalid)?;
+        Ok(self)
+    }
     /// Immutable kernel configuration.
     pub fn config(&self) -> &RaceSimulationConfig {
         self.simulation.config()
@@ -454,7 +495,7 @@ impl MixedSession {
     }
     /// Fixed session duration, not a fabricated finish distance.
     pub fn is_complete(&self) -> bool {
-        self.state.simulation_time() >= self.timeline.total_duration()
+        self.state.simulation_time() >= self.end
     }
     /// Current software target; never written to a trainer.
     pub fn target_w(&self) -> f64 {
@@ -518,6 +559,15 @@ impl MixedSession {
         let scene = match block {
             0 => Scene::WarmUp,
             7 => Scene::CoolDown,
+            _ if ahead.is_none()
+                && self.state.riders().iter().any(|r| {
+                    r.id() != me.id()
+                        && me.distance_m() - r.distance_m() > 0.0
+                        && me.distance_m() - r.distance_m() <= 12.0
+                }) =>
+            {
+                Scene::FrontWork
+            }
             _ if ahead.is_none_or(|g| g > 50.0) => Scene::SoloFallback,
             2 if ahead.is_some_and(|g| g > 12.0) => Scene::Pursue,
             2 => Scene::MaintainContribution,
@@ -538,7 +588,7 @@ impl MixedSession {
         )
         .map_err(|_| MixedError::Invalid("invalid physiology input"))?
         .delivered_power_w;
-        let p = self.pace[(self.state.simulation_time().as_millis() / 50) as usize];
+        let p = self.pace[((self.state.simulation_time() - self.start).as_millis() / 50) as usize];
         let inputs = Self::inputs(
             self.simulation.config(),
             &self.state,

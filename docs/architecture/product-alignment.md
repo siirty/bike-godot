@@ -18,6 +18,12 @@ and the connected selections, fatigue and any finishing result must make sense f
 field. Race excitement supports learning and adherence; it does not justify an invalid workout,
 unreadable lesson or predetermined winner.
 
+For the current designed-race prototype, [ADR 0011](../decisions/0011-game-session-lifecycle.md)
+adopts explicit game rules while the world model remains provisional. Prioritise a complete
+warm-up/race/cooldown loop, meaningful choices and workout alignment. Empirical race prediction
+and tactical-transfer claims wait for world-model and human validation. Game success alone does
+not establish that the intended racing action induces the intended workout.
+
 Priority is given to:
 
 1. **Tactical readability and fair information**: the player can judge a move from known context

@@ -76,5 +76,6 @@ Its [verification record](../verification/2026-10-21-selection-chain.md) disting
 engineering acceptance from human learning and empirical race plausibility.
 
 The [mixed-session experiment](mixed-session-experiment.md) adds playable software input,
-semantic group observation and an endurance-heavy connected session. It remains an
-engineering fixture rather than a validated general situation compiler.
+semantic group observation and an endurance-heavy connected game. Its explicit
+[lifecycle and team objective](../decisions/0011-game-session-lifecycle.md) separate stationary
+preparation/recovery from competition. The world model remains provisional.

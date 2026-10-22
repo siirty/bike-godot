@@ -3,6 +3,7 @@
 - Status: accepted for this scoped engineering experiment
 - Date: 2026-10-22
 - Extends ADR 0006–0009 and TT-01–TT-10; no general lesson compiler is claimed
+- App lifecycle and replay superseded by [ADR 0011](0011-game-session-lifecycle.md).
 
 ## Decision
 

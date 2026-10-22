@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game session review</title>
+<style>body{max-width:1100px;margin:30px auto;padding:0 20px;background:#17252b;color:#edf2e8;font:16px system-ui}select,button,input{font:inherit;padding:8px;margin:5px}input[type=range]{width:95%}canvas{width:100%;background:#23373d;border-radius:12px}td,th{padding:8px;text-align:left;border-bottom:1px solid #456}table{width:100%}p,li{color:#b6c9c7}.card{padding:15px;background:#294149;margin:15px 0;border-radius:12px}</style>
+<h1>Game session review</h1><p id="objective"></p><p>Provisional game world. Preparation and recovery occur on the trainer. This report tests game rules and workload consequences, not elite-race prediction.</p>
+<select id="variant" aria-label="Variant"></select><select id="checkpoint" aria-label="Checkpoint"><option value="">Jump to checkpoint…</option></select><button id="play">Play ×30</button>
+<div id="outcome" class="card"></div><div id="clock"></div><input id="scrub" type="range" min="0" max="3599" value="0" aria-label="Active time">
+<canvas id="chart" width="1060" height="220"></canvas><p>Orange: delivered watts. Purple: prescribed watts. Shading: bus warm-up and cooldown.</p>
+<div id="state" class="card"></div><table><thead><tr><th>Rider</th><th>Relative metres</th><th>Speed km/h</th><th>Wheel</th><th>Reserve J</th></tr></thead><tbody id="riders"></tbody></table><h2>Design findings</h2><ul id="findings"></ul>
+<script>
+const report=__DATA__,el=id=>document.getElementById(id),runs=report.runs;let playing=false,last=0;
+el('objective').textContent=report.objective;
+runs.forEach((r,i)=>{const o=document.createElement('option');o.value=i;o.textContent=r.name;el('variant').append(o)});
+report.findings.forEach(f=>{const li=document.createElement('li');li.textContent=f;el('findings').append(li)});
+function checkpoints(){el('checkpoint').replaceChildren();const initial=document.createElement('option');initial.value='';initial.textContent='Jump to checkpoint…';el('checkpoint').append(initial);runs[Number(el('variant').value)].checkpoints.forEach(p=>{const o=document.createElement('option');o.value=Math.round(p.workout_s)-1;o.textContent=p.label;el('checkpoint').append(o)})}
+function render(){
+ const run=runs[Number(el('variant').value)],i=Number(el('scrub').value),s=run.samples[i];
+ el('outcome').textContent=`Final game result: ${run.outcome.verdict}; reason: ${run.outcome.reason}; workout: ${run.completion}. Ember representatives: ${run.outcome.represented.join(', ')||'none'}.`;
+ el('clock').textContent=`Workout ${Math.floor(s.workout_s/60)}:${String(s.workout_s%60).padStart(2,'0')} · Active ${s.active_s}s · ${s.phase}`;
+ el('state').textContent=s.race?`Block ${s.block+1} · ${s.race.observation.topology} / ${s.race.observation.pursuit} · ${s.race.scene}`:`Team bus · player reserve ${Math.round(s.reserve_j)} J. ${s.phase==='WarmUp'?'Competitive field has not started.':'Competitive result and field are frozen.'}`;
+ const body=el('riders');body.replaceChildren();if(s.race){const h=s.race.riders.find(r=>r.id==='human');s.race.riders.forEach(r=>{const tr=document.createElement('tr');[r.id,(r.distance_m-h.distance_m).toFixed(1),(r.speed_ms*3.6).toFixed(1),r.wheel??'—',Math.round(r.reserve_j)].forEach(x=>{const td=document.createElement('td');td.textContent=x;tr.append(td)});body.append(tr)})}
+ const cv=el('chart'),c=cv.getContext('2d'),w=cv.width,h=cv.height;c.clearRect(0,0,w,h);c.fillStyle='#47605c';c.fillRect(0,0,w*600/3600,h);c.fillRect(w*3300/3600,0,w*300/3600,h);
+ for(const [key,color] of [['target_w','#bca0ff'],['delivered_w','#ffbe67']]){c.strokeStyle=color;c.lineWidth=2;c.beginPath();run.samples.forEach((p,j)=>{const x=j/3599*w,y=h-15-p[key]/450*(h-25);j?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()}
+ c.strokeStyle='#84dfed';const x=i/3599*w;c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();
+}
+el('variant').onchange=()=>{checkpoints();render()};el('checkpoint').onchange=()=>{if(el('checkpoint').value!==''){el('scrub').value=el('checkpoint').value;render()}};el('scrub').oninput=render;
+el('play').onclick=()=>{if(Number(el('scrub').value)===3599)el('scrub').value=0;playing=!playing;el('play').textContent=playing?'Pause':'Play ×30'};
+function tick(t){if(playing&&t-last>1000/30){el('scrub').value=Math.min(3599,Number(el('scrub').value)+1);render();last=t;if(Number(el('scrub').value)===3599){playing=false;el('play').textContent='Play ×30'}}requestAnimationFrame(tick)}checkpoints();render();requestAnimationFrame(tick);
+</script></html>
