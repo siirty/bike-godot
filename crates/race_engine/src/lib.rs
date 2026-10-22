@@ -7,6 +7,8 @@
 pub mod canonical_json;
 #[cfg(feature = "testing")]
 pub mod harness;
+pub mod mixed;
+pub mod observation;
 pub mod pack;
 pub mod perception;
 pub mod ride_session;

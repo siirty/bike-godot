@@ -18,6 +18,7 @@ func _ready() -> void:
 	Ui.label(bar, "Workouts", 28)
 	Ui.spacer(bar)
 	Ui.button(bar, "Race view", func() -> void: App.show_screen(RaceScreen.new()))
+	Ui.button(bar, "Mixed session", func() -> void: App.show_screen(MixedRaceScreen.new()))
 	Ui.button(bar, "Settings", func() -> void: App.show_screen(SettingsScreen.new()))
 	Ui.button(bar, "Import workout…", _pick_file)
 	_message = Ui.label(col, "", 14, Ui.ACCENT)

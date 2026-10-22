@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mixed race inspector</title>
+<style>
+body{background:#17252b;color:#eef2ea;font:16px system-ui;margin:30px auto;max-width:1100px;padding:0 20px}
+button,select,input{font:inherit;margin:8px;padding:8px}canvas{width:100%;background:#20343a;border-radius:12px}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:9px;border-bottom:1px solid #456}p{color:#b5c8c5}input[type=range]{width:95%}
+</style>
+<h1>Mixed workout race</h1><p>Engineering inspector · software data · private diagnostics visible. Nominal power playback does not validate induced demand or tactical learning.</p>
+<select id="variant" aria-label="Variant"></select><button id="play">Play ×30</button><span id="clock"></span>
+<input id="scrub" type="range" min="0" max="3599" value="0" aria-label="Time">
+<canvas id="chart" width="1060" height="240"></canvas>
+<p>Orange: delivered W. Purple: prescribed W. Blue cursor: current second.</p><h2 id="status"></h2><div id="summary"></div>
+<table><thead><tr><th>Rider</th><th>Relative metres</th><th>Speed km/h</th><th>Slot</th><th>Wheel</th><th>Reserve J</th></tr></thead><tbody id="riders"></tbody></table>
+<script>
+const report=__DATA__, runs=report.runs;
+const byId=id=>document.getElementById(id), variant=byId('variant'), scrub=byId('scrub');
+let playing=false, last=0;
+runs.forEach((run,index)=>{const option=document.createElement('option');option.value=index;option.textContent=run.name;variant.append(option)});
+function render(){
+ const run=runs[Number(variant.value)], i=Number(scrub.value), sample=run.samples[i], human=sample.riders.find(r=>r.id==='human');
+ byId('clock').textContent=`${Math.floor(sample.time_s/60)}:${String(sample.time_s%60).padStart(2,'0')} / 60:00`;
+ byId('status').textContent=`Block ${sample.block+1} · ${sample.scene} · ${sample.observation.topology} / ${sample.observation.pursuit}`;
+ const block=run.blocks[sample.block];byId('summary').textContent=`Block target band: ${(100*block.band_fraction).toFixed(1)}%; sheltered: ${(100*block.sheltered_fraction).toFixed(1)}%`;
+ const body=byId('riders');body.replaceChildren();
+ sample.riders.forEach(r=>{const row=document.createElement('tr');[r.id,(r.distance_m-human.distance_m).toFixed(1),(r.speed_ms*3.6).toFixed(1),r.slot,r.wheel??'—',r.reserve_j.toFixed(0)].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.append(cell)});body.append(row)});
+ const canvas=byId('chart'), c=canvas.getContext('2d'), w=canvas.width,h=canvas.height;c.clearRect(0,0,w,h);
+ c.strokeStyle='#456';for(let watts=0;watts<=400;watts+=100){const y=h-20-watts/450*(h-30);c.beginPath();c.moveTo(35,y);c.lineTo(w,y);c.stroke();c.fillStyle='#c8d8d4';c.fillText(`${watts} W`,0,y-3)}
+ for(const [key,color] of [['target_w','#bfa1ff'],['delivered_w','#ffc16c']]){c.strokeStyle=color;c.lineWidth=2;c.beginPath();run.samples.forEach((s,j)=>{const x=35+j/3599*(w-35),y=h-20-s[key]/450*(h-30);j?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()}
+ const x=35+i/3599*(w-35);c.strokeStyle='#80dded';c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();
+}
+byId('play').onclick=()=>{playing=!playing;byId('play').textContent=playing?'Pause':'Play ×30'};
+variant.onchange=render;scrub.oninput=render;
+function tick(t){if(playing&&t-last>1000/30){scrub.value=Math.min(3599,Number(scrub.value)+1);render();last=t;if(Number(scrub.value)===3599)playing=false}requestAnimationFrame(tick)}
+render();requestAnimationFrame(tick);
+</script></html>

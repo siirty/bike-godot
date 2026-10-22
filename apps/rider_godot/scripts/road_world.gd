@@ -77,6 +77,21 @@ func add_rider(id: String, jersey: Color) -> void:
 	_riders[id] = bike
 
 
+## Public identity for recognising teammates and rivals.
+func set_rider_label(id: String, caption: String, color: Color) -> void:
+	if not _riders.has(id):
+		return
+	var label := Label3D.new()
+	label.text = caption
+	label.position = Vector3(0, 2.8, 0)
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.set_draw_flag(Label3D.FLAG_FIXED_SIZE, true)
+	label.font_size = 32
+	label.pixel_size = 0.0012
+	label.modulate = color
+	_riders[id].add_child(label)
+
+
 func place_rider(id: String, distance_m: float, sideways: float, visible_from: float) -> void:
 	if not _riders.has(id):
 		return

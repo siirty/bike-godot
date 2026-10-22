@@ -72,6 +72,22 @@ func _run() -> void:
 	var feed: PackedStringArray = race.state()["events"]
 	_check(feed.size() > 0 and feed[feed.size() - 1].contains("1st"), "race event feed ends on the winner (%s)" % [feed])
 	_check(state["riders"].size() == 3, "three kernel riders")
+	var mixed := MixedRaceController.new()
+	for i in range(4):
+		mixed.advance(0.25, 10.0)
+	_check(mixed.state()["riders"].size() == 6, "mixed session has six persistent riders")
+	_check(str(mixed.state()["clock"]).begins_with("0:10"), "mixed accelerated playback preserves fixed steps")
+	_check(mixed.set_manual_power(0.0), "mixed software power is adjustable")
+	_check(mixed.set_slot(2) and mixed.set_wheel("pacer"), "mixed positioning is adjustable")
+	_check(not mixed.set_wheel("unknown"), "mixed unknown wheel rejected")
+	var trace_path := ProjectSettings.globalize_path("user://mixed-smoke.json")
+	_check(mixed.export_trace(trace_path), "mixed trace exports")
+	var audit: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(trace_path))
+	_check(audit["software_only"] and audit["samples"].size() == 10, "mixed trace contains simulated data at one sample per second")
+	_check(mixed.load_trace(trace_path), "mixed replay loads")
+	mixed.advance(0.25, 10.0)
+	_check(str(mixed.state()["clock"]).begins_with("0:02"), "mixed replay executes recorded input")
+	DirAccess.remove_absolute(trace_path)
 
 	var host := Node.new()
 	add_child(host)
@@ -82,12 +98,18 @@ func _run() -> void:
 		SettingsScreen.new(),
 		ConnectTrainerScreen.new(id),
 		RaceScreen.new(),
+		MixedRaceScreen.new(),
 	]
 	for screen in screens:
 		var name := str(screen.get_script().get_global_name())
 		App.show_screen(screen)
 		await _frames(3)
 		_check(host.get_child_count() >= 1 and is_instance_valid(screen) and screen.is_inside_tree(), "%s shows" % name)
+		if screen is MixedRaceScreen:
+			_check(screen._diagnostics.all(func(control: Control) -> bool: return not control.visible), "mixed private diagnostics hidden by default")
+			var coaching: CheckButton = screen.find_child("CoachingToggle", true, false)
+			coaching.button_pressed = true
+			_check(screen._diagnostics.all(func(control: Control) -> bool: return control.visible), "mixed diagnostics explicitly revealed")
 	var ride_link := TrainerLink.new()
 	ride_link.use_simulated()
 	ride_link.connect_trainer(Time.get_ticks_usec())
